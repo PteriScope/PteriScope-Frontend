@@ -1,20 +1,29 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPreferencesService {
-  static SharedPreferencesService? _instance;
-  static SharedPreferences? _preferences;
-
-  static Future<SharedPreferencesService?> getInstance() async {
-    _instance ??= SharedPreferencesService();
-    _preferences ??= await SharedPreferences.getInstance();
+  SharedPreferencesService._privateConstructor();
+  static final SharedPreferencesService _instance = SharedPreferencesService._privateConstructor();
+  factory SharedPreferencesService() {
     return _instance;
   }
 
-  Future<bool?> setLoggedInStatus(bool isLoggedIn) async {
-    return await _preferences?.setBool('isLoggedIn', isLoggedIn);
+  SharedPreferences? _prefs;
+
+  Future<void> init() async {
+    _prefs = await SharedPreferences.getInstance();
   }
 
-  bool getLoggedInStatus() {
-    return _preferences?.getBool('isLoggedIn') ?? false;
+  Future<bool> setAuthToken(String token) async {
+    return _prefs?.setString('authToken', token) ?? Future.value(false);
   }
+
+  String? getAuthToken() {
+    return _prefs?.getString('authToken');
+  }
+
+  Future<bool> removeAuthToken() async {
+    return _prefs?.remove('authToken') ?? Future.value(false);
+  }
+
+// Puedes agregar más métodos para guardar y recuperar otros tipos de datos según sea necesario.
 }

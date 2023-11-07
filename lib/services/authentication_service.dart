@@ -1,33 +1,48 @@
+import 'dart:convert';
+
 import 'package:pteriscope_frontend/services/secure_storage_service.dart';
 import 'package:pteriscope_frontend/services/shared_preferences_service.dart';
 
-class AuthenticationService {
-  final SharedPreferencesService? _prefsService = SharedPreferencesService.getInstance() as SharedPreferencesService?;
-  final SecureStorageService _secureStorageService = SecureStorageService();
+import 'api_service.dart';
 
+class AuthenticationService {
+  final ApiService apiService;
+  final SecureStorageService secureStorageService;
+  final SharedPreferencesService sharedPreferencesService;
+
+  AuthenticationService({
+    required this.apiService,
+    required this.secureStorageService,
+    required this.sharedPreferencesService,
+  });
 
   Future<bool> login(String dni, String password) async {
-    // Simula la lógica de autenticación
-    // En un escenario real, aquí enviarías los datos al backend y guardarías el token de sesión si es exitoso
-    bool loginSuccess = true; // Simula una respuesta exitosa
-
-    if (loginSuccess) {
-      // Si el login es exitoso, guardamos el estado de sesión como 'true'
-      await _prefsService?.setLoggedInStatus(true);
-      await _secureStorageService.setToken(jwtToken);
-      return true;
-    } else {
+    try {
+      final response = await apiService.loginSpecialist(dni, password);
+      if (response.statusCode == 200) {
+        final jwtToken = jsonDecode(response.body)['token'];
+        await secureStorageService.storeToken(jwtToken);
+        // Otras configuraciones de inicio de sesión pueden ir aquí, como guardar el estado de la sesión en SharedPreferences.
+        return true;
+      }
+      // Manejar aquí otros códigos de estado y errores
+      return false;
+    } catch (e) {
+      // Manejar excepción
       return false;
     }
   }
 
   Future<void> logout() async {
-    // Lógica para cerrar sesión
-    await _secureStorageService.setToken('');
-    await _prefsService?.setLoggedInStatus(false);
+    await secureStorageService.deleteToken();
+    // Limpiar SharedPreferences si es necesario.
   }
 
-  Future<bool?> checkLoggedInStatus() async {
-    return _prefsService?.getLoggedInStatus();
+  Future<bool> isLoggedIn() async{
+    final token = await secureStorageService.getToken();
+    if (token == null){
+      return false;
+    }
+    return true;
   }
 }

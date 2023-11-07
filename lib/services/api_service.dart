@@ -1,77 +1,110 @@
-import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
+
+import '../models/specialist.dart';
 
 class ApiService {
-  final String baseUrl = "http://localhost:8080/api";
+  final String baseUrl = 'https://tu-dominio-api.com/api';
+  final Map<String, String> headers = {
+    'Content-Type': 'application/json',
+  };
 
-  // Headers básicos para Content-Type y Accept
-  Map<String, String> _getHeaders() {
+  // Helper method to get the authorization header
+  Future<Map<String, String>> _getAuthHeaders() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('jwt_token') ?? '';
     return {
       'Content-Type': 'application/json',
-      'Accept': 'application/json',
-    };
-  }
-
-  // Headers con Autorización, necesitarás el token JWT aquí.
-  Map<String, String> _getAuthHeaders(String token) {
-    return {
-      ..._getHeaders(),
       'Authorization': 'Bearer $token',
     };
   }
 
-  // Especialistas
-  Future<http.Response> registerSpecialist(Map<String, dynamic> data) {
-    var url = Uri.parse('$baseUrl/specialists/register');
-    return http.post(url, headers: _getHeaders(), body: json.encode(data));
+  Future<String> login(String dni, String password) async {
+    var response = await http.post(
+      Uri.parse('$baseUrl/specialists/login'),
+      headers: headers,
+      body: json.encode({'dni': dni, 'password': password}),
+    );
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body);
+      return data['token'];
+    } else {
+      throw Exception('Failed to login');
+    }
   }
 
-  Future<http.Response> loginSpecialist(Map<String, dynamic> data) {
-    var url = Uri.parse('$baseUrl/specialists/login');
-    return http.post(url, headers: _getHeaders(), body: json.encode(data));
+  Future<String> registerSpecialist(Specialist specialist) async {
+    var response = await http.post(
+      Uri.parse('$baseUrl/specialists/register'),
+      headers: headers,
+      body: json.encode(specialist.toJson()),
+    );
+    if (response.statusCode == 200) {
+      return response.body;
+    } else {
+      throw Exception('Failed to register specialist');
+    }
   }
 
-  Future<http.Response> getSpecialist(String token, int specialistId) {
-    var url = Uri.parse('$baseUrl/specialists/get/$specialistId');
-    return http.get(url, headers: _getAuthHeaders(token));
+  Future<http.Response> getSpecialist(String specialistId) async {
+    final headers = await _getAuthHeaders();
+
+    final response = await http.get(
+      Uri.parse('$baseUrl/specialists/get/$specialistId'),
+      headers: headers
+    );
+
+    return response;
   }
 
-  // Pacientes
-  Future<http.Response> createPatient(String token, Map<String, dynamic> data, int specialistId) {
-    var url = Uri.parse('$baseUrl/specialists/$specialistId/patients');
-    return http.post(url, headers: _getAuthHeaders(token), body: json.encode(data));
+  Future<http.Response> createPatient(String specialistId, Map<String, dynamic> patientData) async {
+    final headers = await _getAuthHeaders();
+
+    final response = await http.post(
+      Uri.parse('$baseUrl/specialists/$specialistId/patients'),
+      headers: headers,
+      body: json.encode(patientData),
+    );
+
+    return response;
   }
 
-  Future<http.Response> getPatient(String token, int patientId) {
-    var url = Uri.parse('$baseUrl/patients/get/$patientId');
-    return http.get(url, headers: _getAuthHeaders(token));
+  Future<http.Response> getPatient(String patientId) async {
+    final headers = await _getAuthHeaders();
+
+    final response = await http.get(
+      Uri.parse('$baseUrl/patients/$patientId'),
+      headers: headers,
+    );
+
+    return response;
   }
 
-  Future<http.Response> updatePatient(String token, int patientId, Map<String, dynamic> data) {
-    var url = Uri.parse('$baseUrl/patients/update/$patientId');
-    return http.put(url, headers: _getAuthHeaders(token), body: json.encode(data));
+  Future<http.Response> createReview(String patientId, String imageBase64) async {
+    final headers = await _getAuthHeaders();
+
+    final response = await http.post(
+      Uri.parse('$baseUrl/reviews'),
+      headers: headers,
+      body: json.encode({
+        'patientId': patientId,
+        'imageBase64': imageBase64,
+      }),
+    );
+
+    return response;
   }
 
-  Future<http.Response> deletePatient(String token, int patientId) {
-    var url = Uri.parse('$baseUrl/patients/delete/$patientId');
-    return http.delete(url, headers: _getAuthHeaders(token));
-  }
+  Future<http.Response> getReview(String reviewId) async {
+    final headers = await _getAuthHeaders();
 
-  // Revisiones
-  Future<http.Response> createReview(String token, int patientId, String imageBase64) {
-    var url = Uri.parse('$baseUrl/reviews');
-    var data = {
-      'patientId': patientId.toString(),
-      'imageBase64': imageBase64,
-    };
-    return http.post(url, headers: _getAuthHeaders(token), body: json.encode(data));
-  }
+    final response = await http.get(
+      Uri.parse('$baseUrl/reviews/$reviewId'),
+      headers: headers,
+    );
 
-  Future<http.Response> getReview(String token, int reviewId) {
-    var url = Uri.parse('$baseUrl/reviews/$reviewId');
-    return http.get(url, headers: _getAuthHeaders(token));
+    return response;
   }
-
-// Aquí puedes agregar métodos adicionales según necesites
 
 }

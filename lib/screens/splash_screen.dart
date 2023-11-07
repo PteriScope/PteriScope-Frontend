@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../constants.dart';
+import '../services/authentication_service.dart';
 import 'login_screen.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -18,7 +19,8 @@ class _SplashScreenState extends State<SplashScreen> {
 
   _navigateToHome() async {
     await Future.delayed(const Duration(seconds: AppConstants.splashDelay), () {});
-    //bool isLoggedIn = await AuthenticationService().checkLoggedInStatus();
+
+    bool isLoggedIn = await AuthenticationService().checkLoggedInStatus();
     bool isLoggedIn = false;
     if (isLoggedIn) {
       // Navigate to HomeScreen
