@@ -19,183 +19,157 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   List<Patient> patients = [];
-  int totalPatients = 0;
-  //int? specialistId;
+  int? totalPatients;
+  ApiService apiService = ApiService();
+  bool loading = true;
+  bool error = false;
 
   @override
   void initState() {
     super.initState();
-    //var apiService = Provider.of<ApiService>(context, listen: false);
-    //apiService.getPatientsFromSpecialist().then(
-    //        (value) => {
-    //          patients = value,
-    //        }
-    //);
+    loadPatients();
   }
 
-  void _logout(){
+  void loadPatients() async {
+    try {
+      var _ = await apiService.getPatientsFromSpecialist().then((value) => {
+            setState(() {
+              patients = value;
+              totalPatients = patients.length;
+              loading = false;
+            })
+          });
+    } catch (e) {
+      setState(() {
+        loading = false;
+        error = true;
+      });
+    }
+  }
+
+  void _logout() {
     SharedPreferencesService().removeAuthToken();
-    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const LoginScreen()));
+    Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => const LoginScreen()));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'PteriScope',
-          style: TextStyle(
-            fontSize: 30,
-              fontWeight: FontWeight.bold,
-              color: Colors.white
+        appBar: AppBar(
+          title: const Text(
+            'PteriScope',
+            style: TextStyle(
+                fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),
           ),
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.menu),
-          color: Colors.white,
-          onPressed: () {
-            _logout();
-          },
-        ),
-        actions: const [
-          Padding(
-            padding: EdgeInsets.only(right: AppConstants.padding),
-            child: Image(
-              image: AssetImage('assets/Logo_w.png'),
-              height: 40,
+          leading: IconButton(
+            icon: const Icon(Icons.menu),
+            color: Colors.white,
+            onPressed: () {
+              _logout();
+            },
+          ),
+          actions: const [
+            Padding(
+              padding: EdgeInsets.only(right: AppConstants.padding),
+              child: Image(
+                image: AssetImage('assets/Logo_w.png'),
+                height: 40,
+              ),
             ),
-          ),
-        ],
-        backgroundColor: AppConstants.primaryColor,
-        centerTitle: true,
-      ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(AppConstants.padding),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
+          ],
+          backgroundColor: AppConstants.primaryColor,
+          centerTitle: true,
+        ),
+        body: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(AppConstants.padding),
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
-                      'Lista de pacientes',
-                      style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white
-                      ),
-                      textAlign: TextAlign.start,
+                    Column(
+                      children: [
+                        const Text(
+                          'Lista de pacientes',
+                          style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white),
+                          textAlign: TextAlign.start,
+                        ),
+                        Text(
+                          // TODO
+                          'Total de pacientes: ${totalPatients ?? 0}',
+                          style: const TextStyle(
+                              fontSize: 15, color: Colors.white),
+                          textAlign: TextAlign.left,
+                        ),
+                      ],
                     ),
-                    Text(
-                      // TODO
-                      'Total de pacientes: $totalPatients',
-                      //'Total de pacientes: 10',
-                      style: const TextStyle(
-                          fontSize: 15,
-                          color: Colors.white
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        // TODO: Navegación a la pantalla de creación de nuevo paciente.
+                      },
+                      icon: const Icon(Icons.add),
+                      label: const Text('Nuevo paciente'),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12.0, vertical: 8.0),
                       ),
-                      textAlign: TextAlign.left,
                     ),
-                  ],
-                ),
-                ElevatedButton.icon(
-                  onPressed: () {
-                    // Navegación a la pantalla de creación de nuevo paciente.
-                  },
-                  icon: const Icon(Icons.add),
-                  label: const Text('Nuevo paciente'),
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+                  ]),
+            ),
+
+            const Padding(
+                padding: EdgeInsets.only(
+                    left: AppConstants.padding,
+                    right: AppConstants.padding,
+                    bottom: AppConstants.padding),
+                child: Divider(
+                  thickness: 1.5,
+                )),
+
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: AppConstants.padding),
+              child: TextField(
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Colors.white,
+                  hintText: 'Busca a un paciente',
+                  hintStyle: const TextStyle(color: Colors.grey),
+                  prefixIcon: const Icon(Icons.search),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(50),
                   ),
                 ),
-              ]
-            ),
-          ),
-
-          const Padding(
-            padding: EdgeInsets.only(left: AppConstants.padding, right: AppConstants.padding, bottom: AppConstants.padding),
-            child: Divider(thickness: 1.5,)
-          ),
-
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppConstants.padding),
-            child: TextField(
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: Colors.white,
-                hintText: 'Busca a un paciente',
-                hintStyle: const TextStyle(
-                  color: Colors.grey
-                ),
-                prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(50),
-                ),
-              ),
-              onChanged: (value) {
-                // Aquí el filtro de búsqueda.
-              },
-            ),
-          ),
-
-          Expanded(
-            child: Card(
-              child: FutureBuilder(
-                // ApiService is being called to fetch patients when the future is null
-                future: Provider.of<ApiService>(context, listen: false).getPatientsFromSpecialist(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (snapshot.error != null) {
-                    // Handle error state
-                    log(snapshot.error.toString());
-                    return const Center(child: Text('Error fetching data'));
-                  } else if (snapshot.hasData) {
-                    log("HAS DATA==============");
-
-
-                    patients = snapshot.data as List<Patient>;
-                    return ListView.builder(
-                      itemCount: patients.length,
-                      itemBuilder: (context, index) {
-                        final patient = patients[index];
-                        log(patient.dni);
-                        return ListTile(
-                          title: Text('${patient.firstName} ${patient.lastName}'),
-                          subtitle: Text('DNI: ${patient.dni}'),
-                          // Aquí puedes añadir más información sobre el paciente
-                        );
-                      },
-                    );
-                  } else {
-
-                    return const Center(child: Text('No patients found'));
-                  }
+                onChanged: (value) {
+                  // Aquí el filtro de búsqueda.
                 },
               ),
             ),
-          )
 
-
-          //Expanded(
-          //  child: ListView.builder(
-          //    itemCount: patients.length,
-          //    itemBuilder: (context, index) {
-          //      final patient = patients[index];
-          //      return ListTile(
-          //        title: Text('${patient.firstName} ${patient.lastName}'),
-          //        subtitle: Text('${patient.dni}'),
-          //        trailing: Text('${patient.reviews.length} Revisiones'),
-          //        onTap: () {
-          //          // Aquí podrías implementar una acción al tocar cada paciente.
-          //        },
-          //      );
-          //    },
-          //  ),
-          //),
-        ],
-      )
-    );
+            Expanded(
+              child: Card(
+                child: loading
+                    ? const Center(child: CircularProgressIndicator())
+                    : error == true
+                        ? const Center(child: Text("Error al cargar los datos"))
+                        : ListView.builder(
+                            itemCount: patients.length,
+                            itemBuilder: (context, index) {
+                              final patient = patients[index];
+                              return ListTile(
+                                title: Text(
+                                    '${patient.firstName} ${patient.lastName}'),
+                                subtitle: Text('DNI: ${patient.email}'),
+                              );
+                            },
+                          ),
+              ),
+            )
+          ],
+        ));
   }
 }
