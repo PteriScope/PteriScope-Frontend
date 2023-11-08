@@ -32,9 +32,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void loadPatients() async {
     try {
-      var _ = await apiService.getPatientsFromSpecialist().then((value) => {
+      var _ = await apiService.getPatientsFromSpecialist().then((patientsResponse) => {
             setState(() {
-              patients = value;
+              patients = patientsResponse;
               totalPatients = patients.length;
               loading = false;
             })
@@ -120,7 +120,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ]),
             ),
-
             const Padding(
                 padding: EdgeInsets.only(
                     left: AppConstants.padding,
@@ -129,7 +128,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Divider(
                   thickness: 1.5,
                 )),
-
             Padding(
               padding:
                   const EdgeInsets.symmetric(horizontal: AppConstants.padding),
@@ -149,23 +147,76 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               ),
             ),
-
             Expanded(
               child: Card(
                 child: loading
                     ? const Center(child: CircularProgressIndicator())
                     : error == true
                         ? const Center(child: Text("Error al cargar los datos"))
-                        : ListView.builder(
-                            itemCount: patients.length,
-                            itemBuilder: (context, index) {
-                              final patient = patients[index];
-                              return ListTile(
-                                title: Text(
-                                    '${patient.firstName} ${patient.lastName}'),
-                                subtitle: Text('DNI: ${patient.email}'),
-                              );
-                            },
+                        : Column(
+                            children: [
+                              const Padding(
+                                padding: EdgeInsets.only(
+                                    left: AppConstants.padding / 2.0,
+                                    right: AppConstants.padding / 2.0,
+                                    bottom: AppConstants.padding / 2.0,
+                                    top: AppConstants.padding
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  children: [
+                                    Expanded(flex: 1,
+                                      child: Text(
+                                        'Datos del paciente',
+                                        style: TextStyle(
+                                          color: Color(0xFF838793),
+                                          fontWeight: FontWeight.bold
+                                        ),
+                                      ),
+                                    ),
+                                    Flexible(flex: 1,
+                                      child: Text(
+                                        'Última revisión',
+                                        style: TextStyle(
+                                            color: Color(0xFF838793),
+                                            fontWeight: FontWeight.bold
+                                        ),
+                                      ),
+                                    ),
+                                    Flexible(flex: 1,
+                                      child: Text(
+                                        'Grupo',
+                                        style: TextStyle(
+                                            color: Color(0xFF838793),
+                                            fontWeight: FontWeight.bold
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Expanded(
+                                child: ListView.builder(
+                                  itemCount: patients.length,
+                                  itemBuilder: (context, index) {
+                                    final patient = patients[index];
+                                    return Card(
+                                      child: ListTile(
+                                        onTap: () {
+                                          // Navigator.of(context).push(MaterialPageRoute(
+                                          //   builder: (context) => PatientDetailScreen(patient: patient),
+                                          // ));
+                                        },
+                                        title: Text(
+                                            '${patient.firstName} ${patient.lastName}'
+                                        ),
+                                        subtitle: Text(patient.email),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ],
                           ),
               ),
             )

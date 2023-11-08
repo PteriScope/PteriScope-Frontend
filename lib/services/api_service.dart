@@ -92,16 +92,9 @@ class ApiService with ChangeNotifier {
 
     if (response.statusCode == 200) {
       List<dynamic> patientsJson = json.decode(response.body);
-      //log(patientsJson as String);
       List<Patient> patients = patientsJson.map((json) => Patient.fromJson(json)).toList();
       notifyListeners();
       return patients;
-
-      //patientResponse = patients;
-      //log(patientResponse.length.toString());
-      //log(patientResponse[0].dni);
-
-
     } else {
       log(response.body);
       throw Exception('Failed to load specialist data');
