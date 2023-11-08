@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:pteriscope_frontend/screens/registration_screen.dart';
+import 'package:pteriscope_frontend/services/api_service.dart';
 import 'package:pteriscope_frontend/widgets/pteriscope_elevated_button.dart';
 import 'package:pteriscope_frontend/widgets/pteriscope_text_field.dart';
 
 import '../constants.dart';
 import 'home_screen.dart';
-//import 'package:pteriscope_app/services/authentication_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -17,7 +18,6 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _dniController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  //final AuthenticationService _authService = AuthenticationService();
   bool _isButtonDisabled = true;
 
   @override
@@ -38,12 +38,14 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _login() async {
-    // Implement the login logic here
-    // On successful login, navigate to the HomeScreen
-    //bool loggedIn = await _authService.login(_dniController.text, _passwordController.text);
-    bool loggedIn = true;
+    var apiService = Provider.of<ApiService>(context, listen: false);
+    bool loggedIn = await apiService.login(
+        _dniController.text, _passwordController.text
+    );
     if (loggedIn) {
-      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const HomeScreen()));
+      Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (_) => const HomeScreen())
+      );
     } else {
       // Show error message
     }
@@ -94,7 +96,9 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             TextButton(
               onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (_) => const RegistrationScreen()));
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (_) => const RegistrationScreen()
+                ));
               },
               child: const Text('¿No tiene una cuenta? Registrarse'),
             ),

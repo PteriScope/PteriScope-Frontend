@@ -17,12 +17,25 @@ class SharedPreferencesService {
     return _prefs?.setString('authToken', token) ?? Future.value(false);
   }
 
+  Future<bool> setId(int id) async {
+    return _prefs?.setInt('id', id) ?? Future.value(false);
+  }
+
   String? getAuthToken() {
     return _prefs?.getString('authToken');
   }
 
+  int? getId() {
+    return _prefs?.getInt('id');
+  }
+
   Future<bool> removeAuthToken() async {
     return _prefs?.remove('authToken') ?? Future.value(false);
+  }
+
+  Future<bool> isLogged() async{
+    String? token = _prefs?.getString('authToken');
+    return token != null ? true : false;
   }
 
 // Puedes agregar más métodos para guardar y recuperar otros tipos de datos según sea necesario.

@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:pteriscope_frontend/screens/home_screen.dart';
+import 'package:pteriscope_frontend/services/shared_preferences_service.dart';
 
 import '../constants.dart';
-import '../services/authentication_service.dart';
 import 'login_screen.dart';
 
 class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
@@ -20,10 +23,10 @@ class _SplashScreenState extends State<SplashScreen> {
   _navigateToHome() async {
     await Future.delayed(const Duration(seconds: AppConstants.splashDelay), () {});
 
-    bool isLoggedIn = await AuthenticationService().checkLoggedInStatus();
-    bool isLoggedIn = false;
+    bool isLoggedIn = await SharedPreferencesService().isLogged();
+    //bool isLoggedIn = false;
     if (isLoggedIn) {
-      // Navigate to HomeScreen
+      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const HomeScreen()));
     } else {
       Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const LoginScreen()));
     }

@@ -1,34 +1,50 @@
+import 'dart:developer';
+
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:pteriscope_frontend/services/shared_preferences_service.dart';
 import 'dart:convert';
 
+import '../models/patient.dart';
 import '../models/specialist.dart';
 
-class ApiService {
-  final String baseUrl = 'https://tu-dominio-api.com/api';
+class ApiService with ChangeNotifier {
+  final String baseUrl = 'http://192.168.0.6:8080/api';
   final Map<String, String> headers = {
     'Content-Type': 'application/json',
   };
 
   // Helper method to get the authorization header
   Future<Map<String, String>> _getAuthHeaders() async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('jwt_token') ?? '';
+    String? token = SharedPreferencesService().getAuthToken();
     return {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token',
     };
   }
 
-  Future<String> login(String dni, String password) async {
+  Future<bool> login(String dni, String password) async {
+    log("==================================Login==================================");
+    log(dni + password);
+    log('$baseUrl/specialists/login');
+    log(json.encode({'dni': dni, 'password': password}));
     var response = await http.post(
       Uri.parse('$baseUrl/specialists/login'),
       headers: headers,
       body: json.encode({'dni': dni, 'password': password}),
     );
+    log("==================================response==================================");
     if (response.statusCode == 200) {
       var data = json.decode(response.body);
-      return data['token'];
+      String token = data['token'];
+      log(data["id"].toString());
+      int specialistId = data["id"];
+      log(token);
+      log(specialistId.toString());
+      await SharedPreferencesService().setAuthToken(token);
+      await SharedPreferencesService().setId(specialistId);
+      notifyListeners();
+      return true;
     } else {
       throw Exception('Failed to login');
     }
@@ -41,70 +57,116 @@ class ApiService {
       body: json.encode(specialist.toJson()),
     );
     if (response.statusCode == 200) {
+      notifyListeners();
       return response.body;
     } else {
       throw Exception('Failed to register specialist');
     }
   }
 
-  Future<http.Response> getSpecialist(String specialistId) async {
+  Future<String> getSpecialist(String specialistId) async {
     final headers = await _getAuthHeaders();
-
     final response = await http.get(
-      Uri.parse('$baseUrl/specialists/get/$specialistId'),
-      headers: headers
+      Uri.parse('$baseUrl/specialists/$specialistId'),
+      headers: headers,
     );
 
-    return response;
+    if (response.statusCode == 200) {
+      notifyListeners();
+      return response.body;
+    } else {
+      throw Exception('Failed to load specialist data');
+    }
   }
 
-  Future<http.Response> createPatient(String specialistId, Map<String, dynamic> patientData) async {
+  Future<List<Patient>> getPatientsFromSpecialist() async {
+    log("==================================getPatientsFromSpecialist==================================");
+    final specialistId = SharedPreferencesService().getId();
+    log(specialistId.toString());
     final headers = await _getAuthHeaders();
+    log("==================================before response==================================");
+    var response = await http.get(
+      Uri.parse('$baseUrl/specialists/$specialistId/patients'),
+      headers: headers,
+    );
 
+    if (response.statusCode == 200) {
+      List<dynamic> patientsJson = json.decode(response.body);
+      //log(patientsJson as String);
+      List<Patient> patients = patientsJson.map((json) => Patient.fromJson(json)).toList();
+      notifyListeners();
+      return patients;
+
+      //patientResponse = patients;
+      //log(patientResponse.length.toString());
+      //log(patientResponse[0].dni);
+
+
+    } else {
+      log(response.body);
+      throw Exception('Failed to load specialist data');
+    }
+  }
+
+  Future<String> createPatient(String specialistId, Map<String, dynamic> patientData) async {
+    final headers = await _getAuthHeaders();
     final response = await http.post(
       Uri.parse('$baseUrl/specialists/$specialistId/patients'),
       headers: headers,
       body: json.encode(patientData),
     );
 
-    return response;
+    if (response.statusCode == 200) {
+      notifyListeners();
+      return response.body;
+    } else {
+      throw Exception('Failed to create patient');
+    }
   }
 
-  Future<http.Response> getPatient(String patientId) async {
+  Future<String> getPatient(String patientId) async {
     final headers = await _getAuthHeaders();
-
     final response = await http.get(
       Uri.parse('$baseUrl/patients/$patientId'),
       headers: headers,
     );
 
-    return response;
+    if (response.statusCode == 200) {
+      notifyListeners();
+      return response.body;
+    } else {
+      throw Exception('Failed to load patient data');
+    }
   }
 
-  Future<http.Response> createReview(String patientId, String imageBase64) async {
+  Future<String> createReview(String patientId, Map<String, dynamic> reviewData) async {
     final headers = await _getAuthHeaders();
-
     final response = await http.post(
-      Uri.parse('$baseUrl/reviews'),
+      Uri.parse('$baseUrl/reviews?patientId=$patientId'),
       headers: headers,
-      body: json.encode({
-        'patientId': patientId,
-        'imageBase64': imageBase64,
-      }),
+      body: json.encode(reviewData),
     );
 
-    return response;
+    if (response.statusCode == 200) {
+      notifyListeners();
+      return response.body;
+    } else {
+      throw Exception('Failed to create review');
+    }
   }
 
-  Future<http.Response> getReview(String reviewId) async {
+  Future<String> getReview(String reviewId) async {
     final headers = await _getAuthHeaders();
-
     final response = await http.get(
       Uri.parse('$baseUrl/reviews/$reviewId'),
       headers: headers,
     );
 
-    return response;
+    if (response.statusCode == 200) {
+      notifyListeners();
+      return response.body;
+    } else {
+      throw Exception('Failed to load review data');
+    }
   }
-
 }

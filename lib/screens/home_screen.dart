@@ -1,5 +1,13 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:pteriscope_frontend/constants.dart';
+import 'package:pteriscope_frontend/services/api_service.dart';
+import 'package:pteriscope_frontend/services/shared_preferences_service.dart';
+
+import '../models/patient.dart';
+import 'login_screen.dart';
 //import 'package:tu_app/models/patient.dart'; // Asumiendo que tienes un modelo para el paciente.
 
 class HomeScreen extends StatefulWidget {
@@ -10,12 +18,24 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  //List<Patient> patients = []; // Este es el listado de pacientes que obtendrías del backend.
+  List<Patient> patients = [];
+  int totalPatients = 0;
+  //int? specialistId;
 
   @override
   void initState() {
     super.initState();
-    // Aquí deberías llamar a tu función que trae los pacientes del backend y actualizar el estado.
+    //var apiService = Provider.of<ApiService>(context, listen: false);
+    //apiService.getPatientsFromSpecialist().then(
+    //        (value) => {
+    //          patients = value,
+    //        }
+    //);
+  }
+
+  void _logout(){
+    SharedPreferencesService().removeAuthToken();
+    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const LoginScreen()));
   }
 
   @override
@@ -34,7 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
           icon: const Icon(Icons.menu),
           color: Colors.white,
           onPressed: () {
-            // Aquí implementarías la lógica para abrir el menú tipo hamburguesa.
+            _logout();
           },
         ),
         actions: const [
@@ -56,9 +76,9 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Column(
+                Column(
                   children: [
-                    Text(
+                    const Text(
                       'Lista de pacientes',
                       style: TextStyle(
                           fontSize: 24,
@@ -69,9 +89,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     Text(
                       // TODO
-                      //'Total de pacientes: ${patients.length}',
-                      'Total de pacientes: 10',
-                      style: TextStyle(
+                      'Total de pacientes: $totalPatients',
+                      //'Total de pacientes: 10',
+                      style: const TextStyle(
                           fontSize: 15,
                           color: Colors.white
                       ),
@@ -118,6 +138,46 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
           ),
+
+          Expanded(
+            child: Card(
+              child: FutureBuilder(
+                // ApiService is being called to fetch patients when the future is null
+                future: Provider.of<ApiService>(context, listen: false).getPatientsFromSpecialist(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.error != null) {
+                    // Handle error state
+                    log(snapshot.error.toString());
+                    return const Center(child: Text('Error fetching data'));
+                  } else if (snapshot.hasData) {
+                    log("HAS DATA==============");
+
+
+                    patients = snapshot.data as List<Patient>;
+                    return ListView.builder(
+                      itemCount: patients.length,
+                      itemBuilder: (context, index) {
+                        final patient = patients[index];
+                        log(patient.dni);
+                        return ListTile(
+                          title: Text('${patient.firstName} ${patient.lastName}'),
+                          subtitle: Text('DNI: ${patient.dni}'),
+                          // Aquí puedes añadir más información sobre el paciente
+                        );
+                      },
+                    );
+                  } else {
+
+                    return const Center(child: Text('No patients found'));
+                  }
+                },
+              ),
+            ),
+          )
+
+
           //Expanded(
           //  child: ListView.builder(
           //    itemCount: patients.length,
