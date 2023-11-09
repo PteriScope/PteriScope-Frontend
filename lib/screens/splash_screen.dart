@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pteriscope_frontend/screens/home_screen.dart';
 import 'package:pteriscope_frontend/services/shared_preferences_service.dart';
 
-import '../constants.dart';
+import '../util/constants.dart';
 import 'login_screen.dart';
 
 class SplashScreen extends StatefulWidget {

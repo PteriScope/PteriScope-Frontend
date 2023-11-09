@@ -5,7 +5,7 @@ import 'package:pteriscope_frontend/services/api_service.dart';
 import 'package:pteriscope_frontend/widgets/pteriscope_elevated_button.dart';
 import 'package:pteriscope_frontend/widgets/pteriscope_text_field.dart';
 
-import '../constants.dart';
+import '../util/constants.dart';
 import 'home_screen.dart';
 
 class LoginScreen extends StatefulWidget {

@@ -1,3 +1,5 @@
+import 'package:pteriscope_frontend/models/review.dart';
+
 class Patient {
   final int id;
   final String firstName;
@@ -6,6 +8,7 @@ class Patient {
   final int age;
   final String email;
   final int specialistId;
+  Review? latestReview;
 
   Patient({
     required this.id,
@@ -15,6 +18,7 @@ class Patient {
     required this.age,
     required this.email,
     required this.specialistId,
+    this.latestReview
   });
 
   // Método para convertir un objeto JSON en un objeto Patient

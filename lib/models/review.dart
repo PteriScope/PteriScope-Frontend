@@ -1,22 +1,33 @@
+import 'dart:convert';
+
 import 'package:intl/intl.dart';
 
 class Review {
-  final int id;
-  final String imageBase64;
-  final String reviewResult;
-  final DateTime reviewDate;
-  final int patientId;
+  final int? id;
+  final String? imageBase64;
+  final String? reviewResult;
+  final DateTime? reviewDate;
+  final int? patientId;
 
   Review({
-    required this.id,
-    required this.imageBase64,
-    required this.reviewResult,
-    required this.reviewDate,
-    required this.patientId,
+    this.id,
+    this.imageBase64,
+    this.reviewResult,
+    this.reviewDate,
+    this.patientId,
   });
 
   // Método para convertir un objeto JSON en un objeto Review
   factory Review.fromJson(Map<String, dynamic> json) {
+    // Devuelve un objeto Review con valores por defecto si es null
+    if (json.values.every((value) => value == null)) {
+      return Review(
+        id: null,
+        imageBase64: null,
+        reviewResult: null,
+
+      );
+    }
     return Review(
       id: json['id'],
       imageBase64: json['imageBase64'],
@@ -32,8 +43,13 @@ class Review {
       'id': id,
       'imageBase64': imageBase64,
       'reviewResult': reviewResult,
-      'reviewDate': DateFormat("yyyy-MM-dd").format(reviewDate),
+      'reviewDate': DateFormat("yyyy-MM-dd").format(reviewDate!),
       'patientId': patientId,
     };
+  }
+
+  String decodeUtf8String(String input) {
+    List<int> bytes = input.runes.toList();
+    return utf8.decode(bytes);
   }
 }

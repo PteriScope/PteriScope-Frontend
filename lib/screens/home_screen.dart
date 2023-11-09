@@ -1,20 +1,21 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:pteriscope_frontend/constants.dart';
+import 'package:intl/intl.dart';
+import 'package:pteriscope_frontend/util/constants.dart';
+import 'package:pteriscope_frontend/screens/patient_detail_screen.dart';
 import 'package:pteriscope_frontend/services/api_service.dart';
 import 'package:pteriscope_frontend/services/shared_preferences_service.dart';
 
 import '../models/patient.dart';
+import '../util/shared.dart';
 import 'login_screen.dart';
-//import 'package:tu_app/models/patient.dart'; // Asumiendo que tienes un modelo para el paciente.
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
@@ -32,26 +33,55 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void loadPatients() async {
     try {
-      var _ = await apiService.getPatientsFromSpecialist().then((patientsResponse) => {
-            setState(() {
-              patients = patientsResponse;
-              totalPatients = patients.length;
-              loading = false;
-            })
-          });
+      var _ = await apiService
+          .getPatientsFromSpecialist()
+          .then((patientsResponse) async => {
+                for (var patient in patientsResponse)
+                  {
+                    await apiService
+                        .getLatestReviewFromPatient(patient.id)
+                        .then((latestReview) =>
+                            patient.latestReview = latestReview),
+                  },
+                setState(() {
+                  patients = patientsResponse;
+                  totalPatients = patients.length;
+                  loading = false;
+                })
+              });
     } catch (e) {
       setState(() {
         loading = false;
         error = true;
+        log(e.toString());
       });
     }
   }
 
-  void _logout() {
-    SharedPreferencesService().removeAuthToken();
-    Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const LoginScreen()));
-  }
+  // TODO: Check if works
+  //Color getColorResult(String? result){
+  //  switch(result){
+  //    case AppConstants.noPterygium:{
+  //      return AppConstants.normalColor;
+  //    }
+  //    case AppConstants.mildPterygium:{
+  //      return AppConstants.mildColor;
+  //    }
+  //    case AppConstants.severePterygium:{
+  //      return AppConstants.severeColor;
+  //    }
+  //    default: {
+  //      return Colors.black;
+  //    }
+  //  }
+  //}
+
+  // TODO: Check if works
+  //void _logout() {
+  //  SharedPreferencesService().removeAuthToken();
+  //  Navigator.of(context).pushReplacement(
+  //      MaterialPageRoute(builder: (_) => const LoginScreen()));
+  //}
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +96,7 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: const Icon(Icons.menu),
             color: Colors.white,
             onPressed: () {
-              _logout();
+              Shared.logout(context);
             },
           ),
           actions: const [
@@ -99,7 +129,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           textAlign: TextAlign.start,
                         ),
                         Text(
-                          // TODO
                           'Total de pacientes: ${totalPatients ?? 0}',
                           style: const TextStyle(
                               fontSize: 15, color: Colors.white),
@@ -125,9 +154,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     left: AppConstants.padding,
                     right: AppConstants.padding,
                     bottom: AppConstants.padding),
-                child: Divider(
-                  thickness: 1.5,
-                )),
+                child: Divider(thickness: 1.5)),
             Padding(
               padding:
                   const EdgeInsets.symmetric(horizontal: AppConstants.padding),
@@ -143,7 +170,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 onChanged: (value) {
-                  // Aquí el filtro de búsqueda.
+                  // TODO: Aquí el filtro de búsqueda.
                 },
               ),
             ),
@@ -160,35 +187,44 @@ class _HomeScreenState extends State<HomeScreen> {
                                     left: AppConstants.padding / 2.0,
                                     right: AppConstants.padding / 2.0,
                                     bottom: AppConstants.padding / 2.0,
-                                    top: AppConstants.padding
-                                ),
+                                    top: AppConstants.padding),
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
                                   children: [
-                                    Expanded(flex: 1,
-                                      child: Text(
-                                        'Datos del paciente',
-                                        style: TextStyle(
-                                          color: Color(0xFF838793),
-                                          fontWeight: FontWeight.bold
+                                    Expanded(
+                                      flex: 2,
+                                      child: Center(
+                                        child: Text(
+                                          'Datos del paciente',
+                                          style: TextStyle(
+                                              color: Color(0xFF838793),
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 12),
                                         ),
                                       ),
                                     ),
-                                    Flexible(flex: 1,
-                                      child: Text(
-                                        'Última revisión',
-                                        style: TextStyle(
-                                            color: Color(0xFF838793),
-                                            fontWeight: FontWeight.bold
+                                    Flexible(
+                                      flex: 1,
+                                      child: Center(
+                                        child: Text(
+                                          'Última revisión',
+                                          style: TextStyle(
+                                              color: Color(0xFF838793),
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 12),
                                         ),
                                       ),
                                     ),
-                                    Flexible(flex: 1,
-                                      child: Text(
-                                        'Grupo',
-                                        style: TextStyle(
-                                            color: Color(0xFF838793),
-                                            fontWeight: FontWeight.bold
+                                    Flexible(
+                                      flex: 1,
+                                      child: Center(
+                                        child: Text(
+                                          'Grupo',
+                                          style: TextStyle(
+                                              color: Color(0xFF838793),
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 12),
                                         ),
                                       ),
                                     ),
@@ -200,17 +236,87 @@ class _HomeScreenState extends State<HomeScreen> {
                                   itemCount: patients.length,
                                   itemBuilder: (context, index) {
                                     final patient = patients[index];
-                                    return Card(
-                                      child: ListTile(
-                                        onTap: () {
-                                          // Navigator.of(context).push(MaterialPageRoute(
-                                          //   builder: (context) => PatientDetailScreen(patient: patient),
-                                          // ));
-                                        },
-                                        title: Text(
-                                            '${patient.firstName} ${patient.lastName}'
+
+                                    String? lastReviewDate = patient
+                                                .latestReview?.reviewDate !=
+                                            null
+                                        ? DateFormat('dd/MM/yyyy').format(
+                                            patient.latestReview!.reviewDate!)
+                                        : '-';
+
+                                    String? lastReviewResult =
+                                        patient.latestReview?.id != null
+                                            ? patient.latestReview?.reviewResult
+                                            : '-';
+
+                                    return InkWell(
+                                      onTap: () {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                PatientDetailScreen(
+                                                    patient: patient),
+                                          ),
+                                        );
+                                      },
+                                      child: Card(
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(
+                                              AppConstants.padding / 2.0
+                                          ),
+                                          child: Row(
+                                            children: <Widget>[
+                                              Expanded(
+                                                flex: 2,
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: <Widget>[
+                                                    Text(
+                                                        '${patient.firstName} ${patient.lastName}',
+                                                        style: const TextStyle(
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold
+                                                        )
+                                                    ),
+                                                    Text(
+                                                      patient.email,
+                                                      style: const TextStyle(
+                                                          fontSize: 10),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Expanded(
+                                                flex: 1,
+                                                child: Center(
+                                                    child: Text(
+                                                      lastReviewDate,
+                                                      style: const TextStyle(
+                                                          fontSize: 10,
+                                                          fontWeight:
+                                                          FontWeight.bold
+                                                      ),
+                                                )),
+                                              ),
+                                              Expanded(
+                                                flex: 1,
+                                                child: Center(
+                                                    child: Text(
+                                                  lastReviewResult!,
+                                                  style: TextStyle(
+                                                      fontSize: 10,
+                                                      color:
+                                                          Shared.getColorResult(
+                                                              lastReviewResult),
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                )),
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                        subtitle: Text(patient.email),
                                       ),
                                     );
                                   },

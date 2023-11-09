@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pteriscope_frontend/widgets/pteriscope_text_field.dart';
 
-import '../constants.dart';
+import '../util/constants.dart';
 import '../widgets/pteriscope_elevated_button.dart';
 
 class RegistrationScreen extends StatefulWidget {
@@ -24,7 +24,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   void initState() {
     super.initState();
     // Add listeners to each controller
-    // TODO: Add
+    // TODO: Add verifications
     _nameController.addListener(_checkFields);
     _dniController.addListener(_checkFields);
     _passwordController.addListener(_checkFields);

@@ -6,15 +6,15 @@ import 'package:pteriscope_frontend/services/shared_preferences_service.dart';
 import 'dart:convert';
 
 import '../models/patient.dart';
+import '../models/review.dart';
 import '../models/specialist.dart';
 
 class ApiService with ChangeNotifier {
   final String baseUrl = 'http://192.168.0.6:8080/api';
   final Map<String, String> headers = {
-    'Content-Type': 'application/json',
+    'Content-Type': 'application/json; charset=utf-8',
   };
 
-  // Helper method to get the authorization header
   Future<Map<String, String>> _getAuthHeaders() async {
     String? token = SharedPreferencesService().getAuthToken();
     return {
@@ -24,8 +24,7 @@ class ApiService with ChangeNotifier {
   }
 
   Future<bool> login(String dni, String password) async {
-    log("==================================Login==================================");
-    log(dni + password);
+    log("================================Login================================");
     log('$baseUrl/specialists/login');
     log(json.encode({'dni': dni, 'password': password}));
     var response = await http.post(
@@ -33,14 +32,11 @@ class ApiService with ChangeNotifier {
       headers: headers,
       body: json.encode({'dni': dni, 'password': password}),
     );
-    log("==================================response==================================");
     if (response.statusCode == 200) {
       var data = json.decode(response.body);
       String token = data['token'];
-      log(data["id"].toString());
       int specialistId = data["id"];
       log(token);
-      log(specialistId.toString());
       await SharedPreferencesService().setAuthToken(token);
       await SharedPreferencesService().setId(specialistId);
       notifyListeners();
@@ -80,11 +76,8 @@ class ApiService with ChangeNotifier {
   }
 
   Future<List<Patient>> getPatientsFromSpecialist() async {
-    log("==================================getPatientsFromSpecialist==================================");
     final specialistId = SharedPreferencesService().getId();
-    log(specialistId.toString());
     final headers = await _getAuthHeaders();
-    log("==================================before response==================================");
     var response = await http.get(
       Uri.parse('$baseUrl/specialists/$specialistId/patients'),
       headers: headers,
@@ -99,6 +92,49 @@ class ApiService with ChangeNotifier {
       log(response.body);
       throw Exception('Failed to load specialist data');
     }
+  }
+
+  Future<List<Review>> getReviewsFromPatient(int patientId) async {
+    final headers = await _getAuthHeaders();
+
+    var response = await http.get(
+      Uri.parse('$baseUrl/patients/$patientId/reviews'),
+      headers: headers,
+    );
+
+    if (response.statusCode == 200) {
+      var decodedResponse = utf8.decode(response.bodyBytes);
+      var jsonResponse = json.decode(decodedResponse);
+      if (jsonResponse is! List) {
+        throw Exception('Expected list of reviews');
+      }
+      List<Review> reviews = jsonResponse.map<Review>((reviewJson) => Review.fromJson(reviewJson)).toList();
+      notifyListeners();
+      return reviews;
+    } else {
+      log(response.body);
+      throw Exception('Failed to load review data');
+    }
+  }
+
+  Future<Review> getLatestReviewFromPatient(int patientId) async {
+    final headers = await _getAuthHeaders();
+    Review latestReview = Review();
+    var decodedResponse;
+    var jsonResponse;
+    var response = await http.get(
+      Uri.parse('$baseUrl/patients/$patientId/latest_reviews'),
+      headers: headers
+    ).then((value) => {
+      if (value.statusCode == 200) {
+        decodedResponse = utf8.decode(value.bodyBytes),
+        jsonResponse = json.decode(decodedResponse),
+        latestReview = Review.fromJson(jsonResponse),
+      } else {
+        throw Exception('Failed to load latest review')
+      }
+    });
+    return latestReview;
   }
 
   Future<String> createPatient(String specialistId, Map<String, dynamic> patientData) async {

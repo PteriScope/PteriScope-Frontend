@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:pteriscope_frontend/constants.dart';
+import 'package:pteriscope_frontend/util/constants.dart';
 import 'package:pteriscope_frontend/screens/splash_screen.dart';
 import 'package:pteriscope_frontend/services/api_service.dart';
 import 'package:pteriscope_frontend/services/shared_preferences_service.dart';

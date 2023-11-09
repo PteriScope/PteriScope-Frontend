@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../constants.dart';
+import '../util/constants.dart';
 
 class PteriscopeElevatedButton extends StatelessWidget{
   final double width;
