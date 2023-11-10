@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
+import 'package:image/image.dart' as img;
 
 import 'confirm_picture_screen.dart';
 
@@ -23,6 +25,9 @@ class _CameraScreenState extends State<CameraScreen> {
   double _currentZoomLevel = 1.0;
   double _minAvailableZoom = 1.0;
   double _maxAvailableZoom = 5.0;
+  img.Image? originalImage;
+  late img.Image rotatedImage;
+  late String base64Image;
 
   @override
   void initState() {
@@ -40,7 +45,7 @@ class _CameraScreenState extends State<CameraScreen> {
       _controller = CameraController(
         _cameras![_selectedCameraIdx],
         ResolutionPreset.max,
-        imageFormatGroup: ImageFormatGroup.jpeg,
+        imageFormatGroup: ImageFormatGroup.yuv420,
       );
 
       await _controller!.initialize();
@@ -63,7 +68,6 @@ class _CameraScreenState extends State<CameraScreen> {
 
   Future<void> _onCapturePressed(context) async {
     try {
-      // Verificar si la cámara está inicializada y lista para capturar imágenes.
       if (!_controller!.value.isInitialized) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Error: la cámara no está lista aún")),
@@ -71,16 +75,16 @@ class _CameraScreenState extends State<CameraScreen> {
         return;
       }
 
-      // Capturar la imagen.
-      final image = await _controller!.takePicture();
+      await _controller!.takePicture().then((image) async => {
+        await image.readAsBytes().then((imageBytes) => {
+          setState(() {
+            originalImage = img.decodeImage(imageBytes);
+            rotatedImage = img.copyRotate(originalImage!, angle: 270);
+            base64Image = base64Encode(img.encodeJpg(rotatedImage));
+          })
+        }),
+      });
 
-      // Leer los bytes de la imagen.
-      final bytes = await image.readAsBytes();
-
-      // Convertir la imagen en una cadena base64.
-      final String base64Image = base64Encode(bytes);
-
-      // Apagar flash si está encendido
       if (_flashMode == FlashMode.torch) {
         _controller!.setFlashMode(FlashMode.off);
         setState(() {
@@ -88,18 +92,16 @@ class _CameraScreenState extends State<CameraScreen> {
         });
       }
 
-      // Navegar a ConfirmPictureScreen con la imagen base64.
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => ConfirmPictureScreen(
             imageBase64: base64Image,
-            patientId: widget.patientId, // Asegúrate de pasar el ID del paciente
+            patientId: widget.patientId,
           ),
         ),
       );
     } catch (e) {
-      // Si ocurre un error, mostrar un mensaje.
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Error al capturar la imagen: $e")),
       );

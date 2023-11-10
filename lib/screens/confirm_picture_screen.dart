@@ -8,7 +8,7 @@ import 'package:pteriscope_frontend/screens/review_detail.dart';
 import '../models/review.dart';
 import '../services/api_service.dart';
 
-class ConfirmPictureScreen extends StatelessWidget {
+class ConfirmPictureScreen extends StatefulWidget {
   final String imageBase64;
   final int patientId;
 
@@ -19,6 +19,16 @@ class ConfirmPictureScreen extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  State<ConfirmPictureScreen> createState() => _ConfirmPictureScreenState();
+}
+
+class _ConfirmPictureScreenState extends State<ConfirmPictureScreen> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
@@ -27,7 +37,7 @@ class ConfirmPictureScreen extends StatelessWidget {
           Transform.scale(
             scale: 1,
             child: Center(
-              child: Image.memory(base64Decode(imageBase64)),
+              child: Image.memory(base64Decode(widget.imageBase64)),
             ),
           ),
 
@@ -53,7 +63,6 @@ class ConfirmPictureScreen extends StatelessWidget {
                   heroTag: 'takePicture',
                   backgroundColor: Colors.white,
                   onPressed: () => {
-                    // Confirmar y subir la imagen, luego mostrar el procesamiento
                     uploadPicture(context)
                   },
                   child: const Icon(Icons.check, color: Colors.black),
@@ -67,53 +76,62 @@ class ConfirmPictureScreen extends StatelessWidget {
   }
 
   Future<void> uploadPicture(BuildContext context) async {
-    try {
-      log("=========uploadPicture==========");
-      ScaffoldMessenger.of(context)
-        ..hideCurrentSnackBar()
-        ..showSnackBar(
-          const SnackBar(
-            content: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Text('Se está procesando su imagen.\nEspere un momento por favor'),
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext dialogContext) {
+        return const Dialog(
+          child: Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
                 CircularProgressIndicator(),
+                SizedBox(width: 24),
+                Expanded(child: Text('Se está procesando su imagen.\nEspere un momento...')),
               ],
             ),
           ),
         );
+      },
+    );
 
-      log("=========before call==========");
-      // Llama al ApiService para crear la revisión
+    try {
       String reviewResponse = await Provider.of<ApiService>(context, listen: false)
-          .createReview(patientId, {'imageBase64': imageBase64});
+          .createReview(widget.patientId, {'imageBase64': widget.imageBase64});
 
-      log("=========response==========");
-      // Parsea la respuesta y obtén el ID de la revisión
-      final reviewData = jsonDecode(reviewResponse);
-      Review review = Review.fromJson(reviewData);
-
-      log("=========hide==========");
-      // Oculta el SnackBar actual
-      ScaffoldMessenger.of(context).hideCurrentSnackBar();
-
-      log("=========moving to ReviewDetailScreen==========");
-      // Navega a la pantalla de detalles de la revisión
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ReviewDetailScreen(review: review),
-        ),
-      );
-    } catch (e) {
-      // Oculta el SnackBar actual y muestra un mensaje de error
-      ScaffoldMessenger.of(context)
-        ..hideCurrentSnackBar()
-        ..showSnackBar(
-          SnackBar(
-            content: Text('Error al crear la revisión: $e'),
+      if (mounted) {
+        Navigator.of(context, rootNavigator: true).pop(); // Usa rootNavigator para cerrar el diálogo
+        final reviewData = jsonDecode(reviewResponse);
+        Review review = Review.fromJson(reviewData);
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => ReviewDetailScreen(review: review),
           ),
         );
+      }
+    } catch (e) {
+      if (mounted) {
+        Navigator.of(context, rootNavigator: true).pop(); // Cierra el diálogo
+
+        showDialog(
+          context: context,
+          builder: (BuildContext dialogContext) {
+            return AlertDialog(
+              title: const Text('Error'),
+              content: Text('Error al crear la revisión: $e'),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('Cerrar'),
+                  onPressed: () {
+                    Navigator.of(dialogContext).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      }
     }
   }
 }

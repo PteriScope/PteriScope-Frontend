@@ -170,6 +170,7 @@ class ApiService with ChangeNotifier {
 
   Future<String> createReview(int patientId, Map<String, dynamic> reviewData) async {
     final headers = await _getAuthHeaders();
+    log("***************Before post****************");
     var response = await http.post(
       Uri.parse('$baseUrl/reviews?patientId=$patientId'),
       headers: headers,
@@ -177,6 +178,7 @@ class ApiService with ChangeNotifier {
     );
 
     if (response.statusCode == 200) {
+      log("***************Responded****************");
       notifyListeners();
       return response.body;
     } else {
