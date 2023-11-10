@@ -168,9 +168,9 @@ class ApiService with ChangeNotifier {
     }
   }
 
-  Future<String> createReview(String patientId, Map<String, dynamic> reviewData) async {
+  Future<String> createReview(int patientId, Map<String, dynamic> reviewData) async {
     final headers = await _getAuthHeaders();
-    final response = await http.post(
+    var response = await http.post(
       Uri.parse('$baseUrl/reviews?patientId=$patientId'),
       headers: headers,
       body: json.encode(reviewData),

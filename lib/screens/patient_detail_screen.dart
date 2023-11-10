@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:pteriscope_frontend/screens/camera_screen.dart';
 import 'package:pteriscope_frontend/services/api_service.dart';
 
 import '../models/patient.dart';
@@ -95,7 +96,7 @@ class _PatientDetailScreen extends State<PatientDetailScreen> {
                   Column(
                     children: [
                       const Text(
-                        'Lista de Revisiones',
+                        'Revisiones',
                         style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
@@ -112,7 +113,12 @@ class _PatientDetailScreen extends State<PatientDetailScreen> {
                   ),
                   ElevatedButton.icon(
                     onPressed: () {
-                      // TODO: Navegación a la pantalla de creación de nueva revisión.
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              CameraScreen(patientId: patient.id)
+                        ),
+                      );
                     },
                     icon: const Icon(Icons.add),
                     label: const Text('Nueva revisión'),
