@@ -36,13 +36,6 @@ class _HomeScreenState extends State<HomeScreen> {
       var _ = await apiService
           .getPatientsFromSpecialist()
           .then((patientsResponse) async => {
-                for (var patient in patientsResponse)
-                  {
-                    await apiService
-                        .getLatestReviewFromPatient(patient.id)
-                        .then((latestReview) =>
-                            patient.latestReview = latestReview),
-                  },
                 setState(() {
                   patients = patientsResponse;
                   totalPatients = patients.length;
@@ -57,24 +50,6 @@ class _HomeScreenState extends State<HomeScreen> {
       });
     }
   }
-
-  // TODO: Check if works
-  //Color getColorResult(String? result){
-  //  switch(result){
-  //    case AppConstants.noPterygium:{
-  //      return AppConstants.normalColor;
-  //    }
-  //    case AppConstants.mildPterygium:{
-  //      return AppConstants.mildColor;
-  //    }
-  //    case AppConstants.severePterygium:{
-  //      return AppConstants.severeColor;
-  //    }
-  //    default: {
-  //      return Colors.black;
-  //    }
-  //  }
-  //}
 
   // TODO: Check if works
   //void _logout() {
@@ -237,17 +212,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                   itemBuilder: (context, index) {
                                     final patient = patients[index];
 
-                                    String? lastReviewDate = patient
-                                                .latestReview?.reviewDate !=
-                                            null
+                                    String? lastReviewDate =
+                                    patient.lastReviewDate != null
                                         ? DateFormat('dd/MM/yyyy').format(
-                                            patient.latestReview!.reviewDate!)
+                                            patient.lastReviewDate!)
                                         : '-';
 
                                     String? lastReviewResult =
-                                        patient.latestReview?.id != null
-                                            ? patient.latestReview?.reviewResult
-                                            : '-';
+                                        patient.lastReviewResult ?? '-';
 
                                     return InkWell(
                                       onTap: () {

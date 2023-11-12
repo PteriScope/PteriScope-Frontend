@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:intl/intl.dart';
 import 'package:pteriscope_frontend/models/review.dart';
 
 class Patient {
@@ -8,7 +11,8 @@ class Patient {
   final int age;
   final String email;
   final int specialistId;
-  Review? latestReview;
+  final String? lastReviewResult;
+  final DateTime? lastReviewDate;
 
   Patient({
     required this.id,
@@ -18,11 +22,13 @@ class Patient {
     required this.age,
     required this.email,
     required this.specialistId,
-    this.latestReview
+    this.lastReviewResult,
+    this.lastReviewDate,
   });
 
   // Método para convertir un objeto JSON en un objeto Patient
   factory Patient.fromJson(Map<String, dynamic> json) {
+    log("===========Patient============");
     return Patient(
       id: json['id'],
       firstName: json['firstName'],
@@ -31,6 +37,9 @@ class Patient {
       age: json['age'],
       email: json['email'],
       specialistId: json['specialistId'],
+      lastReviewResult: json['lastReviewResult'],
+      lastReviewDate: json['lastReviewDate'] == null
+          ? null : DateFormat("yyyy-MM-dd").parse(json['lastReviewDate']),
     );
   }
 
@@ -44,6 +53,8 @@ class Patient {
       'age': age,
       'email': email,
       'specialistId': specialistId,
+      'reviewResult': lastReviewResult,
+      'reviewDate': DateFormat("yyyy-MM-dd").format(lastReviewDate!),
     };
   }
 }

@@ -47,9 +47,4 @@ class Review {
       'patientId': patientId,
     };
   }
-
-  String decodeUtf8String(String input) {
-    List<int> bytes = input.runes.toList();
-    return utf8.decode(bytes);
-  }
 }

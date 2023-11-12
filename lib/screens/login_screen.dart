@@ -38,6 +38,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _login() async {
+    // TODO: Disable Login Button
     var apiService = Provider.of<ApiService>(context, listen: false);
     bool loggedIn = await apiService.login(
         _dniController.text, _passwordController.text

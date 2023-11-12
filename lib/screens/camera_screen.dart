@@ -1,6 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
@@ -24,7 +22,7 @@ class _CameraScreenState extends State<CameraScreen> {
   FlashMode _flashMode = FlashMode.off;
   double _currentZoomLevel = 1.0;
   double _minAvailableZoom = 1.0;
-  double _maxAvailableZoom = 5.0;
+  double _maxAvailableZoom = 3.0;
   img.Image? originalImage;
   late img.Image rotatedImage;
   late String base64Image;

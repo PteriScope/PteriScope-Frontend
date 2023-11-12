@@ -18,7 +18,7 @@ class ApiService with ChangeNotifier {
   Future<Map<String, String>> _getAuthHeaders() async {
     String? token = SharedPreferencesService().getAuthToken();
     return {
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/json; charset=utf-8',
       'Authorization': 'Bearer $token',
     };
   }
@@ -84,8 +84,17 @@ class ApiService with ChangeNotifier {
     );
 
     if (response.statusCode == 200) {
-      List<dynamic> patientsJson = json.decode(response.body);
-      List<Patient> patients = patientsJson.map((json) => Patient.fromJson(json)).toList();
+      log("===========decodedResponse============");
+      var decodedResponse = utf8.decode(response.bodyBytes);
+      log("===========jsonResponse============");
+      var jsonResponse = json.decode(decodedResponse);
+      if (jsonResponse is! List) {
+        throw Exception('Expected list of reviews');
+      }
+
+      log("===========patients============");
+      List<Patient> patients = jsonResponse.map<Patient>((json) => Patient.fromJson(json)).toList();
+      log("===========notifyListeners============");
       notifyListeners();
       return patients;
     } else {
