@@ -23,34 +23,66 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
-    // TODO: Add more verifications
     _dniController.addListener(_checkFields);
     _passwordController.addListener(_checkFields);
   }
 
   void _checkFields() {
-    if (_dniController.text.isNotEmpty && _passwordController.text.isNotEmpty) {
-      if (!_isButtonDisabled) return;
-      setState(() => _isButtonDisabled = false);
-    } else {
-      if (_isButtonDisabled) return;
-      setState(() => _isButtonDisabled = true);
-    }
+    final dniIsValid = RegExp(r'^\d{8}$').hasMatch(_dniController.text);
+    final passwordIsValid = _passwordController.text.length >= 5;
+
+    setState(() {
+      _isButtonDisabled = !(dniIsValid && passwordIsValid);
+    });
   }
 
   void _login() async {
-    // TODO: Disable Login Button
-    var apiService = Provider.of<ApiService>(context, listen: false);
-    bool loggedIn = await apiService.login(
-        _dniController.text, _passwordController.text
-    );
-    if (loggedIn) {
-      Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => const HomeScreen())
+    setState(() {
+      _isButtonDisabled = true;
+    });
+
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        const SnackBar(
+          content: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('Se está procesando su solicitud\nEspere un momento por favor'),
+              CircularProgressIndicator(),
+            ],
+          ),
+          duration: Duration(hours: 1),
+        ),
       );
-    } else {
-      // Show error message
+
+    try{
+      var apiService = Provider.of<ApiService>(context, listen: false);
+      bool loggedIn = await apiService.login(
+          _dniController.text, _passwordController.text
+      );
+      if (loggedIn) {
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (_) => const HomeScreen())
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Usuario o contraseña incorrectos')),
+        );
+        setState(() {
+          _isButtonDisabled = false;
+        });
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+      setState(() {
+        _isButtonDisabled = false;
+      });
     }
+
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
   }
 
   @override
@@ -93,7 +125,7 @@ class _LoginScreenState extends State<LoginScreen> {
             PteriscopeElevatedButton(
                 width: MediaQuery.of(context).size.width,
                 enabled: _isButtonDisabled,
-                onTap: _login,
+                onTap: _isButtonDisabled ? null : _login,
                 text: 'Ingresar'
             ),
             TextButton(

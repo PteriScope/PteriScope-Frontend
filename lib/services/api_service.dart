@@ -2,6 +2,8 @@ import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:pteriscope_frontend/models/register_patient.dart';
+import 'package:pteriscope_frontend/models/register_user.dart';
 import 'package:pteriscope_frontend/services/shared_preferences_service.dart';
 import 'dart:convert';
 
@@ -41,21 +43,28 @@ class ApiService with ChangeNotifier {
       await SharedPreferencesService().setId(specialistId);
       notifyListeners();
       return true;
-    } else {
+    } else if (response.statusCode == 404) {
+      notifyListeners();
+      return false;
+    }else {
       log(response.statusCode.toString());
       throw Exception('Failed to login');
     }
   }
 
-  Future<bool> registerSpecialist(Specialist specialist) async {
+  Future<bool> registerSpecialist(RegisterUser specialist) async {
     var response = await http.post(
       Uri.parse('$baseUrl/specialists/register'),
       headers: headers,
       body: json.encode(specialist.toJson()),
     );
+    log(json.encode(specialist.toJson()));
     if (response.statusCode == 200) {
       notifyListeners();
       return true;
+    } else if (response.statusCode == 404) {
+      notifyListeners();
+      return false;
     } else {
       throw Exception('Failed to register specialist');
     }
@@ -150,19 +159,23 @@ class ApiService with ChangeNotifier {
     return latestReview;
   }
 
-  Future<String> createPatient(String specialistId, Map<String, dynamic> patientData) async {
+  Future<Patient?> createPatient(RegisterPatient patient) async {
+    final specialistId = SharedPreferencesService().getId();
     final headers = await _getAuthHeaders();
     final response = await http.post(
-      Uri.parse('$baseUrl/specialists/$specialistId/patients'),
+      Uri.parse('$baseUrl/specialists/createPatient/$specialistId'),
       headers: headers,
-      body: json.encode(patientData),
+      body: json.encode(patient.toJson()),
     );
 
     if (response.statusCode == 200) {
+      var decodedResponse = utf8.decode(response.bodyBytes);
+      var jsonResponse = json.decode(decodedResponse);
+      Patient patient = Patient.fromJson(jsonResponse);
       notifyListeners();
-      return response.body;
+      return patient;
     } else {
-      throw Exception('Failed to create patient');
+      return null;
     }
   }
 

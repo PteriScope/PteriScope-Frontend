@@ -2,10 +2,12 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:pteriscope_frontend/screens/new_patient_screen.dart';
 import 'package:pteriscope_frontend/util/constants.dart';
 import 'package:pteriscope_frontend/screens/patient_detail_screen.dart';
 import 'package:pteriscope_frontend/services/api_service.dart';
 import 'package:pteriscope_frontend/services/shared_preferences_service.dart';
+import 'package:pteriscope_frontend/widgets/pteriscope_app_bar.dart';
 
 import '../models/patient.dart';
 import '../util/shared.dart';
@@ -54,31 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            'PteriScope',
-            style: TextStyle(
-                fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),
-          ),
-          leading: IconButton(
-            icon: const Icon(Icons.menu),
-            color: Colors.white,
-            onPressed: () {
-              Shared.logout(context);
-            },
-          ),
-          actions: const [
-            Padding(
-              padding: EdgeInsets.only(right: AppConstants.padding),
-              child: Image(
-                image: AssetImage('assets/Logo_w.png'),
-                height: 40,
-              ),
-            ),
-          ],
-          backgroundColor: AppConstants.primaryColor,
-          centerTitle: true,
-        ),
+        appBar: const PteriscopeAppBar(title: 'PteriScope'),
         body: Column(
           children: [
             Padding(
@@ -106,7 +84,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     ElevatedButton.icon(
                       onPressed: () {
-                        // TODO: Navegación a la pantalla de creación de nuevo paciente.
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => const NewPatient(),
+                          ),
+                        );
                       },
                       icon: const Icon(Icons.add),
                       label: const Text('Nuevo paciente'),

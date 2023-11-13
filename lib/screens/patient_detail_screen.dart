@@ -4,8 +4,9 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pteriscope_frontend/screens/camera_screen.dart';
-import 'package:pteriscope_frontend/screens/review_detail.dart';
+import 'package:pteriscope_frontend/screens/review_detail_screen.dart';
 import 'package:pteriscope_frontend/services/api_service.dart';
+import 'package:pteriscope_frontend/widgets/pteriscope_app_bar.dart';
 
 import '../models/patient.dart';
 import '../models/review.dart';
@@ -60,32 +61,7 @@ class _PatientDetailScreen extends State<PatientDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // TODO: Turn to Widget
-      appBar: AppBar(
-        title: Text(
-          '${patient.firstName} ${patient.lastName}',
-          style: const TextStyle(
-              fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.menu),
-          color: Colors.white,
-          onPressed: () {
-            Shared.logout(context);
-          },
-        ),
-        actions: const [
-          Padding(
-            padding: EdgeInsets.only(right: AppConstants.padding),
-            child: Image(
-              image: AssetImage('assets/Logo_w.png'),
-              height: 40,
-            ),
-          ),
-        ],
-        backgroundColor: AppConstants.primaryColor,
-        centerTitle: true,
-      ),
+      appBar: PteriscopeAppBar(title: '${patient.firstName} ${patient.lastName}'),
       body: Column(
         children: [
           // TODO: Turn to Widget from here

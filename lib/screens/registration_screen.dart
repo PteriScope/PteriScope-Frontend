@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:pteriscope_frontend/models/register_user.dart';
 import 'package:pteriscope_frontend/widgets/pteriscope_text_field.dart';
 
+import '../services/api_service.dart';
 import '../util/constants.dart';
 import '../widgets/pteriscope_elevated_button.dart';
 
@@ -17,14 +20,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _hospitalController = TextEditingController();
   final TextEditingController _positionController = TextEditingController();
-  //final AuthenticationService _authService = AuthenticationService();
   bool _isButtonDisabled = true;
 
   @override
   void initState() {
     super.initState();
-    // Add listeners to each controller
-    // TODO: Add verifications
     _nameController.addListener(_checkFields);
     _dniController.addListener(_checkFields);
     _passwordController.addListener(_checkFields);
@@ -33,34 +33,76 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   }
 
   void _checkFields() {
-    if (_nameController.text.isNotEmpty &&
-        _dniController.text.isNotEmpty &&
-        _passwordController.text.isNotEmpty &&
-        _hospitalController.text.isNotEmpty &&
-        _positionController.text.isNotEmpty) {
-      if (!_isButtonDisabled) return;
-      setState(() => _isButtonDisabled = false);
-    } else {
-      if (_isButtonDisabled) return;
-      setState(() => _isButtonDisabled = true);
-    }
+    final nameIsValid = _nameController.text
+            .split(' ')
+            .where((word) => word.isNotEmpty)
+            .length >=
+        3;
+    final dniIsValid = RegExp(r'^\d{8}$').hasMatch(_dniController.text);
+    final passwordIsValid = _passwordController.text.length >= 5;
+    final hospitalIsValid = _hospitalController.text.length >= 3;
+    final positionIsValid = _positionController.text.length >= 5;
+
+    setState(() {
+      _isButtonDisabled = !(nameIsValid &&
+          dniIsValid &&
+          passwordIsValid &&
+          hospitalIsValid &&
+          positionIsValid);
+    });
   }
 
   void _register() async {
-    // Implement the registration logic here
-    // On successful registration, you might want to navigate to the HomeScreen or LoginScreen
-    //bool registered = await _authService.register(
-    //  _nameController.text,
-    //  _dniController.text,
-    //  _passwordController.text,
-    //  _hospitalController.text,
-    //  _positionController.text,
-    //);
-    bool registered = true;
-    if (registered) {
-      // Navigate to LoginScreen or HomeScreen
-    } else {
-      // Show error message
+    setState(() {
+      _isButtonDisabled = true;
+    });
+
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        const SnackBar(
+          content: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('Registrando...'),
+              CircularProgressIndicator(),
+            ],
+          ),
+          duration: Duration(hours: 1),
+        ),
+      );
+
+    try {
+      var apiService = Provider.of<ApiService>(context, listen: false);
+      bool registered = await apiService.registerSpecialist(RegisterUser(
+          name: _nameController.text,
+          dni: _dniController.text,
+          password: _passwordController.text,
+          hospital: _hospitalController.text,
+          position: _positionController.text));
+
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+
+      if (registered) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Registro exitoso')),
+        );
+        Navigator.of(context).pop();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Registro fallido')),
+        );
+        setState(() {
+          _isButtonDisabled = false;
+        });
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+      setState(() {
+        _isButtonDisabled = false;
+      });
     }
   }
 
@@ -78,57 +120,47 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 height: 50,
               ),
               const SizedBox(height: 20),
-              const Text(
-                  'Registrarse',
+              const Text('Registrarse',
                   style: TextStyle(
                       fontSize: 36,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black
-                  )
-              ),
+                      color: Colors.black)),
               const SizedBox(height: 15),
               PteriscopeTextField(
                   controller: _nameController,
                   hintText: 'Nombre',
                   obscureText: false,
-                  inputType: TextInputType.name
-              ),
+                  inputType: TextInputType.name),
               const SizedBox(height: 15),
               PteriscopeTextField(
                   controller: _dniController,
                   hintText: 'DNI',
                   obscureText: false,
-                  inputType: TextInputType.number
-              ),
+                  inputType: TextInputType.number),
               const SizedBox(height: 15),
               PteriscopeTextField(
                   controller: _passwordController,
                   hintText: 'Contraseña',
                   obscureText: true,
-                  inputType: TextInputType.text
-              ),
+                  inputType: TextInputType.text),
               const SizedBox(height: 15),
               PteriscopeTextField(
                   controller: _hospitalController,
                   hintText: 'Hospital',
                   obscureText: false,
-                  inputType: TextInputType.text
-              ),
+                  inputType: TextInputType.text),
               const SizedBox(height: 15),
               PteriscopeTextField(
                   controller: _positionController,
                   hintText: 'Cargo',
                   obscureText: false,
-                  inputType: TextInputType.text
-              ),
-
+                  inputType: TextInputType.text),
               const SizedBox(height: 95),
               PteriscopeElevatedButton(
                   width: MediaQuery.of(context).size.width,
                   enabled: _isButtonDisabled,
-                  onTap: _register,
-                  text: 'Crear cuenta'
-              ),
+                  onTap: _isButtonDisabled ? null : _register,
+                  text: 'Crear cuenta'),
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop(); // Return to the previous screen
