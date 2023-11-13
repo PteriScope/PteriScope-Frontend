@@ -42,11 +42,12 @@ class ApiService with ChangeNotifier {
       notifyListeners();
       return true;
     } else {
+      log(response.statusCode.toString());
       throw Exception('Failed to login');
     }
   }
 
-  Future<String> registerSpecialist(Specialist specialist) async {
+  Future<bool> registerSpecialist(Specialist specialist) async {
     var response = await http.post(
       Uri.parse('$baseUrl/specialists/register'),
       headers: headers,
@@ -54,22 +55,25 @@ class ApiService with ChangeNotifier {
     );
     if (response.statusCode == 200) {
       notifyListeners();
-      return response.body;
+      return true;
     } else {
       throw Exception('Failed to register specialist');
     }
   }
 
-  Future<String> getSpecialist(String specialistId) async {
+  Future<Specialist> getSpecialist(int specialistId) async {
     final headers = await _getAuthHeaders();
-    final response = await http.get(
-      Uri.parse('$baseUrl/specialists/$specialistId'),
+    var response = await http.get(
+      Uri.parse('$baseUrl/specialists/get/$specialistId'),
       headers: headers,
     );
 
     if (response.statusCode == 200) {
+      var decodedResponse = utf8.decode(response.bodyBytes);
+      var jsonResponse = json.decode(decodedResponse);
+      Specialist specialist = Specialist.fromJson(jsonResponse);
       notifyListeners();
-      return response.body;
+      return specialist;
     } else {
       throw Exception('Failed to load specialist data');
     }

@@ -4,12 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:image/image.dart' as img;
 
+import '../models/patient.dart';
 import 'confirm_picture_screen.dart';
 
 class CameraScreen extends StatefulWidget {
-  final int patientId;
+  final Patient patient;
 
-  const CameraScreen({Key? key, required this.patientId}) : super(key: key);
+  const CameraScreen({Key? key, required this.patient}) : super(key: key);
 
   @override
   State<CameraScreen> createState() => _CameraScreenState();
@@ -95,7 +96,7 @@ class _CameraScreenState extends State<CameraScreen> {
         MaterialPageRoute(
           builder: (context) => ConfirmPictureScreen(
             imageBase64: base64Image,
-            patientId: widget.patientId,
+            patient: widget.patient,
           ),
         ),
       );

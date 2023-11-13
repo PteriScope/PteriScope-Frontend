@@ -51,13 +51,6 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  // TODO: Check if works
-  //void _logout() {
-  //  SharedPreferencesService().removeAuthToken();
-  //  Navigator.of(context).pushReplacement(
-  //      MaterialPageRoute(builder: (_) => const LoginScreen()));
-  //}
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

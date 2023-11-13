@@ -4,17 +4,18 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pteriscope_frontend/screens/review_detail.dart';
 
+import '../models/patient.dart';
 import '../models/review.dart';
 import '../services/api_service.dart';
 
 class ConfirmPictureScreen extends StatefulWidget {
   final String imageBase64;
-  final int patientId;
+  final Patient patient;
 
   const ConfirmPictureScreen({
     Key? key,
     required this.imageBase64,
-    required this.patientId,
+    required this.patient,
   }) : super(key: key);
 
   @override
@@ -97,7 +98,7 @@ class _ConfirmPictureScreenState extends State<ConfirmPictureScreen> {
 
     try {
       String reviewResponse = await Provider.of<ApiService>(context, listen: false)
-          .createReview(widget.patientId, {'imageBase64': widget.imageBase64});
+          .createReview(widget.patient.id, {'imageBase64': widget.imageBase64});
 
       if (mounted) {
         Navigator.of(context, rootNavigator: true).pop(); // Usa rootNavigator para cerrar el diálogo
@@ -105,7 +106,10 @@ class _ConfirmPictureScreenState extends State<ConfirmPictureScreen> {
         Review review = Review.fromJson(reviewData);
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => ReviewDetailScreen(review: review),
+            builder: (context) => ReviewDetailScreen(
+                review: review,
+                patient: widget.patient,
+            ),
           ),
         );
       }

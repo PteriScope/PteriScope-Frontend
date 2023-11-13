@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pteriscope_frontend/screens/camera_screen.dart';
+import 'package:pteriscope_frontend/screens/review_detail.dart';
 import 'package:pteriscope_frontend/services/api_service.dart';
 
 import '../models/patient.dart';
@@ -116,7 +117,7 @@ class _PatientDetailScreen extends State<PatientDetailScreen> {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) =>
-                              CameraScreen(patientId: patient.id)
+                              CameraScreen(patient: patient)
                         ),
                       );
                     },
@@ -213,13 +214,15 @@ class _PatientDetailScreen extends State<PatientDetailScreen> {
 
                                           return InkWell(
                                             onTap: () {
-                                              //Navigator.of(context).push(
-                                              //  MaterialPageRoute(
-                                              //    builder: (context) =>
-                                              //        PatientDetailScreen(
-                                              //            patient: patient),
-                                              //  ),
-                                              //);
+                                              Navigator.of(context).push(
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      ReviewDetailScreen(
+                                                          review: review,
+                                                          patient: patient
+                                                      ),
+                                                ),
+                                              );
                                             },
                                             child: Card(
                                               child: Padding(
