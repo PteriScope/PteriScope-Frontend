@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pteriscope_frontend/models/patient.dart';
 import 'package:pteriscope_frontend/models/specialist.dart';
+import 'package:pteriscope_frontend/screens/patient_detail_screen.dart';
 import 'package:pteriscope_frontend/services/shared_preferences_service.dart';
+import 'package:pteriscope_frontend/widgets/pteriscope_app_bar.dart';
 
 import '../models/review.dart';
 import '../services/api_service.dart';
@@ -45,31 +47,8 @@ class _ReviewDetailScreenState extends State<ReviewDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          '${widget.patient.firstName} ${widget.patient.lastName}',
-          style: const TextStyle(
-              fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.menu),
-          color: Colors.white,
-          onPressed: () {
-            Shared.logout(context);
-          },
-        ),
-        actions: const [
-          Padding(
-            padding: EdgeInsets.only(right: AppConstants.padding),
-            child: Image(
-              image: AssetImage('assets/Logo_w.png'),
-              height: 40,
-            ),
-          ),
-        ],
-        backgroundColor: AppConstants.primaryColor,
-        centerTitle: true,
-      ),
+      appBar: PteriscopeAppBar(
+          title: '${widget.patient.firstName} ${widget.patient.lastName}'),
       body: Stack(children: [
         Card(
           child: Column(
@@ -188,7 +167,14 @@ class _ReviewDetailScreenState extends State<ReviewDetailScreen> {
                 FloatingActionButton(
                   heroTag: 'backToPatient',
                   backgroundColor: AppConstants.primaryColor,
-                  onPressed: () => {},
+                  onPressed: () => {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            PatientDetailScreen(patient: widget.patient),
+                      ),
+                    )
+                  },
                   child: const Icon(Icons.arrow_back, color: Colors.white),
                 )
               ],

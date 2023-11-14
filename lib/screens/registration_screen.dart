@@ -163,7 +163,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   text: 'Crear cuenta'),
               TextButton(
                 onPressed: () {
-                  Navigator.of(context).pop(); // Return to the previous screen
+                  Navigator.of(context).pop();
                 },
                 child: const Text('¿Ya tiene una cuenta? Ingresar'),
               ),

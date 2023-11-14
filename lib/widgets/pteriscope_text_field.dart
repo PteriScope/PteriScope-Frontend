@@ -1,9 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../util/constants.dart';
 
-class PteriscopeTextField extends StatelessWidget{
+class PteriscopeTextField extends StatelessWidget {
   final TextEditingController controller;
   final String hintText;
   final bool obscureText;
@@ -18,21 +17,18 @@ class PteriscopeTextField extends StatelessWidget{
   });
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return TextField(
       controller: controller,
       decoration: InputDecoration(
           labelText: hintText,
           enabledBorder: const OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.grey)
-          ),
+              borderSide: BorderSide(color: Colors.grey)),
           focusedBorder: const OutlineInputBorder(
-              borderSide: BorderSide(color: AppConstants.primaryColor)
-          ),
+              borderSide: BorderSide(color: AppConstants.primaryColor)),
           errorBorder: const OutlineInputBorder(
             borderSide: BorderSide(color: Colors.red, width: 1.0),
-          )
-      ),
+          )),
       obscureText: obscureText,
       keyboardType: inputType,
     );

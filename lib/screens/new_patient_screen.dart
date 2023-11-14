@@ -9,6 +9,7 @@ import '../services/api_service.dart';
 import '../util/constants.dart';
 import '../widgets/pteriscope_elevated_button.dart';
 import '../widgets/pteriscope_text_field.dart';
+import 'home_screen.dart';
 
 class NewPatient extends StatefulWidget {
   const NewPatient({super.key});
@@ -94,9 +95,7 @@ class _NewPatientState extends State<NewPatient> {
 
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) =>
-                PatientDetailScreen(
-                    patient: patient),
+            builder: (context) => PatientDetailScreen(patient: patient),
           ),
         );
       } else {
@@ -175,8 +174,13 @@ class _NewPatientState extends State<NewPatient> {
                     FloatingActionButton(
                       heroTag: 'sendEmail',
                       backgroundColor: AppConstants.primaryColor,
-                      // TODO: Implement functionallity
-                      onPressed: () => {},
+                      onPressed: () => {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => const HomeScreen(),
+                          ),
+                        )
+                      },
                       child: const Icon(Icons.arrow_back, color: Colors.white),
                     ),
                   ],
@@ -189,5 +193,4 @@ class _NewPatientState extends State<NewPatient> {
       ),
     );
   }
-
 }

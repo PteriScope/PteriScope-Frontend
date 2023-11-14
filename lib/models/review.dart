@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:intl/intl.dart';
 
 class Review {
@@ -17,9 +15,7 @@ class Review {
     this.patientId,
   });
 
-  // Método para convertir un objeto JSON en un objeto Review
   factory Review.fromJson(Map<String, dynamic> json) {
-    // Devuelve un objeto Review con valores por defecto si es null
     if (json.values.every((value) => value == null)) {
       return Review(
         id: null,
@@ -37,7 +33,6 @@ class Review {
     );
   }
 
-  // Método para convertir un objeto Review en un objeto JSON
   Map<String, dynamic> toJson() {
     return {
       'id': id,

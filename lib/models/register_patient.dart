@@ -1,8 +1,3 @@
-import 'dart:developer';
-
-import 'package:intl/intl.dart';
-import 'package:pteriscope_frontend/models/review.dart';
-
 class RegisterPatient {
   final String firstName;
   final String lastName;
@@ -18,9 +13,7 @@ class RegisterPatient {
     required this.email
   });
 
-  // Método para convertir un objeto JSON en un objeto Patient
   factory RegisterPatient.fromJson(Map<String, dynamic> json) {
-    log("===========Patient============");
     return RegisterPatient(
       firstName: json['firstName'],
       lastName: json['lastName'],
@@ -30,7 +23,6 @@ class RegisterPatient {
     );
   }
 
-  // Método para convertir un objeto Patient en un objeto JSON
   Map<String, dynamic> toJson() {
     return {
       'firstName': firstName,

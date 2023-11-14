@@ -10,8 +10,7 @@ void main() async {
   await SharedPreferencesService().init();
   runApp(MultiProvider(
       providers: [ChangeNotifierProvider(create: (_) => ApiService())],
-      child: const MyApp()
-  ));
+      child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {

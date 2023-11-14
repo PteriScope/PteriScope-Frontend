@@ -37,6 +37,4 @@ class SharedPreferencesService {
     String? token = _prefs?.getString('authToken');
     return token != null ? true : false;
   }
-
-// Puedes agregar más métodos para guardar y recuperar otros tipos de datos según sea necesario.
 }

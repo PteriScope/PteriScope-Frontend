@@ -48,7 +48,8 @@ class _LoginScreenState extends State<LoginScreen> {
           content: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Se está procesando su solicitud\nEspere un momento por favor'),
+              Text(
+                  'Se está procesando su solicitud\nEspere un momento por favor'),
               CircularProgressIndicator(),
             ],
           ),
@@ -56,15 +57,13 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       );
 
-    try{
+    try {
       var apiService = Provider.of<ApiService>(context, listen: false);
-      bool loggedIn = await apiService.login(
-          _dniController.text, _passwordController.text
-      );
+      bool loggedIn =
+          await apiService.login(_dniController.text, _passwordController.text);
       if (loggedIn) {
         Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (_) => const HomeScreen())
-        );
+            MaterialPageRoute(builder: (_) => const HomeScreen()));
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Usuario o contraseña incorrectos')),
@@ -98,41 +97,33 @@ class _LoginScreenState extends State<LoginScreen> {
               height: 50,
             ),
             const SizedBox(height: 20),
-            const Text(
-                'Bienvenido',
+            const Text('Bienvenido',
                 style: TextStyle(
                     fontSize: 36,
                     fontWeight: FontWeight.bold,
-                    color: Colors.black
-                )
-            ),
+                    color: Colors.black)),
             const SizedBox(height: 20),
             PteriscopeTextField(
                 controller: _dniController,
                 hintText: 'DNI',
                 obscureText: false,
-                inputType: TextInputType.number
-            ),
+                inputType: TextInputType.number),
             const SizedBox(height: 20),
             PteriscopeTextField(
                 controller: _passwordController,
                 hintText: 'Contraseña',
                 obscureText: true,
-                inputType: TextInputType.text
-            ),
+                inputType: TextInputType.text),
             const SizedBox(height: 20),
-
             PteriscopeElevatedButton(
                 width: MediaQuery.of(context).size.width,
                 enabled: _isButtonDisabled,
                 onTap: _isButtonDisabled ? null : _login,
-                text: 'Ingresar'
-            ),
+                text: 'Ingresar'),
             TextButton(
               onPressed: () {
                 Navigator.of(context).push(MaterialPageRoute(
-                    builder: (_) => const RegistrationScreen()
-                ));
+                    builder: (_) => const RegistrationScreen()));
               },
               child: const Text('¿No tiene una cuenta? Registrarse'),
             ),

@@ -112,8 +112,6 @@ class _CameraScreenState extends State<CameraScreen> {
     if (_controller == null || !_controller!.value.isInitialized) {
       return const Center(child: CircularProgressIndicator());
     }
-    //final size = MediaQuery.of(context).size;
-    //final deviceRatio = size.width / size.height;
 
     return Scaffold(
       backgroundColor: Colors.black,

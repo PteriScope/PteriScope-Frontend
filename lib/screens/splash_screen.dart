@@ -9,11 +9,10 @@ class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  _SplashScreenState createState() => _SplashScreenState();
+  State<SplashScreen> createState() => _SplashScreenState();
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-
   @override
   void initState() {
     super.initState();
@@ -21,14 +20,16 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   _navigateToHome() async {
-    await Future.delayed(const Duration(seconds: AppConstants.splashDelay), () {});
+    await Future.delayed(
+        const Duration(seconds: AppConstants.splashDelay), () {});
 
     bool isLoggedIn = await SharedPreferencesService().isLogged();
-    //bool isLoggedIn = false;
     if (isLoggedIn) {
-      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const HomeScreen()));
+      Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (_) => const HomeScreen()));
     } else {
-      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const LoginScreen()));
+      Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (_) => const LoginScreen()));
     }
   }
 
@@ -44,14 +45,11 @@ class _SplashScreenState extends State<SplashScreen> {
               height: 100,
             ),
             SizedBox(height: 10),
-            Text(
-                'PteriScope',
+            Text('PteriScope',
                 style: TextStyle(
                     fontSize: 35,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white
-                )
-            ),
+                    color: Colors.white)),
           ],
         ),
       ),

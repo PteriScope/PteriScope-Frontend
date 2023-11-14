@@ -7,11 +7,14 @@ import 'package:pteriscope_frontend/screens/camera_screen.dart';
 import 'package:pteriscope_frontend/screens/review_detail_screen.dart';
 import 'package:pteriscope_frontend/services/api_service.dart';
 import 'package:pteriscope_frontend/widgets/pteriscope_app_bar.dart';
+import 'package:pteriscope_frontend/widgets/pteriscope_colum_header.dart';
+import 'package:pteriscope_frontend/widgets/pteriscope_header.dart';
 
 import '../models/patient.dart';
 import '../models/review.dart';
 import '../util/constants.dart';
 import '../util/shared.dart';
+import 'home_screen.dart';
 
 class PatientDetailScreen extends StatefulWidget {
   final Patient patient;
@@ -61,50 +64,21 @@ class _PatientDetailScreen extends State<PatientDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PteriscopeAppBar(title: '${patient.firstName} ${patient.lastName}'),
+      appBar:
+          PteriscopeAppBar(title: '${patient.firstName} ${patient.lastName}'),
       body: Column(
         children: [
-          // TODO: Turn to Widget from here
-          Padding(
-            padding: const EdgeInsets.all(AppConstants.padding),
-            child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    children: [
-                      const Text(
-                        'Revisiones',
-                        style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white),
-                        textAlign: TextAlign.start,
-                      ),
-                      Text(
-                        'Total de revisiones: ${totalReviews ?? 0}',
-                        style:
-                            const TextStyle(fontSize: 15, color: Colors.white),
-                        textAlign: TextAlign.left,
-                      ),
-                    ],
-                  ),
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              CameraScreen(patient: patient)
-                        ),
-                      );
-                    },
-                    icon: const Icon(Icons.add),
-                    label: const Text('Nueva revisión'),
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12.0, vertical: 8.0),
-                    ),
-                  ),
-                ]),
+          PteriscopeHeader(
+            title: 'Revisiones',
+            subtitle: 'Total de revisiones: ${totalReviews ?? 0}',
+            buttonTitle: 'Nueva revisión',
+            action: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => CameraScreen(patient: patient),
+                ),
+              );
+            },
           ),
           const Padding(
               padding: EdgeInsets.only(
@@ -112,174 +86,147 @@ class _PatientDetailScreen extends State<PatientDetailScreen> {
                   right: AppConstants.padding,
                   bottom: AppConstants.padding),
               child: Divider(thickness: 1.5)),
-          // TODO: Until here
-
           Expanded(
-              child: Card(
+              child: Stack(
+            children: [
+              Card(
                   child: loading
                       ? const Center(child: CircularProgressIndicator())
                       : error == true
                           ? const Center(
                               child: Text("Error al cargar los datos"))
-                                      // TODO: Button to recharge
-                          : Column(
-                              children: [
-                                // TODO: Turn to widget
-                                const Padding(
-                                  padding: EdgeInsets.only(
-                                      left: AppConstants.padding / 2.0,
-                                      right: AppConstants.padding / 2.0,
-                                      bottom: AppConstants.padding / 2.0,
-                                      top: AppConstants.padding),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                    children: [
-                                      Expanded(
-                                        flex: 2,
-                                        child: Center(
-                                          child: Text(
-                                            'Imagen',
-                                            style: TextStyle(
-                                                color: Color(0xFF838793),
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 12),
-                                          ),
-                                        ),
-                                      ),
-                                      Flexible(
-                                        flex: 1,
-                                        child: Center(
-                                          child: Text(
-                                            'Fecha',
-                                            style: TextStyle(
-                                                color: Color(0xFF838793),
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 12),
-                                          ),
-                                        ),
-                                      ),
-                                      Flexible(
-                                        flex: 1,
-                                        child: Center(
-                                          child: Text(
-                                            'Grupo',
-                                            style: TextStyle(
-                                                color: Color(0xFF838793),
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 12),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-
-                                Expanded(
-                                    child: ListView.builder(
-                                        itemCount: reviews.length,
-                                        itemBuilder: (context, index) {
-                                          final review = reviews[index];
-
-                                          String reviewDate =
-                                              DateFormat('dd/MM/yyyy')
-                                                  .format(review.reviewDate!);
-
-                                          String reviewResult =
-                                              review.reviewResult!;
-
-                                          return InkWell(
-                                            onTap: () {
-                                              Navigator.of(context).push(
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      ReviewDetailScreen(
-                                                          review: review,
-                                                          patient: patient
-                                                      ),
-                                                ),
-                                              );
-                                            },
-                                            child: Card(
-                                              child: Padding(
-                                                padding: const EdgeInsets.all(
-                                                    AppConstants.padding / 2.0),
-                                                child: Row(
-                                                  children: <Widget>[
-                                                    Expanded(
-                                                        flex: 2,
-                                                        child: Center(
-                                                          child: review
-                                                                  .imageBase64!
-                                                                  .isNotEmpty
-                                                              ? ClipRRect(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              8.0),
-                                                                  child: Image
-                                                                      .memory(
-                                                                    base64Decode(
-                                                                        review
-                                                                            .imageBase64!),
-                                                                    fit: BoxFit
-                                                                        .cover,
-                                                                    height:
-                                                                        100.0,
-                                                                    width:
-                                                                        100.0,
-                                                                  ),
-                                                                )
-                                                              : const SizedBox(
-                                                                  height:
-                                                                      100.0,
-                                                                  width:
-                                                                      100.0,
-                                                                  child: Icon(
-                                                                    Icons
-                                                                        .image,
-                                                                    size:
-                                                                        60,
-                                                                  ),
-                                                                ),
-                                                        )),
-                                                    Expanded(
-                                                      flex: 1,
-                                                      child: Center(
-                                                          child: Text(
-                                                        reviewDate,
-                                                        style: const TextStyle(
-                                                            fontSize: 10,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold),
-                                                      )),
-                                                    ),
-                                                    Expanded(
-                                                      flex: 1,
-                                                      child: Center(
-                                                          child: Text(
-                                                        reviewResult,
-                                                        style: TextStyle(
-                                                            fontSize: 10,
-                                                            color: Shared
-                                                                .getColorResult(
-                                                                    reviewResult),
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold),
-                                                      )),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                          );
-                                        }))
-                              ],
-                            )))
+                          : _buildReviewList()),
+              Positioned(
+                bottom: 20.0,
+                left: 20.0,
+                right: 20.0,
+                child: Padding(
+                  padding: const EdgeInsets.all(AppConstants.padding),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      //TODO: Implement functionality
+                      FloatingActionButton(
+                        heroTag: 'sendEmail',
+                        backgroundColor: AppConstants.severeColor,
+                        onPressed: () => {},
+                        child: const Icon(Icons.delete, color: Colors.white),
+                      ),
+                      FloatingActionButton(
+                        heroTag: 'backToPatient',
+                        backgroundColor: AppConstants.primaryColor,
+                        onPressed: () => {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => const HomeScreen(),
+                            ),
+                          )
+                        },
+                        child:
+                            const Icon(Icons.arrow_back, color: Colors.white),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ))
         ],
       ),
+    );
+  }
+
+  Widget _buildReviewList() {
+    return Column(
+      children: [
+        const PteriScopeColumnHeader(
+          firstTitle: 'Imagen',
+          secondTitle: 'Fecha',
+          thirdTitle: 'Grupo',
+        ),
+        Expanded(
+            child: RefreshIndicator(
+          onRefresh: () async {
+            setState(() {
+              loading = true;
+            });
+            loadReviews();
+          },
+          child: ListView.builder(
+              itemCount: reviews.length,
+              itemBuilder: (context, index) {
+                final review = reviews[index];
+
+                String reviewDate =
+                    DateFormat('dd/MM/yyyy').format(review.reviewDate!);
+
+                String reviewResult = review.reviewResult!;
+
+                return InkWell(
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => ReviewDetailScreen(
+                            review: review, patient: patient),
+                      ),
+                    );
+                  },
+                  child: Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(AppConstants.padding / 2.0),
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(
+                              flex: 2,
+                              child: Center(
+                                child: review.imageBase64!.isNotEmpty
+                                    ? ClipRRect(
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                        child: Image.memory(
+                                          base64Decode(review.imageBase64!),
+                                          fit: BoxFit.cover,
+                                          height: 125.0,
+                                          width: 125.0,
+                                        ),
+                                      )
+                                    : const SizedBox(
+                                        height: 100.0,
+                                        width: 100.0,
+                                        child: Icon(
+                                          Icons.image,
+                                          size: 60,
+                                        ),
+                                      ),
+                              )),
+                          Expanded(
+                            flex: 1,
+                            child: Center(
+                                child: Text(
+                              reviewDate,
+                              style: const TextStyle(
+                                  fontSize: 10, fontWeight: FontWeight.bold),
+                            )),
+                          ),
+                          Expanded(
+                            flex: 1,
+                            child: Center(
+                                child: Text(
+                              reviewResult,
+                              style: TextStyle(
+                                  fontSize: 10,
+                                  color: Shared.getColorResult(reviewResult),
+                                  fontWeight: FontWeight.bold),
+                            )),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              }),
+        ))
+      ],
     );
   }
 }

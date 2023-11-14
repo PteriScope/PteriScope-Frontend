@@ -58,7 +58,6 @@ class ApiService with ChangeNotifier {
       headers: headers,
       body: json.encode(specialist.toJson()),
     );
-    log(json.encode(specialist.toJson()));
     if (response.statusCode == 200) {
       notifyListeners();
       return true;
@@ -97,17 +96,12 @@ class ApiService with ChangeNotifier {
     );
 
     if (response.statusCode == 200) {
-      log("===========decodedResponse============");
       var decodedResponse = utf8.decode(response.bodyBytes);
-      log("===========jsonResponse============");
       var jsonResponse = json.decode(decodedResponse);
       if (jsonResponse is! List) {
         throw Exception('Expected list of reviews');
       }
-
-      log("===========patients============");
       List<Patient> patients = jsonResponse.map<Patient>((json) => Patient.fromJson(json)).toList();
-      log("===========notifyListeners============");
       notifyListeners();
       return patients;
     } else {
@@ -144,7 +138,7 @@ class ApiService with ChangeNotifier {
     Review latestReview = Review();
     var decodedResponse;
     var jsonResponse;
-    var response = await http.get(
+    var _ = await http.get(
       Uri.parse('$baseUrl/patients/$patientId/latest_reviews'),
       headers: headers
     ).then((value) => {
@@ -196,7 +190,6 @@ class ApiService with ChangeNotifier {
 
   Future<String> createReview(int patientId, Map<String, dynamic> reviewData) async {
     final headers = await _getAuthHeaders();
-    log("***************Before post****************");
     var response = await http.post(
       Uri.parse('$baseUrl/reviews?patientId=$patientId'),
       headers: headers,
@@ -204,7 +197,6 @@ class ApiService with ChangeNotifier {
     );
 
     if (response.statusCode == 200) {
-      log("***************Responded****************");
       notifyListeners();
       return response.body;
     } else {

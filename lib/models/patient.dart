@@ -1,7 +1,4 @@
-import 'dart:developer';
-
 import 'package:intl/intl.dart';
-import 'package:pteriscope_frontend/models/review.dart';
 
 class Patient {
   final int id;
@@ -26,9 +23,7 @@ class Patient {
     this.lastReviewDate,
   });
 
-  // Método para convertir un objeto JSON en un objeto Patient
   factory Patient.fromJson(Map<String, dynamic> json) {
-    log("===========Patient============");
     return Patient(
       id: json['id'],
       firstName: json['firstName'],
@@ -43,7 +38,6 @@ class Patient {
     );
   }
 
-  // Método para convertir un objeto Patient en un objeto JSON
   Map<String, dynamic> toJson() {
     return {
       'id': id,

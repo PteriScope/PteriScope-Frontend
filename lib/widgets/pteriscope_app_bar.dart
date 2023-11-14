@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../screens/home_screen.dart';
 import '../util/constants.dart';
 import '../util/shared.dart';
 
@@ -12,7 +13,7 @@ class PteriscopeAppBar extends StatelessWidget implements PreferredSizeWidget {
   });
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return AppBar(
       title: Text(
         title,
@@ -26,12 +27,21 @@ class PteriscopeAppBar extends StatelessWidget implements PreferredSizeWidget {
           Shared.logout(context);
         },
       ),
-      actions: const [
-        Padding(
-          padding: EdgeInsets.only(right: AppConstants.padding),
-          child: Image(
-            image: AssetImage('assets/Logo_w.png'),
-            height: 40,
+      actions: [
+        InkWell(
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const HomeScreen(),
+              ),
+            );
+          },
+          child: const Padding(
+            padding: EdgeInsets.only(right: AppConstants.padding),
+            child: Image(
+              image: AssetImage('assets/Logo_w.png'),
+              height: 40,
+            ),
           ),
         ),
       ],

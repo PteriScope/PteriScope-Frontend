@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../util/constants.dart';
 
-class PteriscopeElevatedButton extends StatelessWidget{
+class PteriscopeElevatedButton extends StatelessWidget {
   final double width;
   final bool enabled;
   final Function()? onTap;
@@ -17,24 +17,19 @@ class PteriscopeElevatedButton extends StatelessWidget{
   });
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return SizedBox(
       height: 55,
       width: width,
-      child:ElevatedButton(
+      child: ElevatedButton(
         onPressed: enabled ? null : onTap,
         style: ElevatedButton.styleFrom(
             backgroundColor: AppConstants.primaryColor,
-
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(50)
-            )
-        ),
+                borderRadius: BorderRadius.circular(50))),
         child: Text(
-            text,
-          style: const TextStyle(
-            color: Colors.white
-          ),
+          text,
+          style: const TextStyle(color: Colors.white),
         ),
       ),
     );

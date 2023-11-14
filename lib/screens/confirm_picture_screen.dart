@@ -40,7 +40,6 @@ class _ConfirmPictureScreenState extends State<ConfirmPictureScreen> {
               child: Image.memory(base64Decode(widget.imageBase64)),
             ),
           ),
-
           Positioned(
             bottom: 40.0,
             left: 20.0,
@@ -62,9 +61,7 @@ class _ConfirmPictureScreenState extends State<ConfirmPictureScreen> {
                 FloatingActionButton(
                   heroTag: 'takePicture',
                   backgroundColor: Colors.white,
-                  onPressed: () => {
-                    uploadPicture(context)
-                  },
+                  onPressed: () => {uploadPicture(context)},
                   child: const Icon(Icons.check, color: Colors.black),
                 ),
               ],
@@ -88,7 +85,9 @@ class _ConfirmPictureScreenState extends State<ConfirmPictureScreen> {
               children: [
                 CircularProgressIndicator(),
                 SizedBox(width: 24),
-                Expanded(child: Text('Se está procesando su imagen.\nEspere un momento...')),
+                Expanded(
+                    child: Text(
+                        'Se está procesando su imagen.\nEspere un momento...')),
               ],
             ),
           ),
@@ -97,25 +96,26 @@ class _ConfirmPictureScreenState extends State<ConfirmPictureScreen> {
     );
 
     try {
-      String reviewResponse = await Provider.of<ApiService>(context, listen: false)
-          .createReview(widget.patient.id, {'imageBase64': widget.imageBase64});
+      String reviewResponse =
+          await Provider.of<ApiService>(context, listen: false).createReview(
+              widget.patient.id, {'imageBase64': widget.imageBase64});
 
       if (mounted) {
-        Navigator.of(context, rootNavigator: true).pop(); // Usa rootNavigator para cerrar el diálogo
+        Navigator.of(context, rootNavigator: true).pop();
         final reviewData = jsonDecode(reviewResponse);
         Review review = Review.fromJson(reviewData);
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) => ReviewDetailScreen(
-                review: review,
-                patient: widget.patient,
+              review: review,
+              patient: widget.patient,
             ),
           ),
         );
       }
     } catch (e) {
       if (mounted) {
-        Navigator.of(context, rootNavigator: true).pop(); // Cierra el diálogo
+        Navigator.of(context, rootNavigator: true).pop();
 
         showDialog(
           context: context,
