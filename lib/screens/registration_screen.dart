@@ -21,6 +21,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final TextEditingController _hospitalController = TextEditingController();
   final TextEditingController _positionController = TextEditingController();
   bool _isButtonDisabled = true;
+  bool _nameIsValid = false;
+  bool _dniIsValid = false;
+  bool _passwordIsValid = false;
+  bool _hospitalIsValid = false;
+  bool _positionIsValid = false;
 
   @override
   void initState() {
@@ -44,6 +49,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     final positionIsValid = _positionController.text.length >= 5;
 
     setState(() {
+      _nameIsValid = nameIsValid;
+      _dniIsValid = dniIsValid;
+      _passwordIsValid = passwordIsValid;
+      _hospitalIsValid = hospitalIsValid;
+      _positionIsValid = positionIsValid;
       _isButtonDisabled = !(nameIsValid &&
           dniIsValid &&
           passwordIsValid &&
@@ -130,31 +140,36 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   controller: _nameController,
                   hintText: 'Nombre',
                   obscureText: false,
-                  inputType: TextInputType.name),
+                  inputType: TextInputType.name,
+                  isValid: _nameIsValid),
               const SizedBox(height: 15),
               PteriscopeTextField(
                   controller: _dniController,
                   hintText: 'DNI',
                   obscureText: false,
-                  inputType: TextInputType.number),
+                  inputType: TextInputType.number,
+                  isValid: _dniIsValid),
               const SizedBox(height: 15),
               PteriscopeTextField(
                   controller: _passwordController,
                   hintText: 'Contraseña',
                   obscureText: true,
-                  inputType: TextInputType.text),
+                  inputType: TextInputType.text,
+                  isValid: _passwordIsValid),
               const SizedBox(height: 15),
               PteriscopeTextField(
                   controller: _hospitalController,
                   hintText: 'Hospital',
                   obscureText: false,
-                  inputType: TextInputType.text),
+                  inputType: TextInputType.text,
+                  isValid: _hospitalIsValid),
               const SizedBox(height: 15),
               PteriscopeTextField(
                   controller: _positionController,
                   hintText: 'Cargo',
                   obscureText: false,
-                  inputType: TextInputType.text),
+                  inputType: TextInputType.text,
+                  isValid: _positionIsValid),
               const SizedBox(height: 95),
               PteriscopeElevatedButton(
                   width: MediaQuery.of(context).size.width,

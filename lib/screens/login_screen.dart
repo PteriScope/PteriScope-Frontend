@@ -19,6 +19,8 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _dniController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isButtonDisabled = true;
+  bool _dniIsValid = false;
+  bool _passwordIsValid = false;
 
   @override
   void initState() {
@@ -32,6 +34,8 @@ class _LoginScreenState extends State<LoginScreen> {
     final passwordIsValid = _passwordController.text.length >= 5;
 
     setState(() {
+      _dniIsValid = dniIsValid; // Actualiza la validez del DNI
+      _passwordIsValid = passwordIsValid; // Actualiza la validez de la contraseña
       _isButtonDisabled = !(dniIsValid && passwordIsValid);
     });
   }
@@ -107,13 +111,15 @@ class _LoginScreenState extends State<LoginScreen> {
                 controller: _dniController,
                 hintText: 'DNI',
                 obscureText: false,
-                inputType: TextInputType.number),
+                inputType: TextInputType.number,
+                isValid: _dniIsValid),
             const SizedBox(height: 20),
             PteriscopeTextField(
                 controller: _passwordController,
                 hintText: 'Contraseña',
                 obscureText: true,
-                inputType: TextInputType.text),
+                inputType: TextInputType.text,
+                isValid: _passwordIsValid,),
             const SizedBox(height: 20),
             PteriscopeElevatedButton(
                 width: MediaQuery.of(context).size.width,

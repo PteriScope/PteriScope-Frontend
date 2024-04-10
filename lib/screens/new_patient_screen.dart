@@ -25,6 +25,12 @@ class _NewPatientState extends State<NewPatient> {
   final TextEditingController _ageController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   bool _isButtonDisabled = true;
+  bool _nameIsValid = false;
+  bool _lastNameIsValid = false;
+  bool _dniIsValid = false;
+  bool _ageIsValid = false;
+  bool _emailIsValid = false;
+
 
   @override
   void initState() {
@@ -49,6 +55,11 @@ class _NewPatientState extends State<NewPatient> {
     ).hasMatch(_emailController.text);
 
     setState(() {
+      _nameIsValid = nameIsValid;
+      _lastNameIsValid = lastNameIsValid;
+      _dniIsValid = dniIsValid;
+      _ageIsValid = ageIsValid;
+      _emailIsValid = emailIsValid;
       _isButtonDisabled = !(nameIsValid &&
           lastNameIsValid &&
           dniIsValid &&
@@ -136,31 +147,36 @@ class _NewPatientState extends State<NewPatient> {
                     controller: _nameController,
                     hintText: 'Nombre',
                     obscureText: false,
-                    inputType: TextInputType.name),
+                    inputType: TextInputType.name,
+                    isValid: _nameIsValid),
                 const SizedBox(height: 15),
                 PteriscopeTextField(
                     controller: _lastNameController,
                     hintText: 'Apellidos',
                     obscureText: false,
-                    inputType: TextInputType.name),
+                    inputType: TextInputType.name,
+                    isValid: _lastNameIsValid),
                 const SizedBox(height: 15),
                 PteriscopeTextField(
                     controller: _dniController,
                     hintText: 'DNI',
                     obscureText: false,
-                    inputType: TextInputType.number),
+                    inputType: TextInputType.number,
+                    isValid: _dniIsValid),
                 const SizedBox(height: 15),
                 PteriscopeTextField(
                     controller: _ageController,
                     hintText: 'Edad',
                     obscureText: false,
-                    inputType: TextInputType.number),
+                    inputType: TextInputType.number,
+                    isValid: _ageIsValid),
                 const SizedBox(height: 15),
                 PteriscopeTextField(
                     controller: _emailController,
                     hintText: 'Email',
                     obscureText: false,
-                    inputType: TextInputType.emailAddress),
+                    inputType: TextInputType.emailAddress,
+                    isValid: _emailIsValid),
                 const SizedBox(height: 75),
                 PteriscopeElevatedButton(
                     width: MediaQuery.of(context).size.width,
