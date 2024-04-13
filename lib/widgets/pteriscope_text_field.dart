@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:just_the_tooltip/just_the_tooltip.dart';
 
+import '../models/validation.dart';
 import '../util/constants.dart';
 
 class PteriscopeTextField extends StatelessWidget {
@@ -8,6 +10,7 @@ class PteriscopeTextField extends StatelessWidget {
   final bool obscureText;
   final TextInputType inputType;
   final bool isValid;
+  final List<Validation> validations;
 
   const PteriscopeTextField({
     super.key,
@@ -16,10 +19,12 @@ class PteriscopeTextField extends StatelessWidget {
     required this.obscureText,
     required this.inputType,
     required this.isValid,
+    required this.validations
   });
 
   @override
   Widget build(BuildContext context) {
+
     return TextField(
       controller: controller,
       decoration: InputDecoration(
@@ -30,13 +35,38 @@ class PteriscopeTextField extends StatelessWidget {
         focusedBorder: const OutlineInputBorder(borderSide: BorderSide(color: AppConstants.primaryColor)),
         errorBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.red, width: 1.0)),
         suffixIcon: !(controller.text.isEmpty || isValid)
-            ? const Tooltip(
-          message: 'Mensaje de error aquí', // Personaliza el mensaje de error según el campo
-          child: Icon(
-            Icons.error_outline,
-            color: Colors.red,
-          ),
-        )
+            ? JustTheTooltip(
+                preferredDirection: AxisDirection.values.first, // Para que el tooltip aparezca arriba del Icon
+                triggerMode: TooltipTriggerMode.tap,
+                content: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: validations.map(
+                            (validation) => Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  validation.isValid ? Icons.check : Icons.close,
+                                  color: validation.isValid ? Colors.green : Colors.red,
+                                ),
+                                const SizedBox(width: 8), // Ajusta el espacio entre el icono y el mensaje según tu preferencia
+                                Text(
+                                  validation.message,
+                                  style: const TextStyle(color: Colors.white),
+                                ),
+                              ],
+                            )
+                    ).toList(),
+                  ),
+                ),
+                backgroundColor: Colors.black,
+                child: const Icon(
+                  Icons.error_outline,
+                  color: Colors.red,
+                ),
+              )
             : null, // No muestra el ícono si el campo es válido
       ),
       obscureText: obscureText,

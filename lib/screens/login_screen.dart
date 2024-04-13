@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pteriscope_frontend/screens/registration_screen.dart';
@@ -5,6 +7,7 @@ import 'package:pteriscope_frontend/services/api_service.dart';
 import 'package:pteriscope_frontend/widgets/pteriscope_elevated_button.dart';
 import 'package:pteriscope_frontend/widgets/pteriscope_text_field.dart';
 
+import '../models/validation.dart';
 import '../util/constants.dart';
 import 'home_screen.dart';
 
@@ -19,8 +22,18 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _dniController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isButtonDisabled = true;
-  bool _dniIsValid = false;
-  bool _passwordIsValid = false;
+  //bool _dniIsValid = false;
+  //bool _passwordIsValid = false;
+  //final String dniValidationMessage = ;
+  List<Validation> dniValidations = [
+    Validation("8 dígitos numéricos", false)
+  ];
+  List<Validation> passwordValidations = [
+    Validation("Al menos 8 caracteres", false),
+    Validation("Al menos 1 letra del alfabeto", false),
+    Validation("Al menos 1 número", false),
+    Validation("Al menos 1 caracter especial", false),
+  ];
 
   @override
   void initState() {
@@ -30,13 +43,26 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _checkFields() {
-    final dniIsValid = RegExp(r'^\d{8}$').hasMatch(_dniController.text);
-    final passwordIsValid = _passwordController.text.length >= 5;
+    final dniLengthValidation = RegExp(r'^\d{8}$').hasMatch(_dniController.text);
+    final passwordLengthValidation = _passwordController.text.length >= 8;
+    final passwordAlphabetValidation = RegExp(r'[a-zA-Z]').hasMatch(_passwordController.text);
+    final passwordNumberValidation = RegExp(r'\d').hasMatch(_passwordController.text);
+    final passwordSpecialCharacterValidation = RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(_passwordController.text);
+
 
     setState(() {
-      _dniIsValid = dniIsValid; // Actualiza la validez del DNI
-      _passwordIsValid = passwordIsValid; // Actualiza la validez de la contraseña
-      _isButtonDisabled = !(dniIsValid && passwordIsValid);
+      dniValidations[0].isValid = dniLengthValidation;
+
+      passwordValidations[0].isValid = passwordLengthValidation;
+      passwordValidations[1].isValid = passwordAlphabetValidation;
+      passwordValidations[2].isValid = passwordNumberValidation;
+      passwordValidations[3].isValid = passwordSpecialCharacterValidation;
+
+
+      _isButtonDisabled = !(dniLengthValidation &&
+          passwordLengthValidation &&
+          passwordAlphabetValidation &&
+          passwordSpecialCharacterValidation);
     });
   }
 
@@ -112,14 +138,16 @@ class _LoginScreenState extends State<LoginScreen> {
                 hintText: 'DNI',
                 obscureText: false,
                 inputType: TextInputType.number,
-                isValid: _dniIsValid),
+                isValid: dniValidations.every((validation) => validation.isValid),
+                validations: dniValidations),
             const SizedBox(height: 20),
             PteriscopeTextField(
                 controller: _passwordController,
                 hintText: 'Contraseña',
                 obscureText: true,
                 inputType: TextInputType.text,
-                isValid: _passwordIsValid,),
+                isValid: passwordValidations.every((validation) => validation.isValid),
+                validations: passwordValidations),
             const SizedBox(height: 20),
             PteriscopeElevatedButton(
                 width: MediaQuery.of(context).size.width,
