@@ -1,4 +1,4 @@
-import 'dart:ffi';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -9,6 +9,8 @@ import 'package:pteriscope_frontend/widgets/pteriscope_text_field.dart';
 
 import '../models/validation.dart';
 import '../util/constants.dart';
+import '../util/pteriscope_exception.dart';
+import '../util/pteriscope_function.dart';
 import 'home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -22,9 +24,6 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _dniController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isButtonDisabled = true;
-  //bool _dniIsValid = false;
-  //bool _passwordIsValid = false;
-  //final String dniValidationMessage = ;
   List<Validation> dniValidations = [
     Validation("8 dígitos numéricos", false)
   ];
@@ -44,11 +43,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _checkFields() {
     final dniLengthValidation = RegExp(r'^\d{8}$').hasMatch(_dniController.text);
+
     final passwordLengthValidation = _passwordController.text.length >= 8;
     final passwordAlphabetValidation = RegExp(r'[a-zA-Z]').hasMatch(_passwordController.text);
     final passwordNumberValidation = RegExp(r'\d').hasMatch(_passwordController.text);
     final passwordSpecialCharacterValidation = RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(_passwordController.text);
-
 
     setState(() {
       dniValidations[0].isValid = dniLengthValidation;
@@ -57,7 +56,6 @@ class _LoginScreenState extends State<LoginScreen> {
       passwordValidations[1].isValid = passwordAlphabetValidation;
       passwordValidations[2].isValid = passwordNumberValidation;
       passwordValidations[3].isValid = passwordSpecialCharacterValidation;
-
 
       _isButtonDisabled = !(dniLengthValidation &&
           passwordLengthValidation &&
@@ -71,47 +69,52 @@ class _LoginScreenState extends State<LoginScreen> {
       _isButtonDisabled = true;
     });
 
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(
-        const SnackBar(
-          content: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                  'Se está procesando su solicitud\nEspere un momento por favor'),
-              CircularProgressIndicator(),
-            ],
-          ),
-          duration: Duration(hours: 1),
-        ),
-      );
-
     try {
+      bool _ = await PteriscopeFunction.checkConnectivity();
+
       var apiService = Provider.of<ApiService>(context, listen: false);
+
+      PteriscopeFunction.PtriscopeSnackBar(
+          context,
+          'Se está procesando su solicitud\nEspere un momento por favor',
+          SnackBarType.loading,
+          AppConstants.longSnackBarDuration);
+
       bool loggedIn =
           await apiService.login(_dniController.text, _passwordController.text);
       if (loggedIn) {
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
         Navigator.of(context).pushReplacement(
             MaterialPageRoute(builder: (_) => const HomeScreen()));
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Usuario o contraseña incorrectos')),
-        );
-        setState(() {
-          _isButtonDisabled = false;
-        });
+        PteriscopeFunction.PtriscopeSnackBar(
+            context,
+            'Usuario o contraseña incorrectos',
+            SnackBarType.onlyText,
+            AppConstants.shortSnackBarDuration);
       }
+    } on PteriscopeException catch(e){
+      PteriscopeFunction.PtriscopeSnackBar(
+          context,
+          'Error: ${e.message}',
+          SnackBarType.onlyText,
+          AppConstants.shortSnackBarDuration);
+    } on SocketException catch(_) {
+      PteriscopeFunction.PtriscopeSnackBar(
+          context,
+          'Hubo un error al tratar de conectarse al servidor. Inténtelo más tarde, por favor',
+          SnackBarType.onlyText,
+          AppConstants.shortSnackBarDuration);
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
-      );
-      setState(() {
-        _isButtonDisabled = false;
-      });
+      PteriscopeFunction.PtriscopeSnackBar(
+          context,
+          'Error: ${e}',
+          SnackBarType.onlyText,
+          AppConstants.shortSnackBarDuration);
     }
-
-    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    setState(() {
+      _isButtonDisabled = false;
+    });
   }
 
   @override

@@ -13,4 +13,7 @@ class AppConstants {
 
   static const String noPterygium = "Sin pterigión";
   static const Color normalColor = Color(0xFF4CAF50);
+
+  static const int longSnackBarDuration = 30;
+  static const int shortSnackBarDuration = 5;
 }

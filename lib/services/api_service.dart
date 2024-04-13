@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:pteriscope_frontend/models/register_patient.dart';
 import 'package:pteriscope_frontend/models/register_user.dart';
 import 'package:pteriscope_frontend/services/shared_preferences_service.dart';
+import 'package:pteriscope_frontend/util/pteriscope_exception.dart';
 import 'dart:convert';
 
 import '../models/patient.dart';
@@ -12,8 +13,8 @@ import '../models/review.dart';
 import '../models/specialist.dart';
 
 class ApiService with ChangeNotifier {
-  //final String baseUrl = 'http://18.212.3.87:8080/api';
-  final String baseUrl = 'http://34.207.218.125:8080/api';
+  //final String baseUrl = 'http://34.204.84.183:8080/api';
+  final String baseUrl = 'http://192.168.1.104:8080/api';
   final Map<String, String> headers = {
     'Content-Type': 'application/json; charset=utf-8',
   };
@@ -66,7 +67,8 @@ class ApiService with ChangeNotifier {
       notifyListeners();
       return false;
     } else {
-      throw Exception('Failed to register specialist');
+      var decodedResponse = utf8.decode(response.bodyBytes);
+      throw PteriscopeException(decodedResponse);
     }
   }
 

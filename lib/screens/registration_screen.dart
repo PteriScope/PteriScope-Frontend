@@ -1,11 +1,16 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pteriscope_frontend/models/register_user.dart';
+import 'package:pteriscope_frontend/util/pteriscope_exception.dart';
 import 'package:pteriscope_frontend/widgets/pteriscope_text_field.dart';
 
+import '../models/validation.dart';
 import '../services/api_service.dart';
 import '../util/constants.dart';
 import '../widgets/pteriscope_elevated_button.dart';
+import '../util/pteriscope_function.dart';
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({super.key});
@@ -21,11 +26,30 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final TextEditingController _hospitalController = TextEditingController();
   final TextEditingController _positionController = TextEditingController();
   bool _isButtonDisabled = true;
-  bool _nameIsValid = false;
-  bool _dniIsValid = false;
-  bool _passwordIsValid = false;
-  bool _hospitalIsValid = false;
-  bool _positionIsValid = false;
+
+  List<Validation> nameValidations = [
+    Validation("Al menos un nombre y dos apellidos", false),
+    Validation("Solo valores alfanuméricos", false),
+  ];
+
+  List<Validation> dniValidations = [
+    Validation("8 dígitos numéricos", false)
+  ];
+
+  List<Validation> passwordValidations = [
+    Validation("Al menos 8 caracteres", false),
+    Validation("Al menos 1 letra del alfabeto", false),
+    Validation("Al menos 1 número", false),
+    Validation("Al menos 1 caracter especial", false),
+  ];
+
+  List<Validation> hospitalValidations = [
+    Validation("Al menos 3 caracteres", false),
+  ];
+
+  List<Validation> positionValidations = [
+    Validation("Al menos 5 caracteres", false),
+  ];
 
   @override
   void initState() {
@@ -38,27 +62,46 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   }
 
   void _checkFields() {
-    final nameIsValid = _nameController.text
+    final nameSurnameValidation = _nameController.text
             .split(' ')
             .where((word) => word.isNotEmpty)
-            .length >=
-        3;
-    final dniIsValid = RegExp(r'^\d{8}$').hasMatch(_dniController.text);
-    final passwordIsValid = _passwordController.text.length >= 5;
-    final hospitalIsValid = _hospitalController.text.length >= 3;
-    final positionIsValid = _positionController.text.length >= 5;
+            .length >= 3;
+    final nameAlphanumericValidation = RegExp(r'^[a-zA-Z0-9\s]+$').hasMatch(_nameController.text);
+
+    final dniLengthValidation = RegExp(r'^\d{8}$').hasMatch(_dniController.text);
+
+    final passwordLengthValidation = _passwordController.text.length >= 8;
+    final passwordAlphabetValidation = RegExp(r'[a-zA-Z]').hasMatch(_passwordController.text);
+    final passwordNumberValidation = RegExp(r'\d').hasMatch(_passwordController.text);
+    final passwordSpecialCharacterValidation = RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(_passwordController.text);
+
+    final hospitalLengthValidation = _hospitalController.text.length >= 3;
+
+    final positionLengthValidation = _positionController.text.length >= 5;
 
     setState(() {
-      _nameIsValid = nameIsValid;
-      _dniIsValid = dniIsValid;
-      _passwordIsValid = passwordIsValid;
-      _hospitalIsValid = hospitalIsValid;
-      _positionIsValid = positionIsValid;
-      _isButtonDisabled = !(nameIsValid &&
-          dniIsValid &&
-          passwordIsValid &&
-          hospitalIsValid &&
-          positionIsValid);
+      nameValidations[0].isValid = nameSurnameValidation;
+      nameValidations[1].isValid = nameAlphanumericValidation;
+
+      dniValidations[0].isValid = dniLengthValidation;
+
+      passwordValidations[0].isValid = passwordLengthValidation;
+      passwordValidations[1].isValid = passwordAlphabetValidation;
+      passwordValidations[2].isValid = passwordNumberValidation;
+      passwordValidations[3].isValid = passwordSpecialCharacterValidation;
+
+      hospitalValidations[0].isValid = hospitalLengthValidation;
+      positionValidations[0].isValid = positionLengthValidation;
+
+      _isButtonDisabled = !(nameSurnameValidation &&
+          nameAlphanumericValidation &&
+          dniLengthValidation &&
+          passwordLengthValidation &&
+          passwordAlphabetValidation &&
+          passwordNumberValidation &&
+          passwordSpecialCharacterValidation &&
+          hospitalLengthValidation &&
+          positionLengthValidation);
     });
   }
 
@@ -67,23 +110,15 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       _isButtonDisabled = true;
     });
 
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(
-        const SnackBar(
-          content: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('Registrando...'),
-              CircularProgressIndicator(),
-            ],
-          ),
-          duration: Duration(hours: 1),
-        ),
-      );
-
     try {
+      bool _ = await PteriscopeFunction.checkConnectivity();
+
       var apiService = Provider.of<ApiService>(context, listen: false);
+      PteriscopeFunction.PtriscopeSnackBar(
+          context,
+          'Registrando...',
+          SnackBarType.loading,
+          AppConstants.longSnackBarDuration);
       bool registered = await apiService.registerSpecialist(RegisterUser(
           name: _nameController.text,
           dni: _dniController.text,
@@ -91,29 +126,42 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           hospital: _hospitalController.text,
           position: _positionController.text));
 
-      ScaffoldMessenger.of(context).hideCurrentSnackBar();
-
       if (registered) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Registro exitoso')),
-        );
+        PteriscopeFunction.PtriscopeSnackBar(
+            context,
+            'Registro exitoso',
+            SnackBarType.onlyText,
+            AppConstants.shortSnackBarDuration);
         Navigator.of(context).pop();
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Registro fallido')),
-        );
-        setState(() {
-          _isButtonDisabled = false;
-        });
+        PteriscopeFunction.PtriscopeSnackBar(
+            context,
+            'Registro fallido',
+            SnackBarType.onlyText,
+            AppConstants.shortSnackBarDuration);
       }
+    } on PteriscopeException catch(e){
+      PteriscopeFunction.PtriscopeSnackBar(
+          context,
+          'Error: ${e.message}',
+          SnackBarType.onlyText,
+          AppConstants.shortSnackBarDuration);
+    } on SocketException catch(_) {
+      PteriscopeFunction.PtriscopeSnackBar(
+          context,
+          'Hubo un error al tratar de conectarse al servidor. Inténtelo más tarde, por favor',
+          SnackBarType.onlyText,
+          AppConstants.shortSnackBarDuration);
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
-      );
-      setState(() {
-        _isButtonDisabled = false;
-      });
+      PteriscopeFunction.PtriscopeSnackBar(
+          context,
+          'Error: ${e}',
+          SnackBarType.onlyText,
+          AppConstants.shortSnackBarDuration);
     }
+    setState(() {
+      _isButtonDisabled = false;
+    });
   }
 
   @override
@@ -136,40 +184,45 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       fontWeight: FontWeight.bold,
                       color: Colors.black)),
               const SizedBox(height: 15),
-              //PteriscopeTextField(
-              //    controller: _nameController,
-              //    hintText: 'Nombre',
-              //    obscureText: false,
-              //    inputType: TextInputType.name,
-              //    isValid: _nameIsValid),
-              //const SizedBox(height: 15),
-              //PteriscopeTextField(
-              //    controller: _dniController,
-              //    hintText: 'DNI',
-              //    obscureText: false,
-              //    inputType: TextInputType.number,
-              //    isValid: _dniIsValid),
-              //const SizedBox(height: 15),
-              //PteriscopeTextField(
-              //    controller: _passwordController,
-              //    hintText: 'Contraseña',
-              //    obscureText: true,
-              //    inputType: TextInputType.text,
-              //    isValid: _passwordIsValid),
-              //const SizedBox(height: 15),
-              //PteriscopeTextField(
-              //    controller: _hospitalController,
-              //    hintText: 'Hospital',
-              //    obscureText: false,
-              //    inputType: TextInputType.text,
-              //    isValid: _hospitalIsValid),
-              //const SizedBox(height: 15),
-              //PteriscopeTextField(
-              //    controller: _positionController,
-              //    hintText: 'Cargo',
-              //    obscureText: false,
-              //    inputType: TextInputType.text,
-              //    isValid: _positionIsValid),
+              PteriscopeTextField(
+                  controller: _nameController,
+                  hintText: 'Nombres completos',
+                  obscureText: false,
+                  inputType: TextInputType.name,
+                  isValid: nameValidations.every((validation) => validation.isValid),
+                  validations: nameValidations),
+              const SizedBox(height: 15),
+              PteriscopeTextField(
+                  controller: _dniController,
+                  hintText: 'DNI',
+                  obscureText: false,
+                  inputType: TextInputType.number,
+                  isValid: dniValidations.every((validation) => validation.isValid),
+                  validations: dniValidations),
+              const SizedBox(height: 15),
+              PteriscopeTextField(
+                  controller: _passwordController,
+                  hintText: 'Contraseña',
+                  obscureText: true,
+                  inputType: TextInputType.text,
+                  isValid: passwordValidations.every((validation) => validation.isValid),
+                  validations: passwordValidations),
+              const SizedBox(height: 15),
+              PteriscopeTextField(
+                  controller: _hospitalController,
+                  hintText: 'Hospital',
+                  obscureText: false,
+                  inputType: TextInputType.text,
+                  isValid: hospitalValidations.every((validation) => validation.isValid),
+                  validations: hospitalValidations),
+              const SizedBox(height: 15),
+              PteriscopeTextField(
+                  controller: _positionController,
+                  hintText: 'Cargo',
+                  obscureText: false,
+                  inputType: TextInputType.text,
+                  isValid: positionValidations.every((validation) => validation.isValid),
+                  validations: positionValidations),
               const SizedBox(height: 95),
               PteriscopeElevatedButton(
                   width: MediaQuery.of(context).size.width,
