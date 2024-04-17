@@ -7,8 +7,10 @@ import 'package:pteriscope_frontend/util/constants.dart';
 import 'package:pteriscope_frontend/screens/patient_detail_screen.dart';
 import 'package:pteriscope_frontend/services/api_service.dart';
 import 'package:pteriscope_frontend/widgets/pteriscope_app_bar.dart';
+import 'package:pteriscope_frontend/widgets/pteriscope_menu_bar.dart';
 
 import '../models/patient.dart';
+import '../util/pteriscope_screen.dart';
 import '../util/shared.dart';
 import '../widgets/pteriscope_colum_header.dart';
 import '../widgets/pteriscope_header.dart';
@@ -78,6 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: const PteriscopeAppBar(title: 'PteriScope'),
+        drawer: const PteriscopeMenuBar(currentView: PteriscopeScreen.patientList),
         body: Column(
           children: [
             PteriscopeHeader(

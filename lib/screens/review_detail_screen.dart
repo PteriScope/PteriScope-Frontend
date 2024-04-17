@@ -11,7 +11,9 @@ import 'package:pteriscope_frontend/widgets/pteriscope_app_bar.dart';
 import '../models/review.dart';
 import '../services/api_service.dart';
 import '../util/constants.dart';
+import '../util/pteriscope_screen.dart';
 import '../util/shared.dart';
+import '../widgets/pteriscope_menu_bar.dart';
 
 class ReviewDetailScreen extends StatefulWidget {
   final Review review;
@@ -49,6 +51,7 @@ class _ReviewDetailScreenState extends State<ReviewDetailScreen> {
     return Scaffold(
       appBar: PteriscopeAppBar(
           title: '${widget.patient.firstName} ${widget.patient.lastName}'),
+      drawer: const PteriscopeMenuBar(currentView: PteriscopeScreen.other),
       body: Stack(children: [
         Card(
           child: Column(

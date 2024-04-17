@@ -13,7 +13,9 @@ import 'package:pteriscope_frontend/widgets/pteriscope_header.dart';
 import '../models/patient.dart';
 import '../models/review.dart';
 import '../util/constants.dart';
+import '../util/pteriscope_screen.dart';
 import '../util/shared.dart';
+import '../widgets/pteriscope_menu_bar.dart';
 import 'home_screen.dart';
 
 class PatientDetailScreen extends StatefulWidget {
@@ -66,6 +68,7 @@ class _PatientDetailScreen extends State<PatientDetailScreen> {
     return Scaffold(
       appBar:
           PteriscopeAppBar(title: '${patient.firstName} ${patient.lastName}'),
+      drawer: const PteriscopeMenuBar(currentView: PteriscopeScreen.other),
       body: Column(
         children: [
           PteriscopeHeader(

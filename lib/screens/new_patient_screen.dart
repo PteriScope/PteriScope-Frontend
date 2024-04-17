@@ -12,7 +12,9 @@ import '../services/api_service.dart';
 import '../util/constants.dart';
 import '../util/pteriscope_exception.dart';
 import '../util/pteriscope_function.dart';
+import '../util/pteriscope_screen.dart';
 import '../widgets/pteriscope_elevated_button.dart';
+import '../widgets/pteriscope_menu_bar.dart';
 import '../widgets/pteriscope_text_field.dart';
 import 'home_screen.dart';
 
@@ -171,6 +173,7 @@ class _NewPatientState extends State<NewPatient> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const PteriscopeAppBar(title: 'Nuevo paciente'),
+      drawer: const PteriscopeMenuBar(currentView: PteriscopeScreen.newPatient),
       body: SingleChildScrollView(
         child: Card(
           elevation: 0,
