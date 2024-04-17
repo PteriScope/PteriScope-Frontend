@@ -89,7 +89,7 @@ class _LoginScreenState extends State<LoginScreen> {
       } else {
         PteriscopeFunction.PtriscopeSnackBar(
             context,
-            'Usuario o contraseña incorrectos',
+            'Credenciales incorrectas',
             SnackBarType.onlyText,
             AppConstants.shortSnackBarDuration);
       }
@@ -108,7 +108,7 @@ class _LoginScreenState extends State<LoginScreen> {
     } catch (e) {
       PteriscopeFunction.PtriscopeSnackBar(
           context,
-          'Error: ${e}',
+          'Inicio de sesión fallido',
           SnackBarType.onlyText,
           AppConstants.shortSnackBarDuration);
     }

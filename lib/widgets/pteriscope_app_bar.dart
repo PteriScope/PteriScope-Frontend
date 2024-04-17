@@ -24,6 +24,7 @@ class PteriscopeAppBar extends StatelessWidget implements PreferredSizeWidget {
         icon: const Icon(Icons.menu),
         color: Colors.white,
         onPressed: () {
+          // TODO: Implement Menu
           Shared.logout(context);
         },
       ),

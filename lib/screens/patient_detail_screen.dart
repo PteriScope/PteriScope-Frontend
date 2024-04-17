@@ -142,88 +142,104 @@ class _PatientDetailScreen extends State<PatientDetailScreen> {
         const PteriScopeColumnHeader(
           firstTitle: 'Imagen',
           secondTitle: 'Fecha',
-          thirdTitle: 'Grupo',
+          thirdTitle: 'Resultado',
         ),
         Expanded(
             child: RefreshIndicator(
-          onRefresh: () async {
-            setState(() {
-              loading = true;
-            });
-            loadReviews();
-          },
-          child: ListView.builder(
-              itemCount: reviews.length,
-              itemBuilder: (context, index) {
-                final review = reviews[index];
+              onRefresh: () async {
+                setState(() {
+                  loading = true;
+                });
+              loadReviews();
+              },
+              child: reviews.isEmpty
+              ? const Padding(
+                padding: EdgeInsets.only(
+                    left: AppConstants.padding,
+                    right: AppConstants.padding,
+                    bottom: AppConstants.padding,
+                    top: AppConstants.padding * 8),
+                child: Text(
+                  "Este paciente aún no cuenta con revisiones.\n\nPresiona el botón “Nueva revisión” para añadir una",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontSize: 25,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey),
+                ),
+              )
+              : ListView.builder(
+                itemCount: reviews.length,
+                itemBuilder: (context, index) {
+                  final review = reviews[index];
 
-                String reviewDate =
-                    DateFormat('dd/MM/yyyy').format(review.reviewDate!);
+                  String reviewDate =
+                      DateFormat('dd/MM/yyyy').format(review.reviewDate!);
 
-                String reviewResult = review.reviewResult!;
+                  String reviewResult = review.reviewResult!;
 
-                return InkWell(
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => ReviewDetailScreen(
-                            review: review, patient: patient),
-                      ),
-                    );
-                  },
-                  child: Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(AppConstants.padding / 2.0),
-                      child: Row(
-                        children: <Widget>[
-                          Expanded(
-                              flex: 2,
+                  return InkWell(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => ReviewDetailScreen(
+                              review: review, patient: patient),
+                        ),
+                      );
+                    },
+                    child: Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(AppConstants.padding / 2.0),
+                        child: Row(
+                          children: <Widget>[
+                            Expanded(
+                                flex: 2,
+                                child: Center(
+                                  child: review.imageBase64!.isNotEmpty
+                                      ? ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
+                                          child: Image.memory(
+                                            base64Decode(review.imageBase64!),
+                                            fit: BoxFit.cover,
+                                            height: 125.0,
+                                            width: 125.0,
+                                          ),
+                                        )
+                                      : const SizedBox(
+                                          height: 100.0,
+                                          width: 100.0,
+                                          child: Icon(
+                                            Icons.image,
+                                            size: 60,
+                                          ),
+                                        ),
+                                )),
+                            Expanded(
+                              flex: 1,
                               child: Center(
-                                child: review.imageBase64!.isNotEmpty
-                                    ? ClipRRect(
-                                        borderRadius:
-                                            BorderRadius.circular(8.0),
-                                        child: Image.memory(
-                                          base64Decode(review.imageBase64!),
-                                          fit: BoxFit.cover,
-                                          height: 125.0,
-                                          width: 125.0,
-                                        ),
-                                      )
-                                    : const SizedBox(
-                                        height: 100.0,
-                                        width: 100.0,
-                                        child: Icon(
-                                          Icons.image,
-                                          size: 60,
-                                        ),
-                                      ),
+                                  child: Text(
+                                reviewDate,
+                                style: const TextStyle(
+                                    fontSize: 10, fontWeight: FontWeight.bold),
                               )),
-                          Expanded(
-                            flex: 1,
-                            child: Center(
-                                child: Text(
-                              reviewDate,
-                              style: const TextStyle(
-                                  fontSize: 10, fontWeight: FontWeight.bold),
-                            )),
-                          ),
-                          Expanded(
-                            flex: 1,
-                            child: Center(
-                                child: Text(
-                              reviewResult,
-                              style: TextStyle(
-                                  fontSize: 10,
-                                  color: Shared.getColorResult(reviewResult),
-                                  fontWeight: FontWeight.bold),
-                            )),
-                          ),
-                        ],
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: Center(
+                                  child: Text(
+                                reviewResult,
+                                style: TextStyle(
+                                    fontSize: 10,
+                                    color: Shared.getColorResult(reviewResult),
+                                    fontWeight: FontWeight.bold),
+                              )),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                );
+                  );
               }),
         ))
       ],

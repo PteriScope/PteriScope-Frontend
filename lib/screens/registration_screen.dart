@@ -31,22 +31,18 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     Validation("Al menos un nombre y dos apellidos", false),
     Validation("Solo valores alfanuméricos", false),
   ];
-
   List<Validation> dniValidations = [
     Validation("8 dígitos numéricos", false)
   ];
-
   List<Validation> passwordValidations = [
     Validation("Al menos 8 caracteres", false),
     Validation("Al menos 1 letra del alfabeto", false),
     Validation("Al menos 1 número", false),
     Validation("Al menos 1 caracter especial", false),
   ];
-
   List<Validation> hospitalValidations = [
     Validation("Al menos 3 caracteres", false),
   ];
-
   List<Validation> positionValidations = [
     Validation("Al menos 5 caracteres", false),
   ];
@@ -155,7 +151,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     } catch (e) {
       PteriscopeFunction.PtriscopeSnackBar(
           context,
-          'Error: ${e}',
+          'Registro fallido',
           SnackBarType.onlyText,
           AppConstants.shortSnackBarDuration);
     }

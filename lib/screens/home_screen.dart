@@ -143,7 +143,7 @@ class _HomeScreenState extends State<HomeScreen> {
         const PteriScopeColumnHeader(
           firstTitle: 'Datos del paciente',
           secondTitle: 'Última revisión',
-          thirdTitle: 'Grupo',
+          thirdTitle: 'Resultado',
         ),
         Expanded(
           child: RefreshIndicator(

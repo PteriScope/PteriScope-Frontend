@@ -36,7 +36,7 @@ class PteriscopeTextField extends StatelessWidget {
         errorBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.red, width: 1.0)),
         suffixIcon: !(controller.text.isEmpty || isValid)
             ? JustTheTooltip(
-                preferredDirection: AxisDirection.values.first, // Para que el tooltip aparezca arriba del Icon
+                preferredDirection: AxisDirection.values.first,
                 triggerMode: TooltipTriggerMode.tap,
                 content: Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -51,7 +51,7 @@ class PteriscopeTextField extends StatelessWidget {
                                   validation.isValid ? Icons.check : Icons.close,
                                   color: validation.isValid ? Colors.green : Colors.red,
                                 ),
-                                const SizedBox(width: 8), // Ajusta el espacio entre el icono y el mensaje según tu preferencia
+                                const SizedBox(width: 8),
                                 Text(
                                   validation.message,
                                   style: const TextStyle(color: Colors.white),
@@ -67,7 +67,7 @@ class PteriscopeTextField extends StatelessWidget {
                   color: Colors.red,
                 ),
               )
-            : null, // No muestra el ícono si el campo es válido
+            : null,
       ),
       obscureText: obscureText,
       keyboardType: inputType,

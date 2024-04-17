@@ -36,11 +36,4 @@ class PteriscopeFunction {
       return true;
     }
   }
-
-  //static void checkConnectivity() async {
-  //  final List<ConnectivityResult> connectivityResult = await (Connectivity().checkConnectivity());
-  //  if (connectivityResult.contains(ConnectivityResult.none)) {
-  //    throw PteriscopeException("Verifique su conexión a Internet");
-  //  }
-  //}
 }

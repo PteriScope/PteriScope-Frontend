@@ -45,15 +45,23 @@ class _CameraScreenState extends State<CameraScreen> {
         _cameras![_selectedCameraIdx],
         ResolutionPreset.max,
         imageFormatGroup: ImageFormatGroup.yuv420,
+        enableAudio: false
       );
 
-      await _controller!.initialize();
-      _minAvailableZoom = await _controller!.getMinZoomLevel();
-      _maxAvailableZoom = await _controller!.getMaxZoomLevel();
+      try{
+        await _controller!.initialize();
+        _minAvailableZoom = await _controller!.getMinZoomLevel();
+        _maxAvailableZoom = await _controller!.getMaxZoomLevel();
 
-      if (!mounted) {
-        return;
+        if (!mounted) {
+          return;
+        }
+      } catch (e) {
+        print(e.toString());
+        // TODO: CameraException Volver
       }
+
+
 
       setState(() {});
     }
