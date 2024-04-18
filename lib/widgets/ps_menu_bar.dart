@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:pteriscope_frontend/util/pteriscope_screen.dart';
+import 'package:pteriscope_frontend/util/enum/current_screen.dart';
 
 import '../screens/home_screen.dart';
-import '../screens/new_patient_screen.dart';
+import '../screens/patient/new_patient_screen.dart';
 import '../util/constants.dart';
 import '../util/shared.dart';
 
-class PteriscopeMenuBar extends StatelessWidget {
-  final PteriscopeScreen currentView;
+class PsMenuBar extends StatelessWidget {
+  final CurrentScreen currentView;
 
-  const PteriscopeMenuBar({
+  const PsMenuBar({
     Key? key,
     required this.currentView
   }) : super(key: key);
@@ -26,9 +26,9 @@ class PteriscopeMenuBar extends StatelessWidget {
             _buildMenuItem(
               icon: Icons.list,
               text: 'Lista de pacientes',
-              isSelected: currentView == PteriscopeScreen.patientList,
+              isSelected: currentView == CurrentScreen.patientList,
               onTap: () {
-                if(currentView != PteriscopeScreen.patientList) {
+                if(currentView != CurrentScreen.patientList) {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => const HomeScreen(),
@@ -40,9 +40,9 @@ class PteriscopeMenuBar extends StatelessWidget {
             _buildMenuItem(
               icon: Icons.add,
               text: 'Nuevo paciente',
-              isSelected: currentView == PteriscopeScreen.newPatient,
+              isSelected: currentView == CurrentScreen.newPatient,
               onTap: () {
-                if(currentView != PteriscopeScreen.newPatient) {
+                if(currentView != CurrentScreen.newPatient) {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => const NewPatient(),
@@ -55,7 +55,7 @@ class PteriscopeMenuBar extends StatelessWidget {
             _buildMenuItem(
               icon: Icons.person,
               text: 'Perfil',
-              isSelected: currentView == PteriscopeScreen.profile,
+              isSelected: currentView == CurrentScreen.profile,
               onTap: () {
                 // TODO
               },

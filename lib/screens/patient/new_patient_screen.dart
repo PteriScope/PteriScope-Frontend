@@ -4,19 +4,20 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pteriscope_frontend/models/patient.dart';
 import 'package:pteriscope_frontend/models/register_patient.dart';
-import 'package:pteriscope_frontend/screens/patient_detail_screen.dart';
-import 'package:pteriscope_frontend/widgets/pteriscope_app_bar.dart';
+import 'package:pteriscope_frontend/screens/patient/patient_detail_screen.dart';
+import 'package:pteriscope_frontend/widgets/ps_app_bar.dart';
 
-import '../models/validation.dart';
-import '../services/api_service.dart';
-import '../util/constants.dart';
-import '../util/pteriscope_exception.dart';
-import '../util/pteriscope_function.dart';
-import '../util/pteriscope_screen.dart';
-import '../widgets/pteriscope_elevated_button.dart';
-import '../widgets/pteriscope_menu_bar.dart';
-import '../widgets/pteriscope_text_field.dart';
-import 'home_screen.dart';
+import '../../util/enum/snack_bar_type.dart';
+import '../../util/shared.dart';
+import '../../util/validation.dart';
+import '../../services/api_service.dart';
+import '../../util/constants.dart';
+import '../../util/ps_exception.dart';
+import '../../util/enum/current_screen.dart';
+import '../../widgets/ps_elevated_button.dart';
+import '../../widgets/ps_menu_bar.dart';
+import '../../widgets/ps_text_field.dart';
+import '../home_screen.dart';
 
 class NewPatient extends StatefulWidget {
   const NewPatient({super.key});
@@ -111,10 +112,10 @@ class _NewPatientState extends State<NewPatient> {
     });
 
     try {
-      bool _ = await PteriscopeFunction.checkConnectivity();
+      bool _ = await Shared.checkConnectivity();
 
       var apiService = Provider.of<ApiService>(context, listen: false);
-      PteriscopeFunction.PtriscopeSnackBar(
+      Shared.showPSSnackBar(
           context,
           'Registrando paciente...',
           SnackBarType.loading,
@@ -127,7 +128,7 @@ class _NewPatientState extends State<NewPatient> {
           email: _emailController.text));
 
       if (patient != null) {
-        PteriscopeFunction.PtriscopeSnackBar(
+        Shared.showPSSnackBar(
             context,
             'Registro exitoso',
             SnackBarType.onlyText,
@@ -139,26 +140,26 @@ class _NewPatientState extends State<NewPatient> {
           ),
         );
       } else {
-        PteriscopeFunction.PtriscopeSnackBar(
+        Shared.showPSSnackBar(
             context,
             'Registro fallido',
             SnackBarType.onlyText,
             AppConstants.shortSnackBarDuration);
       }
-    } on PteriscopeException catch(e){
-      PteriscopeFunction.PtriscopeSnackBar(
+    } on PsException catch(e){
+      Shared.showPSSnackBar(
           context,
           'Error: ${e.message}',
           SnackBarType.onlyText,
           AppConstants.shortSnackBarDuration);
     } on SocketException catch(_) {
-      PteriscopeFunction.PtriscopeSnackBar(
+      Shared.showPSSnackBar(
           context,
           'Hubo un error al tratar de conectarse al servidor. Inténtelo más tarde, por favor',
           SnackBarType.onlyText,
           AppConstants.shortSnackBarDuration);
     } catch (e) {
-      PteriscopeFunction.PtriscopeSnackBar(
+      Shared.showPSSnackBar(
           context,
           'Registro fallido',
           SnackBarType.onlyText,
@@ -172,8 +173,8 @@ class _NewPatientState extends State<NewPatient> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const PteriscopeAppBar(title: 'Nuevo paciente'),
-      drawer: const PteriscopeMenuBar(currentView: PteriscopeScreen.newPatient),
+      appBar: const PsAppBar(title: 'Nuevo paciente', titleSize: AppConstants.bigAppBarTitleSize),
+      drawer: const PsMenuBar(currentView: CurrentScreen.newPatient),
       body: SingleChildScrollView(
         child: Card(
           elevation: 0,
@@ -186,7 +187,7 @@ class _NewPatientState extends State<NewPatient> {
             child: Column(
               children: <Widget>[
                 const SizedBox(height: 15),
-                PteriscopeTextField(
+                PsTextField(
                     controller: _nameController,
                     hintText: 'Nombre',
                     obscureText: false,
@@ -194,7 +195,7 @@ class _NewPatientState extends State<NewPatient> {
                     isValid: nameValidations.every((validation) => validation.isValid),
                     validations: nameValidations),
                 const SizedBox(height: 15),
-                PteriscopeTextField(
+                PsTextField(
                     controller: _lastNameController,
                     hintText: 'Apellidos',
                     obscureText: false,
@@ -202,7 +203,7 @@ class _NewPatientState extends State<NewPatient> {
                     isValid: lastnameValidations.every((validation) => validation.isValid),
                     validations: lastnameValidations),
                 const SizedBox(height: 15),
-                PteriscopeTextField(
+                PsTextField(
                     controller: _dniController,
                     hintText: 'DNI',
                     obscureText: false,
@@ -210,7 +211,7 @@ class _NewPatientState extends State<NewPatient> {
                     isValid: dniValidations.every((validation) => validation.isValid),
                     validations: dniValidations),
                 const SizedBox(height: 15),
-                PteriscopeTextField(
+                PsTextField(
                     controller: _ageController,
                     hintText: 'Edad',
                     obscureText: false,
@@ -218,7 +219,7 @@ class _NewPatientState extends State<NewPatient> {
                     isValid: ageValidations.every((validation) => validation.isValid),
                     validations: ageValidations),
                 const SizedBox(height: 15),
-                PteriscopeTextField(
+                PsTextField(
                     controller: _emailController,
                     hintText: 'Email',
                     obscureText: false,
@@ -226,7 +227,7 @@ class _NewPatientState extends State<NewPatient> {
                     isValid: emailValidations.every((validation) => validation.isValid),
                     validations: emailValidations),
                 const SizedBox(height: 75),
-                PteriscopeElevatedButton(
+                PsElevatedButton(
                     width: MediaQuery.of(context).size.width,
                     enabled: _isButtonDisabled,
                     onTap: _isButtonDisabled ? null : _register,

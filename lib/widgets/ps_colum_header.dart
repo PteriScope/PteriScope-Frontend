@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:pteriscope_frontend/util/constants.dart';
 
-class PteriScopeColumnHeader extends StatelessWidget {
+class PsColumnHeader extends StatelessWidget {
   final String firstTitle;
   final String secondTitle;
   final String thirdTitle;
 
-  const PteriScopeColumnHeader({
+  const PsColumnHeader({
     Key? key,
     required this.firstTitle,
     required this.secondTitle,

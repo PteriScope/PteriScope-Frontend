@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:image/image.dart' as img;
 
-import '../models/patient.dart';
+import '../../models/patient.dart';
 import 'confirm_picture_screen.dart';
 
 class CameraScreen extends StatefulWidget {

@@ -2,16 +2,17 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:pteriscope_frontend/screens/registration_screen.dart';
+import 'package:pteriscope_frontend/screens/authentication/registration_screen.dart';
 import 'package:pteriscope_frontend/services/api_service.dart';
-import 'package:pteriscope_frontend/widgets/pteriscope_elevated_button.dart';
-import 'package:pteriscope_frontend/widgets/pteriscope_text_field.dart';
+import 'package:pteriscope_frontend/widgets/ps_elevated_button.dart';
+import 'package:pteriscope_frontend/widgets/ps_text_field.dart';
 
-import '../models/validation.dart';
-import '../util/constants.dart';
-import '../util/pteriscope_exception.dart';
-import '../util/pteriscope_function.dart';
-import 'home_screen.dart';
+import '../../util/enum/snack_bar_type.dart';
+import '../../util/shared.dart';
+import '../../util/validation.dart';
+import '../../util/constants.dart';
+import '../../util/ps_exception.dart';
+import '../home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -70,11 +71,11 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     try {
-      bool _ = await PteriscopeFunction.checkConnectivity();
+      bool _ = await Shared.checkConnectivity();
 
       var apiService = Provider.of<ApiService>(context, listen: false);
 
-      PteriscopeFunction.PtriscopeSnackBar(
+      Shared.showPSSnackBar(
           context,
           'Se está procesando su solicitud\nEspere un momento por favor',
           SnackBarType.loading,
@@ -87,26 +88,26 @@ class _LoginScreenState extends State<LoginScreen> {
         Navigator.of(context).pushReplacement(
             MaterialPageRoute(builder: (_) => const HomeScreen()));
       } else {
-        PteriscopeFunction.PtriscopeSnackBar(
+        Shared.showPSSnackBar(
             context,
             'Credenciales incorrectas',
             SnackBarType.onlyText,
             AppConstants.shortSnackBarDuration);
       }
-    } on PteriscopeException catch(e){
-      PteriscopeFunction.PtriscopeSnackBar(
+    } on PsException catch(e){
+      Shared.showPSSnackBar(
           context,
           'Error: ${e.message}',
           SnackBarType.onlyText,
           AppConstants.shortSnackBarDuration);
     } on SocketException catch(_) {
-      PteriscopeFunction.PtriscopeSnackBar(
+      Shared.showPSSnackBar(
           context,
           'Hubo un error al tratar de conectarse al servidor. Inténtelo más tarde, por favor',
           SnackBarType.onlyText,
           AppConstants.shortSnackBarDuration);
     } catch (e) {
-      PteriscopeFunction.PtriscopeSnackBar(
+      Shared.showPSSnackBar(
           context,
           'Inicio de sesión fallido',
           SnackBarType.onlyText,
@@ -136,7 +137,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     fontWeight: FontWeight.bold,
                     color: Colors.black)),
             const SizedBox(height: 20),
-            PteriscopeTextField(
+            PsTextField(
                 controller: _dniController,
                 hintText: 'DNI',
                 obscureText: false,
@@ -144,7 +145,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 isValid: dniValidations.every((validation) => validation.isValid),
                 validations: dniValidations),
             const SizedBox(height: 20),
-            PteriscopeTextField(
+            PsTextField(
                 controller: _passwordController,
                 hintText: 'Contraseña',
                 obscureText: true,
@@ -152,7 +153,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 isValid: passwordValidations.every((validation) => validation.isValid),
                 validations: passwordValidations),
             const SizedBox(height: 20),
-            PteriscopeElevatedButton(
+            PsElevatedButton(
                 width: MediaQuery.of(context).size.width,
                 enabled: _isButtonDisabled,
                 onTap: _isButtonDisabled ? null : _login,

@@ -2,18 +2,18 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:pteriscope_frontend/screens/new_patient_screen.dart';
+import 'package:pteriscope_frontend/screens/patient/new_patient_screen.dart';
+import 'package:pteriscope_frontend/screens/patient/patient_detail_screen.dart';
 import 'package:pteriscope_frontend/util/constants.dart';
-import 'package:pteriscope_frontend/screens/patient_detail_screen.dart';
 import 'package:pteriscope_frontend/services/api_service.dart';
-import 'package:pteriscope_frontend/widgets/pteriscope_app_bar.dart';
-import 'package:pteriscope_frontend/widgets/pteriscope_menu_bar.dart';
+import 'package:pteriscope_frontend/widgets/ps_app_bar.dart';
+import 'package:pteriscope_frontend/widgets/ps_menu_bar.dart';
 
 import '../models/patient.dart';
-import '../util/pteriscope_screen.dart';
+import '../util/enum/current_screen.dart';
 import '../util/shared.dart';
-import '../widgets/pteriscope_colum_header.dart';
-import '../widgets/pteriscope_header.dart';
+import '../widgets/ps_colum_header.dart';
+import '../widgets/ps_header.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -79,11 +79,12 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: const PteriscopeAppBar(title: 'PteriScope'),
-        drawer: const PteriscopeMenuBar(currentView: PteriscopeScreen.patientList),
+        appBar: const PsAppBar(
+            title: 'PteriScope', titleSize: AppConstants.bigAppBarTitleSize),
+        drawer: const PsMenuBar(currentView: CurrentScreen.patientList),
         body: Column(
           children: [
-            PteriscopeHeader(
+            PsHeader(
               title: 'Lista de pacientes',
               subtitle: 'Total de pacientes: ${totalPatients ?? 0}',
               buttonTitle: 'Nuevo paciente',
@@ -143,7 +144,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildPatientList() {
     return Column(
       children: [
-        const PteriScopeColumnHeader(
+        const PsColumnHeader(
           firstTitle: 'Datos del paciente',
           secondTitle: 'Última revisión',
           thirdTitle: 'Resultado',
@@ -156,76 +157,99 @@ class _HomeScreenState extends State<HomeScreen> {
               });
               loadPatients();
             },
-            child: ListView.builder(
-              itemCount:
-                  _filterPatients(patients, _searchController.text).length,
-              itemBuilder: (context, index) {
-                final patient =
-                    _filterPatients(patients, _searchController.text)[index];
+            child: patients.isEmpty
+                ? const Padding(
+                    padding: EdgeInsets.only(
+                        left: AppConstants.padding,
+                        right: AppConstants.padding,
+                        bottom: AppConstants.padding,
+                        top: AppConstants.padding * 8),
+                    child: Text(
+                      // TODO: Verificar texto
+                      "Aún no ha creado a ningún paciente.\n\nPresiona el botón “Nuevo paciente” para añadir uno",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontSize: 25,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey),
+                    ),
+                  )
+                : ListView.builder(
+                    itemCount: _filterPatients(patients, _searchController.text)
+                        .length,
+                    itemBuilder: (context, index) {
+                      final patient = _filterPatients(
+                          patients, _searchController.text)[index];
 
-                String? lastReviewDate = patient.lastReviewDate != null
-                    ? DateFormat('dd/MM/yyyy').format(patient.lastReviewDate!)
-                    : '-';
+                      String? lastReviewDate = patient.lastReviewDate != null
+                          ? DateFormat('dd/MM/yyyy')
+                              .format(patient.lastReviewDate!)
+                          : '-';
 
-                String? lastReviewResult = patient.lastReviewResult ?? '-';
+                      String? lastReviewResult =
+                          patient.lastReviewResult ?? '-';
 
-                return InkWell(
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            PatientDetailScreen(patient: patient),
-                      ),
-                    );
-                  },
-                  child: Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(AppConstants.padding / 2.0),
-                      child: Row(
-                        children: <Widget>[
-                          Expanded(
-                            flex: 2,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
+                      return InkWell(
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  PatientDetailScreen(patient: patient),
+                            ),
+                          );
+                        },
+                        child: Card(
+                          child: Padding(
+                            padding: const EdgeInsets.all(
+                                AppConstants.padding / 2.0),
+                            child: Row(
                               children: <Widget>[
-                                Text('${patient.firstName} ${patient.lastName}',
+                                Expanded(
+                                  flex: 2,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: <Widget>[
+                                      Text(
+                                          '${patient.firstName} ${patient.lastName}',
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.bold)),
+                                      Text(
+                                        patient.email,
+                                        style: const TextStyle(fontSize: 10),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Expanded(
+                                  flex: 1,
+                                  child: Center(
+                                      child: Text(
+                                    lastReviewDate,
                                     style: const TextStyle(
-                                        fontWeight: FontWeight.bold)),
-                                Text(
-                                  patient.email,
-                                  style: const TextStyle(fontSize: 10),
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold),
+                                  )),
+                                ),
+                                Expanded(
+                                  flex: 1,
+                                  child: Center(
+                                      child: Text(
+                                    lastReviewResult,
+                                    style: TextStyle(
+                                        fontSize: 10,
+                                        color: Shared.getColorResult(
+                                            lastReviewResult),
+                                        fontWeight: FontWeight.bold),
+                                  )),
                                 ),
                               ],
                             ),
                           ),
-                          Expanded(
-                            flex: 1,
-                            child: Center(
-                                child: Text(
-                              lastReviewDate,
-                              style: const TextStyle(
-                                  fontSize: 10, fontWeight: FontWeight.bold),
-                            )),
-                          ),
-                          Expanded(
-                            flex: 1,
-                            child: Center(
-                                child: Text(
-                              lastReviewResult,
-                              style: TextStyle(
-                                  fontSize: 10,
-                                  color:
-                                      Shared.getColorResult(lastReviewResult),
-                                  fontWeight: FontWeight.bold),
-                            )),
-                          ),
-                        ],
-                      ),
-                    ),
+                        ),
+                      );
+                    },
                   ),
-                );
-              },
-            ),
           ),
         ),
       ],

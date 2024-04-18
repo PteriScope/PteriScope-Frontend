@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 
 import '../screens/home_screen.dart';
 import '../util/constants.dart';
-import '../util/shared.dart';
 
-class PteriscopeAppBar extends StatelessWidget implements PreferredSizeWidget {
+class PsAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
+  final double titleSize;
 
-  const PteriscopeAppBar({
+  const PsAppBar({
     super.key,
     required this.title,
+    required this.titleSize
   });
 
   @override
@@ -17,8 +18,8 @@ class PteriscopeAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       title: Text(
         title,
-        style: const TextStyle(
-            fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),
+        style: TextStyle(
+            fontSize: titleSize, fontWeight: FontWeight.bold, color: Colors.white),
       ),
       leading: IconButton(
         icon: const Icon(Icons.menu),

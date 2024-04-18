@@ -3,15 +3,15 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pteriscope_frontend/models/register_user.dart';
-import 'package:pteriscope_frontend/util/pteriscope_exception.dart';
-import 'package:pteriscope_frontend/widgets/pteriscope_text_field.dart';
+import 'package:pteriscope_frontend/util/ps_exception.dart';
+import 'package:pteriscope_frontend/widgets/ps_text_field.dart';
 
-import '../models/validation.dart';
-import '../services/api_service.dart';
-import '../util/constants.dart';
-import '../widgets/pteriscope_elevated_button.dart';
-import '../util/pteriscope_function.dart';
-
+import '../../util/enum/snack_bar_type.dart';
+import '../../util/shared.dart';
+import '../../util/validation.dart';
+import '../../services/api_service.dart';
+import '../../util/constants.dart';
+import '../../widgets/ps_elevated_button.dart';
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({super.key});
 
@@ -107,10 +107,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     });
 
     try {
-      bool _ = await PteriscopeFunction.checkConnectivity();
+      bool _ = await Shared.checkConnectivity();
 
       var apiService = Provider.of<ApiService>(context, listen: false);
-      PteriscopeFunction.PtriscopeSnackBar(
+      Shared.showPSSnackBar(
           context,
           'Registrando...',
           SnackBarType.loading,
@@ -123,33 +123,33 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           position: _positionController.text));
 
       if (registered) {
-        PteriscopeFunction.PtriscopeSnackBar(
+        Shared.showPSSnackBar(
             context,
             'Registro exitoso',
             SnackBarType.onlyText,
             AppConstants.shortSnackBarDuration);
         Navigator.of(context).pop();
       } else {
-        PteriscopeFunction.PtriscopeSnackBar(
+        Shared.showPSSnackBar(
             context,
             'Registro fallido',
             SnackBarType.onlyText,
             AppConstants.shortSnackBarDuration);
       }
-    } on PteriscopeException catch(e){
-      PteriscopeFunction.PtriscopeSnackBar(
+    } on PsException catch(e){
+      Shared.showPSSnackBar(
           context,
           'Error: ${e.message}',
           SnackBarType.onlyText,
           AppConstants.shortSnackBarDuration);
     } on SocketException catch(_) {
-      PteriscopeFunction.PtriscopeSnackBar(
+      Shared.showPSSnackBar(
           context,
           'Hubo un error al tratar de conectarse al servidor. Inténtelo más tarde, por favor',
           SnackBarType.onlyText,
           AppConstants.shortSnackBarDuration);
     } catch (e) {
-      PteriscopeFunction.PtriscopeSnackBar(
+      Shared.showPSSnackBar(
           context,
           'Registro fallido',
           SnackBarType.onlyText,
@@ -180,7 +180,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       fontWeight: FontWeight.bold,
                       color: Colors.black)),
               const SizedBox(height: 15),
-              PteriscopeTextField(
+              PsTextField(
                   controller: _nameController,
                   hintText: 'Nombres completos',
                   obscureText: false,
@@ -188,7 +188,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   isValid: nameValidations.every((validation) => validation.isValid),
                   validations: nameValidations),
               const SizedBox(height: 15),
-              PteriscopeTextField(
+              PsTextField(
                   controller: _dniController,
                   hintText: 'DNI',
                   obscureText: false,
@@ -196,7 +196,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   isValid: dniValidations.every((validation) => validation.isValid),
                   validations: dniValidations),
               const SizedBox(height: 15),
-              PteriscopeTextField(
+              PsTextField(
                   controller: _passwordController,
                   hintText: 'Contraseña',
                   obscureText: true,
@@ -204,7 +204,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   isValid: passwordValidations.every((validation) => validation.isValid),
                   validations: passwordValidations),
               const SizedBox(height: 15),
-              PteriscopeTextField(
+              PsTextField(
                   controller: _hospitalController,
                   hintText: 'Hospital',
                   obscureText: false,
@@ -212,7 +212,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   isValid: hospitalValidations.every((validation) => validation.isValid),
                   validations: hospitalValidations),
               const SizedBox(height: 15),
-              PteriscopeTextField(
+              PsTextField(
                   controller: _positionController,
                   hintText: 'Cargo',
                   obscureText: false,
@@ -220,7 +220,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   isValid: positionValidations.every((validation) => validation.isValid),
                   validations: positionValidations),
               const SizedBox(height: 95),
-              PteriscopeElevatedButton(
+              PsElevatedButton(
                   width: MediaQuery.of(context).size.width,
                   enabled: _isButtonDisabled,
                   onTap: _isButtonDisabled ? null : _register,

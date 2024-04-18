@@ -1,4 +1,4 @@
-enum PteriscopeScreen{
+enum CurrentScreen{
   patientList,
   newPatient,
   profile,

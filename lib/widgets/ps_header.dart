@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:pteriscope_frontend/util/constants.dart';
 
-class PteriscopeHeader extends StatelessWidget {
+class PsHeader extends StatelessWidget {
   final String title;
   final String subtitle;
   final String buttonTitle;
   final VoidCallback action;
 
-  const PteriscopeHeader({
+  const PsHeader({
     Key? key,
     required this.title,
     required this.subtitle,

@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:pteriscope_frontend/models/register_patient.dart';
 import 'package:pteriscope_frontend/models/register_user.dart';
 import 'package:pteriscope_frontend/services/shared_preferences_service.dart';
-import 'package:pteriscope_frontend/util/pteriscope_exception.dart';
+import 'package:pteriscope_frontend/util/ps_exception.dart';
 import 'dart:convert';
 
 import '../models/patient.dart';
@@ -68,7 +68,7 @@ class ApiService with ChangeNotifier {
       return false;
     } else {
       var decodedResponse = utf8.decode(response.bodyBytes);
-      throw PteriscopeException(decodedResponse);
+      throw PsException(decodedResponse);
     }
   }
 
@@ -139,7 +139,8 @@ class ApiService with ChangeNotifier {
   Future<Review> getLatestReviewFromPatient(int patientId) async {
     final headers = await _getAuthHeaders();
     Review latestReview = Review();
-    var decodedResponse;
+    String decodedResponse;
+    // TODO: DEPURAR PARA SABER TIPO DE DATO
     var jsonResponse;
     var _ = await http.get(
       Uri.parse('$baseUrl/patients/$patientId/latest_reviews'),

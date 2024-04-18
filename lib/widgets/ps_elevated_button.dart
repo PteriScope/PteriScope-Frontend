@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 
 import '../util/constants.dart';
 
-class PteriscopeElevatedButton extends StatelessWidget {
+class PsElevatedButton extends StatelessWidget {
   final double width;
   final bool enabled;
   final Function()? onTap;
   final String text;
 
-  const PteriscopeElevatedButton({
+  const PsElevatedButton({
     super.key,
     required this.width,
     required this.enabled,

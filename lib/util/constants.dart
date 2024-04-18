@@ -16,4 +16,7 @@ class AppConstants {
 
   static const int longSnackBarDuration = 30;
   static const int shortSnackBarDuration = 5;
+
+  static const double bigAppBarTitleSize = 30;
+  static const double smallAppBarTitleSize = 20;
 }

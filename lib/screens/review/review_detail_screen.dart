@@ -4,16 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pteriscope_frontend/models/patient.dart';
 import 'package:pteriscope_frontend/models/specialist.dart';
-import 'package:pteriscope_frontend/screens/patient_detail_screen.dart';
 import 'package:pteriscope_frontend/services/shared_preferences_service.dart';
-import 'package:pteriscope_frontend/widgets/pteriscope_app_bar.dart';
+import 'package:pteriscope_frontend/widgets/ps_app_bar.dart';
 
-import '../models/review.dart';
-import '../services/api_service.dart';
-import '../util/constants.dart';
-import '../util/pteriscope_screen.dart';
-import '../util/shared.dart';
-import '../widgets/pteriscope_menu_bar.dart';
+import '../../models/review.dart';
+import '../../services/api_service.dart';
+import '../../util/constants.dart';
+import '../../util/enum/current_screen.dart';
+import '../../util/shared.dart';
+import '../../widgets/ps_menu_bar.dart';
+import '../patient/patient_detail_screen.dart';
 
 class ReviewDetailScreen extends StatefulWidget {
   final Review review;
@@ -49,9 +49,9 @@ class _ReviewDetailScreenState extends State<ReviewDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PteriscopeAppBar(
-          title: '${widget.patient.firstName} ${widget.patient.lastName}'),
-      drawer: const PteriscopeMenuBar(currentView: PteriscopeScreen.other),
+      appBar: PsAppBar(
+          title: '${widget.patient.firstName} ${widget.patient.lastName}', titleSize: AppConstants.smallAppBarTitleSize),
+      drawer: const PsMenuBar(currentView: CurrentScreen.other),
       body: Stack(children: [
         Card(
           child: Column(

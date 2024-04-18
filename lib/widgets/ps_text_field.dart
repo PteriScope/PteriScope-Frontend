@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:just_the_tooltip/just_the_tooltip.dart';
 
-import '../models/validation.dart';
+import '../util/validation.dart';
 import '../util/constants.dart';
 
-class PteriscopeTextField extends StatelessWidget {
+class PsTextField extends StatelessWidget {
   final TextEditingController controller;
   final String hintText;
   final bool obscureText;
@@ -12,7 +12,7 @@ class PteriscopeTextField extends StatelessWidget {
   final bool isValid;
   final List<Validation> validations;
 
-  const PteriscopeTextField({
+  const PsTextField({
     super.key,
     required this.controller,
     required this.hintText,

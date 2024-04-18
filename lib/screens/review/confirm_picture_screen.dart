@@ -2,11 +2,11 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:pteriscope_frontend/screens/review_detail_screen.dart';
+import 'package:pteriscope_frontend/screens/review/review_detail_screen.dart';
 
-import '../models/patient.dart';
-import '../models/review.dart';
-import '../services/api_service.dart';
+import '../../../models/patient.dart';
+import '../../../models/review.dart';
+import '../../../services/api_service.dart';
 
 class ConfirmPictureScreen extends StatefulWidget {
   final String imageBase64;

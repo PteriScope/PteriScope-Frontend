@@ -3,20 +3,20 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:pteriscope_frontend/screens/camera_screen.dart';
-import 'package:pteriscope_frontend/screens/review_detail_screen.dart';
+import 'package:pteriscope_frontend/screens/review/camera_screen.dart';
+import 'package:pteriscope_frontend/screens/review/review_detail_screen.dart';
 import 'package:pteriscope_frontend/services/api_service.dart';
-import 'package:pteriscope_frontend/widgets/pteriscope_app_bar.dart';
-import 'package:pteriscope_frontend/widgets/pteriscope_colum_header.dart';
-import 'package:pteriscope_frontend/widgets/pteriscope_header.dart';
+import 'package:pteriscope_frontend/widgets/ps_app_bar.dart';
+import 'package:pteriscope_frontend/widgets/ps_colum_header.dart';
+import 'package:pteriscope_frontend/widgets/ps_header.dart';
 
-import '../models/patient.dart';
-import '../models/review.dart';
-import '../util/constants.dart';
-import '../util/pteriscope_screen.dart';
-import '../util/shared.dart';
-import '../widgets/pteriscope_menu_bar.dart';
-import 'home_screen.dart';
+import '../../models/patient.dart';
+import '../../models/review.dart';
+import '../../util/constants.dart';
+import '../../widgets/ps_menu_bar.dart';
+import '../../util/enum/current_screen.dart';
+import '../../util/shared.dart';
+import '../home_screen.dart';
 
 class PatientDetailScreen extends StatefulWidget {
   final Patient patient;
@@ -67,11 +67,11 @@ class _PatientDetailScreen extends State<PatientDetailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar:
-          PteriscopeAppBar(title: '${patient.firstName} ${patient.lastName}'),
-      drawer: const PteriscopeMenuBar(currentView: PteriscopeScreen.other),
+          PsAppBar(title: '${patient.firstName} ${patient.lastName}', titleSize: AppConstants.smallAppBarTitleSize,),
+      drawer: const PsMenuBar(currentView: CurrentScreen.other),
       body: Column(
         children: [
-          PteriscopeHeader(
+          PsHeader(
             title: 'Revisiones',
             subtitle: 'Total de revisiones: ${totalReviews ?? 0}',
             buttonTitle: 'Nueva revisión',
@@ -142,7 +142,7 @@ class _PatientDetailScreen extends State<PatientDetailScreen> {
   Widget _buildReviewList() {
     return Column(
       children: [
-        const PteriScopeColumnHeader(
+        const PsColumnHeader(
           firstTitle: 'Imagen',
           secondTitle: 'Fecha',
           thirdTitle: 'Resultado',
