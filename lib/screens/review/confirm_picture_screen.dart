@@ -7,6 +7,8 @@ import 'package:pteriscope_frontend/screens/review/review_detail_screen.dart';
 import '../../../models/patient.dart';
 import '../../../models/review.dart';
 import '../../../services/api_service.dart';
+import '../../util/ps_exception.dart';
+import '../../util/shared.dart';
 
 class ConfirmPictureScreen extends StatefulWidget {
   final String imageBase64;
@@ -96,6 +98,8 @@ class _ConfirmPictureScreenState extends State<ConfirmPictureScreen> {
     );
 
     try {
+      bool _ = await Shared.checkConnectivity();
+
       String reviewResponse =
           await Provider.of<ApiService>(context, listen: false).createReview(
               widget.patient.id, {'imageBase64': widget.imageBase64});
@@ -122,7 +126,7 @@ class _ConfirmPictureScreenState extends State<ConfirmPictureScreen> {
           builder: (BuildContext dialogContext) {
             return AlertDialog(
               title: const Text('Error'),
-              content: Text('Error al crear la revisión: $e'),
+              content: Text('Error al crear la revisión: ${e is PsException ? e.message : "Inténtelo más tarde, por favor"}'),
               actions: <Widget>[
                 TextButton(
                   child: const Text('Cerrar'),

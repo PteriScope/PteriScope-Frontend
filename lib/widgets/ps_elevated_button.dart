@@ -4,14 +4,14 @@ import '../util/constants.dart';
 
 class PsElevatedButton extends StatelessWidget {
   final double width;
-  final bool enabled;
+  final bool disabled;
   final Function()? onTap;
   final String text;
 
   const PsElevatedButton({
     super.key,
     required this.width,
-    required this.enabled,
+    required this.disabled,
     required this.onTap,
     required this.text,
   });
@@ -22,7 +22,7 @@ class PsElevatedButton extends StatelessWidget {
       height: 55,
       width: width,
       child: ElevatedButton(
-        onPressed: enabled ? null : onTap,
+        onPressed: disabled ? null : onTap,
         style: ElevatedButton.styleFrom(
             backgroundColor: AppConstants.primaryColor,
             shape: RoundedRectangleBorder(

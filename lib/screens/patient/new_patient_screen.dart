@@ -229,7 +229,7 @@ class _NewPatientState extends State<NewPatient> {
                 const SizedBox(height: 75),
                 PsElevatedButton(
                     width: MediaQuery.of(context).size.width,
-                    enabled: _isButtonDisabled,
+                    disabled: _isButtonDisabled,
                     onTap: _isButtonDisabled ? null : _register,
                     text: 'Crear paciente'),
                 const SizedBox(height: 75),

@@ -6,7 +6,9 @@ import 'package:pteriscope_frontend/screens/patient/new_patient_screen.dart';
 import 'package:pteriscope_frontend/screens/patient/patient_detail_screen.dart';
 import 'package:pteriscope_frontend/util/constants.dart';
 import 'package:pteriscope_frontend/services/api_service.dart';
+import 'package:pteriscope_frontend/util/ps_exception.dart';
 import 'package:pteriscope_frontend/widgets/ps_app_bar.dart';
+import 'package:pteriscope_frontend/widgets/ps_elevated_button_icon.dart';
 import 'package:pteriscope_frontend/widgets/ps_menu_bar.dart';
 
 import '../models/patient.dart';
@@ -27,7 +29,8 @@ class _HomeScreenState extends State<HomeScreen> {
   int? totalPatients;
   ApiService apiService = ApiService();
   bool loading = true;
-  bool error = false;
+  bool serverError = false;
+  bool internetError = false;
   String searchQuery = "";
   final TextEditingController _searchController = TextEditingController();
 
@@ -57,7 +60,13 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void loadPatients() async {
+    setState(() {
+      loading = true;
+    });
+
     try {
+      bool __ = await Shared.checkConnectivity();
+
       var _ = await apiService
           .getPatientsFromSpecialist()
           .then((patientsResponse) async => {
@@ -65,12 +74,20 @@ class _HomeScreenState extends State<HomeScreen> {
                   patients = patientsResponse;
                   totalPatients = patients.length;
                   loading = false;
+                  serverError = false;
+                  internetError = false;
                 })
               });
+    } on PsException catch (e) {
+      setState(() {
+        loading = false;
+        internetError = true;
+        log(e.toString());
+      });
     } catch (e) {
       setState(() {
         loading = false;
-        error = true;
+        serverError = true;
         log(e.toString());
       });
     }
@@ -130,12 +147,36 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             Expanded(
               child: Card(
-                child: loading
-                    ? const Center(child: CircularProgressIndicator())
-                    : error == true
-                        ? const Center(child: Text("Error al cargar los datos"))
-                        : _buildPatientList(),
-              ),
+                  child: loading
+                      ? const Center(child: CircularProgressIndicator())
+                      : !internetError && !serverError
+                          ? _buildPatientList()
+                          : Center(
+                              child: Padding(
+                              padding: const EdgeInsetsDirectional.symmetric(
+                                  horizontal: 5 * AppConstants.padding,
+                                  vertical: AppConstants.padding),
+                              child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      "Error al cargar los datos. ${internetError ? "Compruebe su conexión a Internet" : "Inténtelo más tarde, por favor"} ",
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.grey),
+                                    ),
+                                    const SizedBox(height: 20),
+                                    PsElevatedButtonIcon(
+                                        isPrimary: true,
+                                        icon: Icons.refresh,
+                                        text: "Reintentar",
+                                        onTap: () {
+                                          loadPatients();
+                                        })
+                                  ]),
+                            ))),
             )
           ],
         ));
@@ -152,9 +193,6 @@ class _HomeScreenState extends State<HomeScreen> {
         Expanded(
           child: RefreshIndicator(
             onRefresh: () async {
-              setState(() {
-                loading = true;
-              });
               loadPatients();
             },
             child: patients.isEmpty

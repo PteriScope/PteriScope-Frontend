@@ -222,7 +222,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               const SizedBox(height: 95),
               PsElevatedButton(
                   width: MediaQuery.of(context).size.width,
-                  enabled: _isButtonDisabled,
+                  disabled: _isButtonDisabled,
                   onTap: _isButtonDisabled ? null : _register,
                   text: 'Crear cuenta'),
               TextButton(

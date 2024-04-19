@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pteriscope_frontend/util/constants.dart';
+import 'package:pteriscope_frontend/widgets/ps_elevated_button_icon.dart';
 
 class PsHeader extends StatelessWidget {
   final String title;
@@ -43,17 +44,12 @@ class PsHeader extends StatelessWidget {
               ),
             ],
           ),
-          ElevatedButton.icon(
-            onPressed: action,
-            icon: const Icon(Icons.add),
-            label: Text(buttonTitle),
-            style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 12.0,
-                vertical: 8.0,
-              ),
-            ),
-          ),
+          PsElevatedButtonIcon(
+              isPrimary: false,
+              icon: Icons.add,
+              text: buttonTitle,
+              onTap: action
+          )
         ],
       ),
     );

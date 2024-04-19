@@ -155,7 +155,7 @@ class _LoginScreenState extends State<LoginScreen> {
             const SizedBox(height: 20),
             PsElevatedButton(
                 width: MediaQuery.of(context).size.width,
-                enabled: _isButtonDisabled,
+                disabled: _isButtonDisabled,
                 onTap: _isButtonDisabled ? null : _login,
                 text: 'Ingresar'),
             TextButton(
