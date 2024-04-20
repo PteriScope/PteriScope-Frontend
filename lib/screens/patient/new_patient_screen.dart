@@ -19,14 +19,14 @@ import '../../widgets/ps_menu_bar.dart';
 import '../../widgets/ps_text_field.dart';
 import '../home_screen.dart';
 
-class NewPatient extends StatefulWidget {
-  const NewPatient({super.key});
+class NewPatientScreen extends StatefulWidget {
+  const NewPatientScreen({super.key});
 
   @override
-  State<NewPatient> createState() => _NewPatientState();
+  State<NewPatientScreen> createState() => _NewPatientScreenState();
 }
 
-class _NewPatientState extends State<NewPatient> {
+class _NewPatientScreenState extends State<NewPatientScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _dniController = TextEditingController();

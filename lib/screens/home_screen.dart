@@ -108,7 +108,7 @@ class _HomeScreenState extends State<HomeScreen> {
               action: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => const NewPatient(),
+                    builder: (context) => const NewPatientScreen(),
                   ),
                 );
               },

@@ -159,7 +159,7 @@ class _PatientDetailScreen extends State<PatientDetailScreen> {
                         child: const Icon(Icons.delete, color: Colors.white),
                       ),
                       FloatingActionButton(
-                        heroTag: 'backToPatient',
+                        heroTag: 'backToHomeFromPatient',
                         backgroundColor: AppConstants.primaryColor,
                         onPressed: () => {
                           Navigator.of(context).push(

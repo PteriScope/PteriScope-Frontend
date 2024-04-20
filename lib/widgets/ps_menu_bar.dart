@@ -3,6 +3,7 @@ import 'package:pteriscope_frontend/util/enum/current_screen.dart';
 
 import '../screens/home_screen.dart';
 import '../screens/patient/new_patient_screen.dart';
+import '../screens/specialist/profile_screen.dart';
 import '../util/constants.dart';
 import '../util/shared.dart';
 
@@ -45,7 +46,7 @@ class PsMenuBar extends StatelessWidget {
                 if(currentView != CurrentScreen.newPatient) {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => const NewPatient(),
+                      builder: (context) => const NewPatientScreen(),
                     ),
                   );
                 }
@@ -57,7 +58,13 @@ class PsMenuBar extends StatelessWidget {
               text: 'Perfil',
               isSelected: currentView == CurrentScreen.profile,
               onTap: () {
-                // TODO
+                if(currentView != CurrentScreen.profile) {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const ProfileScreen(),
+                    ),
+                  );
+                }
               },
             ),
             _buildMenuItem(

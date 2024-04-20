@@ -90,6 +90,25 @@ class ApiService with ChangeNotifier {
     }
   }
 
+  Future<Specialist> updateSpecialist(int specialistId, RegisterUser updatedSpecialist) async {
+    final headers = await _getAuthHeaders();
+    var response = await http.put(
+      Uri.parse('$baseUrl/specialists/update/$specialistId'),
+      headers: headers,
+      body: json.encode(updatedSpecialist.toJson())
+    );
+
+    if (response.statusCode == 200) {
+      var decodedResponse = utf8.decode(response.bodyBytes);
+      var jsonResponse = json.decode(decodedResponse);
+      Specialist specialist = Specialist.fromJson(jsonResponse);
+      notifyListeners();
+      return specialist;
+    } else {
+      throw Exception('Failed to update specialist data');
+    }
+  }
+
   Future<List<Patient>> getPatientsFromSpecialist() async {
     final specialistId = SharedPreferencesService().getId();
     final headers = await _getAuthHeaders();
