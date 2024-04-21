@@ -3,15 +3,18 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:pteriscope_frontend/screens/review/camera_screen.dart';
 import 'package:pteriscope_frontend/screens/review/review_detail_screen.dart';
 import 'package:pteriscope_frontend/services/api_service.dart';
+import 'package:pteriscope_frontend/util/enum/dialog_type.dart';
 import 'package:pteriscope_frontend/widgets/ps_app_bar.dart';
 import 'package:pteriscope_frontend/widgets/ps_colum_header.dart';
 import 'package:pteriscope_frontend/widgets/ps_header.dart';
 
 import '../../models/patient.dart';
 import '../../models/review.dart';
+import '../../services/shared_preferences_service.dart';
 import '../../util/constants.dart';
 import '../../util/ps_exception.dart';
 import '../../widgets/ps_elevated_button_icon.dart';
@@ -80,6 +83,54 @@ class _PatientDetailScreen extends State<PatientDetailScreen> {
     }
   }
 
+  void goToCameraScreen() async {
+    bool cameraAccessPermission = await Shared.checkCameraPermission();
+    bool isFirstAccessPermission = SharedPreferencesService().isFirstAccessPermission();
+
+    if (cameraAccessPermission || isFirstAccessPermission) {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => CameraScreen(patient: patient),
+        ),
+      );
+    } else {
+      Shared.showPsDialog(
+          context,
+          DialogType.error,
+          "La aplicación no cuenta con acceso a la cámara del dispositivo",
+          "Aceptar",
+          () => {
+                Navigator.of(context).pop(),
+                Permission.camera.onGrantedCallback(() {
+                  MaterialPageRoute(
+                    builder: (context) => CameraScreen(patient: patient),
+                  );
+                }).onLimitedCallback(() {
+                  MaterialPageRoute(
+                    builder: (context) => CameraScreen(patient: patient),
+                  );
+                }).onProvisionalCallback(() {
+                  MaterialPageRoute(
+                    builder: (context) => CameraScreen(patient: patient),
+                  );
+                }).onProvisionalCallback(() {
+                  MaterialPageRoute(
+                    builder: (context) => CameraScreen(patient: patient),
+                  );
+                }).request()
+              },
+          Icons.check_circle,
+        "Configuraciones",
+          () async {
+            if (await Permission.camera.isPermanentlyDenied) {
+              openAppSettings();
+            }
+          },
+        Icons.settings
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -94,13 +145,7 @@ class _PatientDetailScreen extends State<PatientDetailScreen> {
             title: 'Revisiones',
             subtitle: 'Total de revisiones: ${totalReviews ?? 0}',
             buttonTitle: 'Nueva revisión',
-            action: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => CameraScreen(patient: patient),
-                ),
-              );
-            },
+            action: goToCameraScreen,
           ),
           const Padding(
               padding: EdgeInsets.only(

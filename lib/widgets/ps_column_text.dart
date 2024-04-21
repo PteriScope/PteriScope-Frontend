@@ -12,6 +12,7 @@ class PsColumnText extends StatelessWidget {
     required this.isBold,
   });
 
+  // TODO: Llevar a review detail
   @override
   Widget build(BuildContext context) {
     return Container(

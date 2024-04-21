@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pteriscope_frontend/screens/patient/patient_detail_screen.dart';
 import 'package:pteriscope_frontend/screens/specialist/profile_screen.dart';
+import 'package:pteriscope_frontend/util/enum/dialog_type.dart';
 import 'package:pteriscope_frontend/widgets/ps_app_bar.dart';
 import 'package:pteriscope_frontend/widgets/ps_elevated_button_icon.dart';
 
@@ -70,15 +71,20 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   void _checkFields() {
     final nameSurnameValidation = _nameController.text
-        .split(' ')
-        .where((word) => word.isNotEmpty)
-        .length >= 3;
-    final nameAlphanumericValidation = RegExp(r'^[a-zA-Z0-9\s]+$').hasMatch(_nameController.text);
+            .split(' ')
+            .where((word) => word.isNotEmpty)
+            .length >=
+        3;
+    final nameAlphanumericValidation =
+        RegExp(r'^[a-zA-Z0-9\s]+$').hasMatch(_nameController.text);
 
     final passwordLengthValidation = _passwordController.text.length >= 8;
-    final passwordAlphabetValidation = RegExp(r'[a-zA-Z]').hasMatch(_passwordController.text);
-    final passwordNumberValidation = RegExp(r'\d').hasMatch(_passwordController.text);
-    final passwordSpecialCharacterValidation = RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(_passwordController.text);
+    final passwordAlphabetValidation =
+        RegExp(r'[a-zA-Z]').hasMatch(_passwordController.text);
+    final passwordNumberValidation =
+        RegExp(r'\d').hasMatch(_passwordController.text);
+    final passwordSpecialCharacterValidation =
+        RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(_passwordController.text);
 
     final hospitalLengthValidation = _hospitalController.text.length >= 3;
 
@@ -107,36 +113,19 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     });
   }
 
-  //TODO: make it widget
   void showConfirmDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Confirmación'),
-          content: Text('¿Estás seguro que deseas actualizar tus datos?'),
-          actionsAlignment: MainAxisAlignment.spaceBetween,
-          actions: [
-            PsElevatedButtonIcon(
-              isPrimary: false,
-              icon: Icons.cancel,
-              text: "Cancelar",
-              onTap: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            PsElevatedButtonIcon(
-              isPrimary: true,
-              icon: Icons.check_circle,
-              text: "Actualizar",
-              onTap: () {
-                _updateProfile();
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
+    Shared.showPsDialog(
+        context,
+        DialogType.confirmation,
+        "¿Estás seguro que deseas actualizar tus datos?",
+
+        "Actualizar",
+        () => {_updateProfile(), Navigator.of(context).pop()},
+        Icons.check_circle,
+
+        "Cancelar",
+        () => {Navigator.of(context).pop()},
+        Icons.cancel
     );
   }
 
@@ -156,41 +145,34 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           'Actualizando datos...',
           SnackBarType.loading,
           AppConstants.longSnackBarDuration);
-      Specialist? _ = await apiService.updateSpecialist(specialistId, RegisterUser(
-          name: _nameController.text,
-          dni: widget.specialist.dni,
-          password: _passwordController.text,
-          hospital: _hospitalController.text,
-          position: _positionController.text));
+      Specialist? _ = await apiService.updateSpecialist(
+          specialistId,
+          RegisterUser(
+              name: _nameController.text,
+              dni: widget.specialist.dni,
+              password: _passwordController.text,
+              hospital: _hospitalController.text,
+              position: _positionController.text));
 
-      Shared.showPSSnackBar(
-          context,
-          'Actualización exitosa',
-          SnackBarType.onlyText,
-          AppConstants.shortSnackBarDuration);
+      Shared.showPSSnackBar(context, 'Actualización exitosa',
+          SnackBarType.onlyText, AppConstants.shortSnackBarDuration);
 
       Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => const ProfileScreen(),
         ),
       );
-    } on PsException catch(e){
-      Shared.showPSSnackBar(
-          context,
-          'Error: ${e.message}',
-          SnackBarType.onlyText,
-          AppConstants.shortSnackBarDuration);
-    } on SocketException catch(_) {
+    } on PsException catch (e) {
+      Shared.showPSSnackBar(context, 'Error: ${e.message}',
+          SnackBarType.onlyText, AppConstants.shortSnackBarDuration);
+    } on SocketException catch (_) {
       Shared.showPSSnackBar(
           context,
           'Hubo un error al tratar de conectarse al servidor. Inténtelo más tarde, por favor',
           SnackBarType.onlyText,
           AppConstants.shortSnackBarDuration);
     } catch (e) {
-      Shared.showPSSnackBar(
-          context,
-          'Registro fallido',
-          SnackBarType.onlyText,
+      Shared.showPSSnackBar(context, 'Registro fallido', SnackBarType.onlyText,
           AppConstants.shortSnackBarDuration);
     }
     setState(() {
@@ -202,7 +184,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const PsAppBar(title: 'Actualizar perfil', titleSize: AppConstants.bigAppBarTitleSize),
+      appBar: const PsAppBar(
+          title: 'Actualizar perfil',
+          titleSize: AppConstants.bigAppBarTitleSize),
       drawer: const PsMenuBar(currentView: CurrentScreen.other),
       body: SingleChildScrollView(
         child: Card(
@@ -221,7 +205,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     hintText: 'Nombre',
                     obscureText: false,
                     inputType: TextInputType.name,
-                    isValid: nameValidations.every((validation) => validation.isValid),
+                    isValid: nameValidations
+                        .every((validation) => validation.isValid),
                     validations: nameValidations),
                 const SizedBox(height: 15),
                 PsTextField(
@@ -229,7 +214,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     hintText: 'Contraseña',
                     obscureText: true,
                     inputType: TextInputType.text,
-                    isValid: passwordValidations.every((validation) => validation.isValid),
+                    isValid: passwordValidations
+                        .every((validation) => validation.isValid),
                     validations: passwordValidations),
                 const SizedBox(height: 15),
                 PsTextField(
@@ -237,7 +223,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     hintText: 'Hospital',
                     obscureText: false,
                     inputType: TextInputType.text,
-                    isValid: hospitalValidations.every((validation) => validation.isValid),
+                    isValid: hospitalValidations
+                        .every((validation) => validation.isValid),
                     validations: hospitalValidations),
                 const SizedBox(height: 15),
                 PsTextField(
@@ -245,7 +232,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     hintText: 'Cargo',
                     obscureText: false,
                     inputType: TextInputType.text,
-                    isValid: positionValidations.every((validation) => validation.isValid),
+                    isValid: positionValidations
+                        .every((validation) => validation.isValid),
                     validations: positionValidations),
                 const SizedBox(height: 75),
                 Row(

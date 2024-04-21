@@ -29,6 +29,18 @@ class SharedPreferencesService {
     return _prefs?.getInt('id');
   }
 
+  bool isFirstAccessPermission() {
+    bool isFirstTime = _prefs?.getBool('firstAccessPermission') ?? true;
+    if (isFirstTime) {
+      _prefs?.setBool('firstAccessPermission', false);
+    }
+    return isFirstTime;
+  }
+
+  Future<bool> removeId() async {
+    return _prefs?.remove('id') ?? Future.value(false);
+  }
+
   Future<bool> removeAuthToken() async {
     return _prefs?.remove('authToken') ?? Future.value(false);
   }

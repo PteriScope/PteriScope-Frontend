@@ -131,7 +131,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               height: 150,
                             ),
                           ),
-                          //const SizedBox(height: AppConstants.padding * 2.0),
                           Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.start,

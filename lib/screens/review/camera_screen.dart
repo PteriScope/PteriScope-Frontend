@@ -5,6 +5,7 @@ import 'package:camera/camera.dart';
 import 'package:image/image.dart' as img;
 
 import '../../models/patient.dart';
+import '../../services/shared_preferences_service.dart';
 import 'confirm_picture_screen.dart';
 
 class CameraScreen extends StatefulWidget {
@@ -56,13 +57,11 @@ class _CameraScreenState extends State<CameraScreen> {
         if (!mounted) {
           return;
         }
+      } on CameraException catch(_) {
+        Navigator.pop(context);
       } catch (e) {
-        print(e.toString());
-        // TODO: CameraException Volver
+        Navigator.pop(context);
       }
-
-
-
       setState(() {});
     }
   }

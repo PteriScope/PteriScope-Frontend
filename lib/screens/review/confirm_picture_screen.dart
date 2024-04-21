@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pteriscope_frontend/screens/review/review_detail_screen.dart';
+import 'package:pteriscope_frontend/util/enum/dialog_type.dart';
 
 import '../../../models/patient.dart';
 import '../../../models/review.dart';
@@ -121,22 +122,13 @@ class _ConfirmPictureScreenState extends State<ConfirmPictureScreen> {
       if (mounted) {
         Navigator.of(context, rootNavigator: true).pop();
 
-        showDialog(
-          context: context,
-          builder: (BuildContext dialogContext) {
-            return AlertDialog(
-              title: const Text('Error'),
-              content: Text('Error al crear la revisión: ${e is PsException ? e.message : "Inténtelo más tarde, por favor"}'),
-              actions: <Widget>[
-                TextButton(
-                  child: const Text('Cerrar'),
-                  onPressed: () {
-                    Navigator.of(dialogContext).pop();
-                  },
-                ),
-              ],
-            );
-          },
+        Shared.showPsDialog(
+            context,
+            DialogType.error,
+            'Error al crear la revisión: ${e is PsException ? e.message : "Inténtelo más tarde, por favor"}',
+            'Cerrar',
+                () => {Navigator.of(context).pop()},
+            Icons.close
         );
       }
     }
