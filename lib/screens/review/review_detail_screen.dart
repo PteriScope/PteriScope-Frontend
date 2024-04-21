@@ -10,8 +10,10 @@ import 'package:pteriscope_frontend/widgets/ps_app_bar.dart';
 import '../../models/review.dart';
 import '../../services/api_service.dart';
 import '../../util/constants.dart';
+import '../../util/enum/button_type.dart';
 import '../../util/enum/current_screen.dart';
 import '../../util/shared.dart';
+import '../../widgets/ps_floating_button.dart';
 import '../../widgets/ps_menu_bar.dart';
 import '../patient/patient_detail_screen.dart';
 
@@ -50,7 +52,9 @@ class _ReviewDetailScreenState extends State<ReviewDetailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PsAppBar(
-          title: '${widget.patient.firstName} ${widget.patient.lastName}', titleSize: AppConstants.smallAppBarTitleSize),
+          title: '${widget.patient.firstName} ${widget.patient.lastName}',
+          titleSize: AppConstants.smallAppBarTitleSize,
+          disabled: false),
       drawer: const PsMenuBar(currentView: CurrentScreen.other),
       body: Stack(children: [
         Card(
@@ -160,26 +164,25 @@ class _ReviewDetailScreenState extends State<ReviewDetailScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                //TODO: Implement functionality
-                FloatingActionButton(
-                  heroTag: 'sendEmail',
-                  backgroundColor: AppConstants.primaryColor,
-                  onPressed: () => {},
-                  child: const Icon(Icons.email_outlined, color: Colors.white),
-                ),
-                FloatingActionButton(
-                  heroTag: 'backToPatient',
-                  backgroundColor: AppConstants.primaryColor,
-                  onPressed: () => {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            PatientDetailScreen(patient: widget.patient),
-                      ),
-                    )
-                  },
-                  child: const Icon(Icons.arrow_back, color: Colors.white),
-                )
+                PsFloatingButton(
+                    heroTag: 'sendEmail',
+                    buttonType: ButtonType.secondary,
+                    onTap: () => {
+                          //TODO: Implement functionality
+                        },
+                    iconData: Icons.email_outlined),
+                PsFloatingButton(
+                    heroTag: 'backToPatient',
+                    buttonType: ButtonType.primary,
+                    onTap: () => {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  PatientDetailScreen(patient: widget.patient),
+                            ),
+                          )
+                        },
+                    iconData: Icons.arrow_back),
               ],
             ),
           ),

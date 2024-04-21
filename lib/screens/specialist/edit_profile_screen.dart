@@ -2,11 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:pteriscope_frontend/screens/patient/patient_detail_screen.dart';
 import 'package:pteriscope_frontend/screens/specialist/profile_screen.dart';
 import 'package:pteriscope_frontend/util/enum/dialog_type.dart';
 import 'package:pteriscope_frontend/widgets/ps_app_bar.dart';
-import 'package:pteriscope_frontend/widgets/ps_elevated_button_icon.dart';
 
 import '../../models/register_user.dart';
 import '../../models/specialist.dart';
@@ -21,7 +19,6 @@ import '../../util/enum/current_screen.dart';
 import '../../widgets/ps_elevated_button.dart';
 import '../../widgets/ps_menu_bar.dart';
 import '../../widgets/ps_text_field.dart';
-import '../home_screen.dart';
 
 class EditProfileScreen extends StatefulWidget {
   final Specialist specialist;
@@ -67,6 +64,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _hospitalController.addListener(_checkFields);
     _positionController.addListener(_checkFields);
     specialistId = SharedPreferencesService().getId()!;
+    initializeFieldsText();
+  }
+
+  void initializeFieldsText() {
+    _nameController.text = widget.specialist.name;
+    _hospitalController.text = widget.specialist.hospital;
+    _positionController.text = widget.specialist.position;
   }
 
   void _checkFields() {
@@ -118,15 +122,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         context,
         DialogType.confirmation,
         "¿Estás seguro que deseas actualizar tus datos?",
-
         "Actualizar",
         () => {_updateProfile(), Navigator.of(context).pop()},
         Icons.check_circle,
-
         "Cancelar",
         () => {Navigator.of(context).pop()},
-        Icons.cancel
-    );
+        Icons.cancel);
   }
 
   void _updateProfile() async {
@@ -184,9 +185,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const PsAppBar(
-          title: 'Actualizar perfil',
-          titleSize: AppConstants.bigAppBarTitleSize),
+      appBar: PsAppBar(
+        title: 'Actualizar perfil',
+        titleSize: AppConstants.bigAppBarTitleSize,
+        disabled: _isUpdating,
+      ),
       drawer: const PsMenuBar(currentView: CurrentScreen.other),
       body: SingleChildScrollView(
         child: Card(

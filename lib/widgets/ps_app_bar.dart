@@ -6,11 +6,13 @@ import '../util/constants.dart';
 class PsAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final double titleSize;
+  final bool disabled;
 
   const PsAppBar({
     super.key,
     required this.title,
-    required this.titleSize
+    required this.titleSize,
+    required this.disabled
   });
 
   @override
@@ -25,17 +27,21 @@ class PsAppBar extends StatelessWidget implements PreferredSizeWidget {
         icon: const Icon(Icons.menu),
         color: Colors.white,
         onPressed: () {
-          Scaffold.of(context).openDrawer();
+          if (!disabled) {
+            Scaffold.of(context).openDrawer();
+          }
         },
       ),
       actions: [
         InkWell(
           onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => const HomeScreen(),
-              ),
-            );
+            if (!disabled) {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const HomeScreen(),
+                ),
+              );
+            }
           },
           child: const Padding(
             padding: EdgeInsets.only(right: AppConstants.padding),

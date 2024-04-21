@@ -97,7 +97,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: const PsAppBar(
-            title: 'PteriScope', titleSize: AppConstants.bigAppBarTitleSize),
+            title: 'PteriScope', titleSize: AppConstants.bigAppBarTitleSize, disabled: false),
         drawer: const PsMenuBar(currentView: CurrentScreen.patientList),
         body: Column(
           children: [

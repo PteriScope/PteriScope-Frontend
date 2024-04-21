@@ -8,6 +8,7 @@ import 'package:pteriscope_frontend/screens/patient/patient_detail_screen.dart';
 import 'package:pteriscope_frontend/widgets/ps_app_bar.dart';
 
 import '../../util/enum/button_type.dart';
+import '../../util/enum/dialog_type.dart';
 import '../../util/enum/snack_bar_type.dart';
 import '../../util/shared.dart';
 import '../../util/validation.dart';
@@ -21,14 +22,16 @@ import '../../widgets/ps_menu_bar.dart';
 import '../../widgets/ps_text_field.dart';
 import '../home_screen.dart';
 
-class NewPatientScreen extends StatefulWidget {
-  const NewPatientScreen({super.key});
+class EditPatientScreen extends StatefulWidget {
+  final Patient patient;
+
+  const EditPatientScreen({super.key, required this.patient});
 
   @override
-  State<NewPatientScreen> createState() => _NewPatientScreenState();
+  State<EditPatientScreen> createState() => _EditPatientScreenState();
 }
 
-class _NewPatientScreenState extends State<NewPatientScreen> {
+class _EditPatientScreenState extends State<EditPatientScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _dniController = TextEditingController();
@@ -49,6 +52,7 @@ class _NewPatientScreenState extends State<NewPatientScreen> {
     Validation("No empezar con cero", false),
   ];
   List<Validation> emailValidations = [Validation("Email válido", false)];
+  bool _isUpdating = false;
 
   @override
   void initState() {
@@ -58,6 +62,15 @@ class _NewPatientScreenState extends State<NewPatientScreen> {
     _dniController.addListener(_checkFields);
     _ageController.addListener(_checkFields);
     _emailController.addListener(_checkFields);
+    initializeFieldsText();
+  }
+
+  void initializeFieldsText() {
+    _nameController.text = widget.patient.firstName;
+    _lastNameController.text = widget.patient.lastName;
+    _dniController.text = widget.patient.dni;
+    _ageController.text = widget.patient.age.toString();
+    _emailController.text = widget.patient.email;
   }
 
   void _checkFields() {
@@ -109,37 +122,50 @@ class _NewPatientScreenState extends State<NewPatientScreen> {
     });
   }
 
-  void _register() async {
+  void showConfirmDialog() {
+    Shared.showPsDialog(
+        context,
+        DialogType.confirmation,
+        "¿Estás seguro que deseas actualizar los datos del paciente?",
+        "Actualizar",
+        () => {_updatePatient(), Navigator.of(context).pop()},
+        Icons.check_circle,
+        "Cancelar",
+        () => {Navigator.of(context).pop()},
+        Icons.cancel);
+  }
+
+  void _updatePatient() async {
     setState(() {
       _isButtonDisabled = true;
+      _isUpdating = true;
     });
 
     try {
       bool _ = await Shared.checkConnectivity();
 
       var apiService = Provider.of<ApiService>(context, listen: false);
-      Shared.showPSSnackBar(context, 'Registrando paciente...',
+      //TODO: CHECK WITH EXCEL
+      Shared.showPSSnackBar(context, 'Actualizando datos...',
           SnackBarType.loading, AppConstants.longSnackBarDuration);
-      Patient? patient = await apiService.createPatient(RegisterPatient(
-          firstName: _nameController.text,
-          lastName: _lastNameController.text,
-          dni: _dniController.text,
-          age: int.parse(_ageController.text),
-          email: _emailController.text));
+      Patient? patient = await apiService.updatePatient(
+          widget.patient.id,
+          RegisterPatient(
+              firstName: _nameController.text,
+              lastName: _lastNameController.text,
+              dni: _dniController.text,
+              age: int.parse(_ageController.text),
+              email: _emailController.text));
 
-      if (patient != null) {
-        Shared.showPSSnackBar(context, 'Registro exitoso',
-            SnackBarType.onlyText, AppConstants.shortSnackBarDuration);
+      Shared.showPSSnackBar(context, 'Registro exitoso',
+          SnackBarType.onlyText, AppConstants.shortSnackBarDuration);
 
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => PatientDetailScreen(patient: patient),
-          ),
-        );
-      } else {
-        Shared.showPSSnackBar(context, 'Registro fallido',
-            SnackBarType.onlyText, AppConstants.shortSnackBarDuration);
-      }
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => PatientDetailScreen(patient: patient),
+        ),
+      );
+
     } on PsException catch (e) {
       Shared.showPSSnackBar(context, 'Error: ${e.message}',
           SnackBarType.onlyText, AppConstants.shortSnackBarDuration);
@@ -155,16 +181,15 @@ class _NewPatientScreenState extends State<NewPatientScreen> {
     }
     setState(() {
       _isButtonDisabled = false;
+      _isUpdating = false;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const PsAppBar(
-          title: 'Nuevo paciente',
-          titleSize: AppConstants.bigAppBarTitleSize,
-          disabled: false),
+      appBar: PsAppBar(
+          title: 'Editar paciente', titleSize: AppConstants.bigAppBarTitleSize, disabled: _isUpdating),
       drawer: const PsMenuBar(currentView: CurrentScreen.newPatient),
       body: SingleChildScrollView(
         child: Card(
@@ -223,26 +248,21 @@ class _NewPatientScreenState extends State<NewPatientScreen> {
                         .every((validation) => validation.isValid),
                     validations: emailValidations),
                 const SizedBox(height: 75),
-                PsElevatedButton(
-                    width: MediaQuery.of(context).size.width,
-                    disabled: _isButtonDisabled,
-                    onTap: _isButtonDisabled ? null : _register,
-                    text: 'Crear paciente'),
-                const SizedBox(height: 75),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    PsFloatingButton(
-                        heroTag: 'backToHomeFromNewPatient',
-                        buttonType: ButtonType.primary,
-                        onTap: () => {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => const HomeScreen(),
-                                ),
-                              )
-                            },
-                        iconData: Icons.arrow_back),
+                    PsElevatedButton(
+                        width: MediaQuery.of(context).size.width / 2.5,
+                        disabled: _isUpdating,
+                        onTap: () {
+                          Navigator.of(context).pop();
+                        },
+                        text: 'Cancelar'),
+                    PsElevatedButton(
+                        width: MediaQuery.of(context).size.width / 2.5,
+                        disabled: _isButtonDisabled,
+                        onTap: showConfirmDialog,
+                        text: 'Actualizar datos'),
                   ],
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.2),

@@ -12,10 +12,12 @@ import '../../models/specialist.dart';
 import '../../services/api_service.dart';
 import '../../services/shared_preferences_service.dart';
 import '../../util/constants.dart';
+import '../../util/enum/button_type.dart';
 import '../../util/enum/current_screen.dart';
 import '../../util/enum/snack_bar_type.dart';
 import '../../util/ps_exception.dart';
 import '../../util/shared.dart';
+import '../../widgets/ps_floating_button.dart';
 import '../../widgets/ps_menu_bar.dart';
 import '../home_screen.dart';
 
@@ -92,7 +94,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       appBar: const PsAppBar(
           title: "Perfil de especialista",
-          titleSize: AppConstants.smallAppBarTitleSize),
+          titleSize: AppConstants.smallAppBarTitleSize,
+          disabled: false),
       drawer: const PsMenuBar(currentView: CurrentScreen.profile),
       body: Stack(
         children: [
@@ -204,18 +207,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
-                  FloatingActionButton(
-                    heroTag: 'backToHomeFromProfile',
-                    backgroundColor: AppConstants.primaryColor,
-                    onPressed: () => {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => const HomeScreen(),
-                        ),
-                      )
-                    },
-                    child: const Icon(Icons.arrow_back, color: Colors.white),
-                  )
+                  PsFloatingButton(
+                      heroTag: 'backToHomeFromProfile',
+                      buttonType: ButtonType.primary,
+                      onTap: () => {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => const HomeScreen(),
+                          ),
+                        )
+                      },
+                      iconData: Icons.arrow_back),
                 ],
               ),
             ),

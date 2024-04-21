@@ -6,6 +6,8 @@ import 'package:image/image.dart' as img;
 
 import '../../models/patient.dart';
 import '../../services/shared_preferences_service.dart';
+import '../../util/enum/button_type.dart';
+import '../../widgets/ps_floating_button.dart';
 import 'confirm_picture_screen.dart';
 
 class CameraScreen extends StatefulWidget {
@@ -137,39 +139,33 @@ class _CameraScreenState extends State<CameraScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
-                FloatingActionButton(
-                  heroTag: 'closeCamera',
-                  backgroundColor: Colors.white,
-                  onPressed: () => Navigator.pop(context),
-                  child: const Icon(Icons.arrow_back, color: Colors.black),
-                ),
-                FloatingActionButton(
-                  heroTag: 'takePicture',
-                  backgroundColor: Colors.white,
-                  onPressed: () => _onCapturePressed(context),
-                  child: const Icon(Icons.camera, color: Colors.black),
-                ),
-                FloatingActionButton(
-                  heroTag: 'enableDisableFlash',
-                  backgroundColor: Colors.white,
-                  onPressed: () {
-                    if (_flashMode == FlashMode.off) {
-                      _controller!.setFlashMode(FlashMode.torch);
-                      setState(() {
-                        _flashMode = FlashMode.torch;
-                      });
-                    } else {
-                      _controller!.setFlashMode(FlashMode.off);
-                      setState(() {
-                        _flashMode = FlashMode.off;
-                      });
-                    }
-                  },
-                  child: Icon(
-                    _flashMode == FlashMode.off ? Icons.flash_off : Icons.flash_on,
-                    color: Colors.black,
-                  ),
-                ),
+                PsFloatingButton(
+                    heroTag: 'closeCamera',
+                    buttonType: ButtonType.neutral,
+                    onTap: () => Navigator.pop(context),
+                    iconData: Icons.arrow_back),
+                PsFloatingButton(
+                    heroTag: 'takePicture',
+                    buttonType: ButtonType.neutral,
+                    onTap: () => _onCapturePressed(context),
+                    iconData: Icons.camera),
+                PsFloatingButton(
+                    heroTag: 'enableDisableFlash',
+                    buttonType: ButtonType.neutral,
+                    onTap: () {
+                      if (_flashMode == FlashMode.off) {
+                        _controller!.setFlashMode(FlashMode.torch);
+                        setState(() {
+                          _flashMode = FlashMode.torch;
+                        });
+                      } else {
+                        _controller!.setFlashMode(FlashMode.off);
+                        setState(() {
+                          _flashMode = FlashMode.off;
+                        });
+                      }
+                    },
+                    iconData:  _flashMode == FlashMode.off ? Icons.flash_off : Icons.flash_on),
               ],
             ),
           ),

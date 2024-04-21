@@ -196,6 +196,42 @@ class ApiService with ChangeNotifier {
     }
   }
 
+  Future<Patient> updatePatient(int patientId, RegisterPatient updatedPatient) async {
+    final headers = await _getAuthHeaders();
+    var response = await http.put(
+        Uri.parse('$baseUrl/patients/update/$patientId'),
+        headers: headers,
+        body: json.encode(updatedPatient.toJson())
+    );
+
+    if (response.statusCode == 200) {
+      var decodedResponse = utf8.decode(response.bodyBytes);
+      var jsonResponse = json.decode(decodedResponse);
+      Patient patient = Patient.fromJson(jsonResponse);
+      notifyListeners();
+      return patient;
+    } else {
+      throw Exception('Failed to update patient data');
+    }
+  }
+
+  Future<void> deletePatient(int patientId) async {
+    final headers = await _getAuthHeaders();
+
+    var response = await http.delete(
+      Uri.parse('$baseUrl/patients/delete/$patientId'),
+      headers: headers,
+    );
+
+    if (response.statusCode == 200) {
+      notifyListeners();
+    }
+    else {
+      var decodedResponse = utf8.decode(response.bodyBytes);
+      throw PsException(decodedResponse);
+    }
+  }
+
   Future<String> getPatient(String patientId) async {
     final headers = await _getAuthHeaders();
     final response = await http.get(

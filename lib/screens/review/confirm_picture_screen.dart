@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pteriscope_frontend/screens/review/review_detail_screen.dart';
 import 'package:pteriscope_frontend/util/enum/dialog_type.dart';
+import 'package:pteriscope_frontend/widgets/ps_floating_button.dart';
 
 import '../../../models/patient.dart';
 import '../../../models/review.dart';
 import '../../../services/api_service.dart';
+import '../../util/enum/button_type.dart';
 import '../../util/ps_exception.dart';
 import '../../util/shared.dart';
 
@@ -50,23 +52,18 @@ class _ConfirmPictureScreenState extends State<ConfirmPictureScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
-                FloatingActionButton(
-                  heroTag: 'retake',
-                  backgroundColor: Colors.white,
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: const Icon(
-                    Icons.arrow_back,
-                    color: Colors.black,
-                  ),
-                ),
-                FloatingActionButton(
-                  heroTag: 'takePicture',
-                  backgroundColor: Colors.white,
-                  onPressed: () => {uploadPicture(context)},
-                  child: const Icon(Icons.check, color: Colors.black),
-                ),
+                PsFloatingButton(
+                    heroTag: 'retake',
+                    buttonType: ButtonType.neutral,
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    iconData: Icons.arrow_back),
+                PsFloatingButton(
+                    heroTag: 'loadPicture',
+                    buttonType: ButtonType.neutral,
+                    onTap: () => {uploadPicture(context)},
+                    iconData: Icons.check),
               ],
             ),
           ),

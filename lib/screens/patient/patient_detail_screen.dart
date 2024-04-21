@@ -1,15 +1,21 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
+import 'package:pteriscope_frontend/screens/patient/edit_patient_screen.dart';
 import 'package:pteriscope_frontend/screens/review/camera_screen.dart';
 import 'package:pteriscope_frontend/screens/review/review_detail_screen.dart';
 import 'package:pteriscope_frontend/services/api_service.dart';
+import 'package:pteriscope_frontend/util/enum/button_type.dart';
 import 'package:pteriscope_frontend/util/enum/dialog_type.dart';
+import 'package:pteriscope_frontend/util/enum/snack_bar_type.dart';
 import 'package:pteriscope_frontend/widgets/ps_app_bar.dart';
 import 'package:pteriscope_frontend/widgets/ps_colum_header.dart';
+import 'package:pteriscope_frontend/widgets/ps_floating_button.dart';
 import 'package:pteriscope_frontend/widgets/ps_header.dart';
 
 import '../../models/patient.dart';
@@ -41,6 +47,7 @@ class _PatientDetailScreen extends State<PatientDetailScreen> {
   bool loading = true;
   bool serverError = false;
   bool internetError = false;
+  bool _isDeleting = false;
 
   @override
   void initState() {
@@ -85,7 +92,8 @@ class _PatientDetailScreen extends State<PatientDetailScreen> {
 
   void goToCameraScreen() async {
     bool cameraAccessPermission = await Shared.checkCameraPermission();
-    bool isFirstAccessPermission = SharedPreferencesService().isFirstAccessPermission();
+    bool isFirstAccessPermission =
+        SharedPreferencesService().isFirstAccessPermission();
 
     if (cameraAccessPermission || isFirstAccessPermission) {
       Navigator.of(context).push(
@@ -120,14 +128,87 @@ class _PatientDetailScreen extends State<PatientDetailScreen> {
                 }).request()
               },
           Icons.check_circle,
-        "Configuraciones",
-          () async {
-            if (await Permission.camera.isPermanentlyDenied) {
-              openAppSettings();
-            }
-          },
-        Icons.settings
-      );
+          "Configuraciones", () async {
+        if (await Permission.camera.isPermanentlyDenied) {
+          openAppSettings();
+        }
+      }, Icons.settings);
+    }
+  }
+
+  void goToEditPatientScreen() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => EditPatientScreen(
+            patient: widget.patient),
+      ),
+    );
+  }
+
+  void showAlertDialog(){
+    Shared.showPsDialog(
+        context,
+        DialogType.warning,
+        "¿Estás seguro que deseas eliminar este paciente?",
+        "Eliminar",
+            () => {_deletePatient(), Navigator.of(context).pop()},
+        Icons.check_circle,
+        "Cancelar",
+            () => {Navigator.of(context).pop()},
+        Icons.cancel);
+  }
+
+  Future<void> _deletePatient() async {
+    if (internetError || serverError) {
+      Shared.showPSSnackBar(
+          context,
+          "Compruebe su conexión a Internet",
+          SnackBarType.onlyText,
+          AppConstants.shortSnackBarDuration);
+    }
+    else {
+      setState(() {
+        _isDeleting = true;
+      });
+
+      try {
+        bool __ = await Shared.checkConnectivity();
+
+        var apiService = Provider.of<ApiService>(context, listen: false);
+        Shared.showPSSnackBar(
+            context,
+            //TODO: CHECK WITH EXCEL
+            'Eliminando paciente...',
+            SnackBarType.loading,
+            AppConstants.longSnackBarDuration);
+
+        await apiService.deletePatient(
+            widget.patient.id);
+
+        Shared.showPSSnackBar(context, 'Eliminación exitosa',
+            SnackBarType.onlyText, AppConstants.shortSnackBarDuration);
+
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => const HomeScreen(),
+          ),
+        );
+      } on PsException catch (e) {
+        Shared.showPSSnackBar(context, 'Error: ${e.message}',
+            SnackBarType.onlyText, AppConstants.shortSnackBarDuration);
+      } on SocketException catch (_) {
+        Shared.showPSSnackBar(
+            context,
+            'Hubo un error al tratar de conectarse al servidor. Inténtelo más tarde, por favor',
+            SnackBarType.onlyText,
+            AppConstants.shortSnackBarDuration);
+      } catch (e) {
+        Shared.showPSSnackBar(context, 'Registro fallido', SnackBarType.onlyText,
+            AppConstants.shortSnackBarDuration);
+      }
+      setState(() {
+        _isDeleting = false;
+      });
     }
   }
 
@@ -137,6 +218,7 @@ class _PatientDetailScreen extends State<PatientDetailScreen> {
       appBar: PsAppBar(
         title: '${patient.firstName} ${patient.lastName}',
         titleSize: AppConstants.smallAppBarTitleSize,
+        disabled: _isDeleting
       ),
       drawer: const PsMenuBar(currentView: CurrentScreen.other),
       body: Column(
@@ -196,26 +278,27 @@ class _PatientDetailScreen extends State<PatientDetailScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      //TODO: Implement functionality
-                      FloatingActionButton(
-                        heroTag: 'deletePatient',
-                        backgroundColor: AppConstants.severeColor,
-                        onPressed: () => {},
-                        child: const Icon(Icons.delete, color: Colors.white),
-                      ),
-                      FloatingActionButton(
-                        heroTag: 'backToHomeFromPatient',
-                        backgroundColor: AppConstants.primaryColor,
-                        onPressed: () => {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => const HomeScreen(),
-                            ),
-                          )
-                        },
-                        child:
-                            const Icon(Icons.arrow_back, color: Colors.white),
-                      )
+                      PsFloatingButton(
+                          heroTag: 'deletePatient',
+                          buttonType: ButtonType.severe,
+                          onTap: showAlertDialog,
+                          iconData: Icons.delete),
+                      PsFloatingButton(
+                          heroTag: 'editPatient',
+                          buttonType: ButtonType.secondary,
+                          onTap: goToEditPatientScreen,
+                          iconData: Icons.edit),
+                      PsFloatingButton(
+                          heroTag: 'backToHomeFromPatient',
+                          buttonType: ButtonType.primary,
+                          onTap: () => {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => const HomeScreen(),
+                                  ),
+                                )
+                              },
+                          iconData: Icons.arrow_back),
                     ],
                   ),
                 ),
