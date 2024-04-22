@@ -4,13 +4,15 @@ class Specialist {
   final String dni;
   final String hospital;
   final String position;
+  final bool showAdvice;
 
   Specialist({
     required this.id,
     required this.name,
     required this.dni,
     required this.hospital,
-    required this.position
+    required this.position,
+    required this.showAdvice
   });
 
   factory Specialist.fromJson(Map<String, dynamic> json) {
@@ -20,6 +22,7 @@ class Specialist {
       dni: json['dni'],
       hospital: json['hospital'],
       position: json['position'],
+      showAdvice: json['showAdvice']
     );
   }
 

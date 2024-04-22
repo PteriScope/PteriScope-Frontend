@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -5,8 +6,10 @@ import 'package:camera/camera.dart';
 import 'package:image/image.dart' as img;
 
 import '../../models/patient.dart';
+import '../../services/api_service.dart';
 import '../../services/shared_preferences_service.dart';
 import '../../util/enum/button_type.dart';
+import '../../widgets/ps_advice_dialog.dart';
 import '../../widgets/ps_floating_button.dart';
 import 'confirm_picture_screen.dart';
 
@@ -30,6 +33,12 @@ class _CameraScreenState extends State<CameraScreen> {
   img.Image? originalImage;
   late img.Image rotatedImage;
   late String base64Image;
+  Offset? _focusPoint;
+  bool _showFocusIndicator = false;
+  bool _takingPicture = false;
+  final specialistId = SharedPreferencesService().getId();
+  ApiService apiService = ApiService();
+
 
   @override
   void initState() {
@@ -45,13 +54,10 @@ class _CameraScreenState extends State<CameraScreen> {
       });
 
       _controller = CameraController(
-        _cameras![_selectedCameraIdx],
-        ResolutionPreset.max,
-        imageFormatGroup: ImageFormatGroup.yuv420,
-        enableAudio: false
-      );
+          _cameras![_selectedCameraIdx], ResolutionPreset.max,
+          imageFormatGroup: ImageFormatGroup.yuv420, enableAudio: false);
 
-      try{
+      try {
         await _controller!.initialize();
         _minAvailableZoom = await _controller!.getMinZoomLevel();
         _maxAvailableZoom = await _controller!.getMaxZoomLevel();
@@ -59,12 +65,13 @@ class _CameraScreenState extends State<CameraScreen> {
         if (!mounted) {
           return;
         }
-      } on CameraException catch(_) {
+      } on CameraException catch (_) {
         Navigator.pop(context);
       } catch (e) {
         Navigator.pop(context);
       }
       setState(() {});
+      _initAdvices();
     }
   }
 
@@ -74,7 +81,27 @@ class _CameraScreenState extends State<CameraScreen> {
     super.dispose();
   }
 
+  void _initAdvices() async {
+    bool willShowAdvice = await apiService.willShowAdvice(specialistId!);
+    if (willShowAdvice) {
+      showDialog(
+          barrierDismissible: false,
+          context: context,
+          builder: (BuildContext context) {
+            return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+                return const PsAdviceDialog();
+              },
+            );
+          });
+    }
+  }
+
   Future<void> _onCapturePressed(context) async {
+    setState(() {
+      _takingPicture = true;
+    });
+
     try {
       if (!_controller!.value.isInitialized) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -84,14 +111,14 @@ class _CameraScreenState extends State<CameraScreen> {
       }
 
       await _controller!.takePicture().then((image) async => {
-        await image.readAsBytes().then((imageBytes) => {
-          setState(() {
-            originalImage = img.decodeImage(imageBytes);
-            rotatedImage = img.copyRotate(originalImage!, angle: 270);
-            base64Image = base64Encode(img.encodeJpg(rotatedImage));
-          })
-        }),
-      });
+            await image.readAsBytes().then((imageBytes) => {
+                  setState(() {
+                    originalImage = img.decodeImage(imageBytes);
+                    rotatedImage = img.copyRotate(originalImage!, angle: 270);
+                    base64Image = base64Encode(img.encodeJpg(rotatedImage));
+                  })
+                }),
+          });
 
       if (_flashMode == FlashMode.torch) {
         _controller!.setFlashMode(FlashMode.off);
@@ -114,6 +141,32 @@ class _CameraScreenState extends State<CameraScreen> {
         SnackBar(content: Text("Error al capturar la imagen: $e")),
       );
     }
+
+    setState(() {
+      _takingPicture = false;
+    });
+  }
+
+  Future<void> _handleFocusTap(Offset localPosition) async {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+    ;
+
+    final x = localPosition.dx / screenWidth;
+    final y = localPosition.dy / screenHeight;
+    await _controller!.setFocusPoint(Offset(x, y));
+    await _controller!.setExposurePoint(Offset(x, y));
+
+    setState(() {
+      _showFocusIndicator = true;
+      _focusPoint = localPosition;
+    });
+
+    Timer(const Duration(milliseconds: 1500), () {
+      setState(() {
+        _showFocusIndicator = false;
+      });
+    });
   }
 
   @override
@@ -124,69 +177,96 @@ class _CameraScreenState extends State<CameraScreen> {
 
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Stack(
-        children: <Widget>[
-          Transform.scale(
-            scale: 1,
-            child: Center(
-              child: CameraPreview(_controller!),
+      body: GestureDetector(
+        onTapDown: (details) => _handleFocusTap(details.localPosition),
+        child: Stack(
+          children: <Widget>[
+            Transform.scale(
+              scale: 1,
+              child: Center(
+                child: CameraPreview(_controller!),
+              ),
             ),
-          ),
-          Positioned(
-            bottom: 40.0,
-            left: 20.0,
-            right: 20.0,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: <Widget>[
-                PsFloatingButton(
-                    heroTag: 'closeCamera',
-                    buttonType: ButtonType.neutral,
-                    onTap: () => Navigator.pop(context),
-                    iconData: Icons.arrow_back),
-                PsFloatingButton(
-                    heroTag: 'takePicture',
-                    buttonType: ButtonType.neutral,
-                    onTap: () => _onCapturePressed(context),
-                    iconData: Icons.camera),
-                PsFloatingButton(
-                    heroTag: 'enableDisableFlash',
-                    buttonType: ButtonType.neutral,
-                    onTap: () {
-                      if (_flashMode == FlashMode.off) {
-                        _controller!.setFlashMode(FlashMode.torch);
-                        setState(() {
-                          _flashMode = FlashMode.torch;
-                        });
-                      } else {
-                        _controller!.setFlashMode(FlashMode.off);
-                        setState(() {
-                          _flashMode = FlashMode.off;
-                        });
-                      }
-                    },
-                    iconData:  _flashMode == FlashMode.off ? Icons.flash_off : Icons.flash_on),
-              ],
+            if (_showFocusIndicator && _focusPoint != null)
+              AnimatedPositioned(
+                duration: const Duration(milliseconds: 500),
+                left: _focusPoint!.dx - 25,
+                top: _focusPoint!.dy - 25,
+                child: Container(
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    color: Colors.transparent,
+                    border: Border.all(color: Colors.green, width: 2),
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                ),
+              ),
+            if (_takingPicture)
+              const Center(child: CircularProgressIndicator()),
+            Positioned(
+              bottom: 40.0,
+              left: 20.0,
+              right: 20.0,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: <Widget>[
+                  PsFloatingButton(
+                      heroTag: 'closeCamera',
+                      buttonType: ButtonType.neutral,
+                      onTap: () => {
+                            if (!_takingPicture) {Navigator.pop(context)}
+                          },
+                      iconData: Icons.arrow_back),
+                  PsFloatingButton(
+                      heroTag: 'takePicture',
+                      buttonType: ButtonType.neutral,
+                      onTap: () => {
+                            if (!_takingPicture) {_onCapturePressed(context)}
+                          },
+                      iconData: Icons.camera),
+                  PsFloatingButton(
+                      heroTag: 'enableDisableFlash',
+                      buttonType: ButtonType.neutral,
+                      onTap: () {
+                        if (!_takingPicture) {
+                          if (_flashMode == FlashMode.off) {
+                            _controller!.setFlashMode(FlashMode.torch);
+                            setState(() {
+                              _flashMode = FlashMode.torch;
+                            });
+                          } else {
+                            _controller!.setFlashMode(FlashMode.off);
+                            setState(() {
+                              _flashMode = FlashMode.off;
+                            });
+                          }
+                        }
+                      },
+                      iconData: _flashMode == FlashMode.off
+                          ? Icons.flash_off
+                          : Icons.flash_on),
+                ],
+              ),
             ),
-          ),
-
-          Positioned(
-            bottom: 120.0,
-            left: 20.0,
-            right: 20.0,
-            child: Slider(
-              value: _currentZoomLevel,
-              min: _minAvailableZoom,
-              max: _maxAvailableZoom,
-              onChanged: (newZoomLevel) {
-                setState(() {
-                  _currentZoomLevel = newZoomLevel;
-                });
-                _controller!.setZoomLevel(_currentZoomLevel);
-              },
+            Positioned(
+              bottom: 120.0,
+              left: 20.0,
+              right: 20.0,
+              child: Slider(
+                value: _currentZoomLevel,
+                min: _minAvailableZoom,
+                max: _maxAvailableZoom,
+                onChanged: (newZoomLevel) {
+                  setState(() {
+                    _currentZoomLevel = newZoomLevel;
+                  });
+                  _controller!.setZoomLevel(_currentZoomLevel);
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -20,4 +20,16 @@ class AppConstants {
 
   static const double bigAppBarTitleSize = 30;
   static const double smallAppBarTitleSize = 20;
+
+  static const String advice1 = "Coloque la cámara de forma horizontal.";
+  static const String advice2 = "Debe haber entre 10 y 15 cm entre el ojo del paciente y el celular.";
+  static const String advice3 = "Use el zoom hasta que el iris se muestre en su totalidad. Los párpados deben mostrarse lo menos posible.";
+  static const String advice4 = "De preferencia, active el flash.";
+  static const String advice5 = "Asegurese que la imagen esté bien enfocada.";
+
+  static const String advice1ImagePath = 'assets/advice1.png';
+  static const String advice2ImagePath = 'assets/advice2.png';
+  static const String advice3ImagePath = 'assets/advice3.png';
+  static const String advice4ImagePath = 'assets/advice4.png';
+  static const String advice5ImagePath = 'assets/advice5.png';
 }

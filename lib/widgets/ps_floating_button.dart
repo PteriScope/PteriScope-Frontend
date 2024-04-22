@@ -9,6 +9,7 @@ class PsFloatingButton extends StatelessWidget {
   final ButtonType buttonType;
   final Function() onTap;
   final IconData iconData;
+  final bool? disabled;
 
   const PsFloatingButton({
     super.key,
@@ -16,6 +17,7 @@ class PsFloatingButton extends StatelessWidget {
     required this.buttonType,
     required this.onTap,
     required this.iconData,
+    this.disabled,
   });
 
   @override
@@ -24,8 +26,9 @@ class PsFloatingButton extends StatelessWidget {
       heroTag: heroTag,
       backgroundColor: _getButtonBackgroundColor(buttonType),
       onPressed: onTap,
-      child: Icon(iconData,
-          color: _getButtonTextColor(buttonType)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+      child: Icon(iconData, color: _getButtonTextColor(buttonType)),
+      mini: true,
     );
   }
 
@@ -38,8 +41,7 @@ class PsFloatingButton extends StatelessWidget {
     }
     if (buttonType == ButtonType.severe) {
       return AppConstants.severeColor;
-    }
-    else {
+    } else {
       return Colors.white;
     }
   }
@@ -50,8 +52,7 @@ class PsFloatingButton extends StatelessWidget {
     }
     if (buttonType == ButtonType.secondary) {
       return AppConstants.primaryColor;
-    }
-    else {
+    } else {
       return Colors.black;
     }
   }

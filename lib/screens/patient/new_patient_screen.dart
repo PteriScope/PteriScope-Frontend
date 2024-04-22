@@ -242,7 +242,8 @@ class _NewPatientScreenState extends State<NewPatientScreen> {
                                 ),
                               )
                             },
-                        iconData: Icons.arrow_back),
+                        iconData: Icons.arrow_back,
+                        disabled: false),
                   ],
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.2),

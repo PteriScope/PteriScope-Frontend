@@ -75,7 +75,7 @@ class ApiService with ChangeNotifier {
   Future<Specialist> getSpecialist(int specialistId) async {
     final headers = await _getAuthHeaders();
     var response = await http.get(
-      Uri.parse('$baseUrl/specialists/get/$specialistId'),
+      Uri.parse('$baseUrl/specialists/$specialistId'),
       headers: headers,
     );
 
@@ -90,10 +90,40 @@ class ApiService with ChangeNotifier {
     }
   }
 
+  Future<bool> willShowAdvice(int specialistId) async {
+    final headers = await _getAuthHeaders();
+    var response = await http.get(
+      Uri.parse('$baseUrl/specialists/$specialistId/checkShowAdvice'),
+      headers: headers,
+    );
+
+    if (response.statusCode == 200) {
+      bool decodedResponse = jsonDecode(response.body);
+      notifyListeners();
+      return decodedResponse;
+    } else {
+      throw Exception('Failed to load data');
+    }
+  }
+
+  Future<void> markDoNotShowAdvice(int specialistId) async{
+    final headers = await _getAuthHeaders();
+    var response = await http.put(
+      Uri.parse('$baseUrl/specialists/$specialistId/markDoNotShowAdvice'),
+      headers: headers,
+    );
+
+    if (response.statusCode == 200) {
+      notifyListeners();
+    } else {
+      throw Exception('Failed to load data');
+    }
+  }
+
   Future<Specialist> updateSpecialist(int specialistId, RegisterUser updatedSpecialist) async {
     final headers = await _getAuthHeaders();
     var response = await http.put(
-      Uri.parse('$baseUrl/specialists/update/$specialistId'),
+      Uri.parse('$baseUrl/specialists/$specialistId'),
       headers: headers,
       body: json.encode(updatedSpecialist.toJson())
     );
@@ -180,7 +210,7 @@ class ApiService with ChangeNotifier {
     final specialistId = SharedPreferencesService().getId();
     final headers = await _getAuthHeaders();
     final response = await http.post(
-      Uri.parse('$baseUrl/specialists/createPatient/$specialistId'),
+      Uri.parse('$baseUrl/specialists/$specialistId/createPatient'),
       headers: headers,
       body: json.encode(patient.toJson()),
     );
@@ -199,7 +229,7 @@ class ApiService with ChangeNotifier {
   Future<Patient> updatePatient(int patientId, RegisterPatient updatedPatient) async {
     final headers = await _getAuthHeaders();
     var response = await http.put(
-        Uri.parse('$baseUrl/patients/update/$patientId'),
+        Uri.parse('$baseUrl/patients/$patientId'),
         headers: headers,
         body: json.encode(updatedPatient.toJson())
     );
@@ -219,7 +249,7 @@ class ApiService with ChangeNotifier {
     final headers = await _getAuthHeaders();
 
     var response = await http.delete(
-      Uri.parse('$baseUrl/patients/delete/$patientId'),
+      Uri.parse('$baseUrl/patients/$patientId'),
       headers: headers,
     );
 

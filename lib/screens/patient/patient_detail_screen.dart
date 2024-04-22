@@ -282,12 +282,14 @@ class _PatientDetailScreen extends State<PatientDetailScreen> {
                           heroTag: 'deletePatient',
                           buttonType: ButtonType.severe,
                           onTap: showAlertDialog,
-                          iconData: Icons.delete),
+                          iconData: Icons.delete,
+                          disabled: false),
                       PsFloatingButton(
                           heroTag: 'editPatient',
                           buttonType: ButtonType.secondary,
                           onTap: goToEditPatientScreen,
-                          iconData: Icons.edit),
+                          iconData: Icons.edit,
+                          disabled: false),
                       PsFloatingButton(
                           heroTag: 'backToHomeFromPatient',
                           buttonType: ButtonType.primary,
@@ -298,7 +300,8 @@ class _PatientDetailScreen extends State<PatientDetailScreen> {
                                   ),
                                 )
                               },
-                          iconData: Icons.arrow_back),
+                          iconData: Icons.arrow_back,
+                          disabled: false),
                     ],
                   ),
                 ),
