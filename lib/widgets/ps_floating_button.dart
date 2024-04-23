@@ -10,6 +10,7 @@ class PsFloatingButton extends StatelessWidget {
   final Function() onTap;
   final IconData iconData;
   final bool? disabled;
+  final bool isMini;
 
   const PsFloatingButton({
     super.key,
@@ -18,6 +19,7 @@ class PsFloatingButton extends StatelessWidget {
     required this.onTap,
     required this.iconData,
     this.disabled,
+    this.isMini = false
   });
 
   @override
@@ -28,7 +30,7 @@ class PsFloatingButton extends StatelessWidget {
       onPressed: onTap,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
       child: Icon(iconData, color: _getButtonTextColor(buttonType)),
-      mini: true,
+      mini: isMini,
     );
   }
 

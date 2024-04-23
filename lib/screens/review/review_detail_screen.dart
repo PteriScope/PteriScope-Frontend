@@ -11,6 +11,7 @@ import 'package:pteriscope_frontend/widgets/ps_app_bar.dart';
 
 import '../../models/review.dart';
 import '../../services/api_service.dart';
+import '../../util/advice.dart';
 import '../../util/constants.dart';
 import '../../util/enum/button_type.dart';
 import '../../util/enum/current_screen.dart';
@@ -18,6 +19,7 @@ import '../../util/enum/dialog_type.dart';
 import '../../util/enum/snack_bar_type.dart';
 import '../../util/ps_exception.dart';
 import '../../util/shared.dart';
+import '../../widgets/ps_advice_dialog.dart';
 import '../../widgets/ps_column_text.dart';
 import '../../widgets/ps_elevated_button_icon.dart';
 import '../../widgets/ps_floating_button.dart';
@@ -154,6 +156,47 @@ class _ReviewDetailScreenState extends State<ReviewDetailScreen> {
     });
   }
 
+  void viewAdvices() {
+    List<Advice> advices = [];
+
+    if (widget.review.reviewResult == AppConstants.noPterygium) {
+      advices = [
+        Advice(adviceMessage: AppConstants.noPterygiumAdvice1),
+        Advice(adviceMessage: AppConstants.noPterygiumAdvice2),
+        Advice(adviceMessage: AppConstants.noPterygiumAdvice3),
+        Advice(adviceMessage: AppConstants.noPterygiumAdvice4),
+      ];
+    }
+    else if (widget.review.reviewResult == AppConstants.mildPterygium) {
+      advices = [
+        Advice(adviceMessage: AppConstants.mildPterygiumAdvice1),
+        Advice(adviceMessage: AppConstants.mildPterygiumAdvice2),
+        Advice(adviceMessage: AppConstants.mildPterygiumAdvice3),
+        Advice(adviceMessage: AppConstants.mildPterygiumAdvice4),
+        Advice(adviceMessage: AppConstants.mildPterygiumAdvice5),
+      ];
+    }
+    else if (widget.review.reviewResult == AppConstants.severePterygium) {
+      advices = [
+        Advice(adviceMessage: AppConstants.severePterygiumAdvice1),
+        Advice(adviceMessage: AppConstants.severePterygiumAdvice2),
+        Advice(adviceMessage: AppConstants.severePterygiumAdvice3),
+        Advice(adviceMessage: AppConstants.severePterygiumAdvice4),
+      ];
+    }
+
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) {
+          return StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return PsAdviceDialog(advices: advices, isResultAdvice: true);
+            },
+          );
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -220,6 +263,14 @@ class _ReviewDetailScreenState extends State<ReviewDetailScreen> {
                         ],
                       ),
                       const SizedBox(height: AppConstants.padding * 2),
+
+                      PsElevatedButtonIcon(
+                          isPrimary: true,
+                          icon: Icons.health_and_safety_sharp,
+                          text: "Sugerencias",
+                          onTap: viewAdvices
+                      ),
+
                       if (loading)
                         const Center(child: CircularProgressIndicator())
                       else if (internetError || serverError)

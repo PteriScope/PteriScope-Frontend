@@ -8,6 +8,8 @@ import 'package:image/image.dart' as img;
 import '../../models/patient.dart';
 import '../../services/api_service.dart';
 import '../../services/shared_preferences_service.dart';
+import '../../util/advice.dart';
+import '../../util/constants.dart';
 import '../../util/enum/button_type.dart';
 import '../../widgets/ps_advice_dialog.dart';
 import '../../widgets/ps_floating_button.dart';
@@ -82,6 +84,13 @@ class _CameraScreenState extends State<CameraScreen> {
   }
 
   void _initAdvices() async {
+    List<Advice> advices = [
+      Advice(adviceMessage: AppConstants.advice1, imagePath: AppConstants.advice1ImagePath),
+      Advice(adviceMessage: AppConstants.advice2, imagePath: AppConstants.advice2ImagePath),
+      Advice(adviceMessage: AppConstants.advice3, imagePath: AppConstants.advice3ImagePath),
+      Advice(adviceMessage: AppConstants.advice4, imagePath: AppConstants.advice4ImagePath),
+      Advice(adviceMessage: AppConstants.advice5, imagePath: AppConstants.advice5ImagePath),
+    ];
     bool willShowAdvice = await apiService.willShowAdvice(specialistId!);
     if (willShowAdvice) {
       showDialog(
@@ -90,7 +99,7 @@ class _CameraScreenState extends State<CameraScreen> {
           builder: (BuildContext context) {
             return StatefulBuilder(
               builder: (BuildContext context, StateSetter setState) {
-                return const PsAdviceDialog();
+                return PsAdviceDialog(advices: advices);
               },
             );
           });

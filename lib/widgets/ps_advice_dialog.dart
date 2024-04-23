@@ -9,7 +9,11 @@ import '../util/constants.dart';
 import '../util/enum/button_type.dart';
 
 class PsAdviceDialog extends StatefulWidget {
-  const PsAdviceDialog({Key? key}) : super(key: key);
+  final List<Advice> advices;
+  final bool isResultAdvice;
+  const PsAdviceDialog(
+      {Key? key, required this.advices, this.isResultAdvice = false})
+      : super(key: key);
 
   @override
   State<PsAdviceDialog> createState() => _PsAdviceDialogState();
@@ -17,13 +21,7 @@ class PsAdviceDialog extends StatefulWidget {
 
 class _PsAdviceDialogState extends State<PsAdviceDialog> {
   late int currentIndex = 0;
-  List<Advice> advices = [
-    Advice(AppConstants.advice1, AppConstants.advice1ImagePath),
-    Advice(AppConstants.advice2, AppConstants.advice2ImagePath),
-    Advice(AppConstants.advice3, AppConstants.advice3ImagePath),
-    Advice(AppConstants.advice4, AppConstants.advice4ImagePath),
-    Advice(AppConstants.advice5, AppConstants.advice5ImagePath),
-  ];
+
   bool isCheckboxChecked = false;
   ApiService apiService = ApiService();
   final specialistId = SharedPreferencesService().getId();
@@ -31,9 +29,11 @@ class _PsAdviceDialogState extends State<PsAdviceDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text(
-        "Consejos para crear una revisión",
-        style: TextStyle(fontSize: 17.5, fontWeight: FontWeight.bold),
+      title: Text(
+        widget.isResultAdvice
+            ? "Consejos para el paciente"
+            : "Consejos para crear una revisión",
+        style: const TextStyle(fontSize: 17.5, fontWeight: FontWeight.bold),
         textAlign: TextAlign.center,
       ),
       contentPadding: const EdgeInsets.only(
@@ -55,48 +55,53 @@ class _PsAdviceDialogState extends State<PsAdviceDialog> {
                   });
                 }
               },
-              iconData: Icons.chevron_left),
+              iconData: Icons.chevron_left,
+              isMini: true),
           Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             mainAxisSize: MainAxisSize.min,
             children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(AppConstants.padding / 2.0),
-                child: Image(
-                  image: AssetImage(advices[currentIndex].imagePath),
-                  height: 100,
+              if (widget.advices[currentIndex].imagePath != null)
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(AppConstants.padding / 2.0),
+                  child: Image(
+                    image: AssetImage(widget.advices[currentIndex].imagePath!),
+                    height: 100,
+                  ),
                 ),
-              ),
-              const SizedBox(height: AppConstants.padding),
+              if (widget.advices[currentIndex].imagePath != null)
+                const SizedBox(height: AppConstants.padding),
               Container(
                 padding: const EdgeInsets.symmetric(
                     vertical: AppConstants.padding / 4),
                 width: MediaQuery.of(context).size.width * 0.45,
                 child: Text(
-                  advices[currentIndex].adviceMessage,
+                  widget.advices[currentIndex].adviceMessage,
                   textAlign: TextAlign.center,
                   style: const TextStyle(fontSize: 15),
                 ),
               ),
               const SizedBox(height: AppConstants.padding),
               Text(
-                '${currentIndex + 1}/5',
+                '${currentIndex + 1}/${widget.advices.length}',
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
             ],
           ),
           PsFloatingButton(
-              heroTag: 'nextAdvice',
-              buttonType: ButtonType.secondary,
-              onTap: () {
-                if (currentIndex < 4) {
-                  setState(() {
-                    currentIndex += 1;
-                  });
-                }
-              },
-              iconData: Icons.chevron_right),
+            heroTag: 'nextAdvice',
+            buttonType: ButtonType.secondary,
+            onTap: () {
+              if (currentIndex < widget.advices.length - 1) {
+                setState(() {
+                  currentIndex += 1;
+                });
+              }
+            },
+            iconData: Icons.chevron_right,
+            isMini: true,
+          ),
         ],
       ),
       actionsPadding: const EdgeInsets.only(
@@ -104,35 +109,37 @@ class _PsAdviceDialogState extends State<PsAdviceDialog> {
           left: AppConstants.padding / 3.0,
           right: AppConstants.padding,
           bottom: AppConstants.padding),
-      actionsAlignment: MainAxisAlignment.spaceBetween,
+      actionsAlignment: MainAxisAlignment.spaceAround,
       actions: [
-        Row(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Checkbox(
-                value: isCheckboxChecked,
-                onChanged: (bool? value) {
-                  setState(() {
-                    isCheckboxChecked = value!;
-                  });
-                },
-              ),
-              const Text(
-                'No volver a mostrar',
-                style: TextStyle(fontSize: 11),
-              ),
-            ]),
+        if (!widget.isResultAdvice)
+          Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Checkbox(
+                  value: isCheckboxChecked,
+                  onChanged: (bool? value) {
+                    setState(() {
+                      isCheckboxChecked = value!;
+                    });
+                  },
+                ),
+                const Text(
+                  'No volver a mostrar',
+                  style: TextStyle(fontSize: 11),
+                ),
+              ]),
         PsElevatedButtonIcon(
-            isPrimary: true,
-            icon: Icons.check,
-            text: "Ententido",
-            onTap: () async {
-              if (isCheckboxChecked) {
-                await apiService.markDoNotShowAdvice(specialistId!);
-              }
-              Navigator.of(context).pop();
-            },)
+          isPrimary: true,
+          icon: Icons.check,
+          text: "Ententido",
+          onTap: () async {
+            if (isCheckboxChecked && !widget.isResultAdvice) {
+              await apiService.markDoNotShowAdvice(specialistId!);
+            }
+            Navigator.of(context).pop();
+          },
+        )
       ],
     );
   }

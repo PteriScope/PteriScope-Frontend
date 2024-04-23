@@ -1,6 +1,6 @@
 class Advice {
   String adviceMessage;
-  String imagePath;
+  String? imagePath;
 
-  Advice(this.adviceMessage, this.imagePath);
+  Advice({required this.adviceMessage, this.imagePath});
 }
