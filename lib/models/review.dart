@@ -21,7 +21,6 @@ class Review {
         id: null,
         imageBase64: null,
         reviewResult: null,
-
       );
     }
     return Review(

@@ -62,6 +62,8 @@ class _HomeScreenState extends State<HomeScreen> {
   void loadPatients() async {
     setState(() {
       loading = true;
+      internetError = false;
+      serverError = false;
     });
 
     try {
@@ -97,7 +99,9 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: const PsAppBar(
-            title: 'PteriScope', titleSize: AppConstants.bigAppBarTitleSize, disabled: false),
+            title: 'PteriScope',
+            titleSize: AppConstants.bigAppBarTitleSize,
+            disabled: false),
         drawer: const PsMenuBar(currentView: CurrentScreen.patientList),
         body: Column(
           children: [
@@ -249,9 +253,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                         CrossAxisAlignment.center,
                                     children: <Widget>[
                                       Text(
-                                          '${patient.firstName} ${patient.lastName}',
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.bold)),
+                                        '${patient.firstName} ${patient.lastName}',
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                        textAlign: TextAlign.center,
+                                      ),
                                       Text(
                                         patient.email,
                                         style: const TextStyle(fontSize: 10),

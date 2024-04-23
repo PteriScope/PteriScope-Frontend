@@ -162,29 +162,6 @@ class ApiService with ChangeNotifier {
     }
   }
 
-  Future<List<Review>> getReviewsFromPatient(int patientId) async {
-    final headers = await _getAuthHeaders();
-
-    var response = await http.get(
-      Uri.parse('$baseUrl/patients/$patientId/reviews'),
-      headers: headers,
-    );
-
-    if (response.statusCode == 200) {
-      var decodedResponse = utf8.decode(response.bodyBytes);
-      var jsonResponse = json.decode(decodedResponse);
-      if (jsonResponse is! List) {
-        throw Exception('Expected list of reviews');
-      }
-      List<Review> reviews = jsonResponse.map<Review>((reviewJson) => Review.fromJson(reviewJson)).toList();
-      notifyListeners();
-      return reviews;
-    } else {
-      log(response.body);
-      throw Exception('Failed to load review data');
-    }
-  }
-
   Future<Review> getLatestReviewFromPatient(int patientId) async {
     final headers = await _getAuthHeaders();
     Review latestReview = Review();
@@ -277,7 +254,7 @@ class ApiService with ChangeNotifier {
     }
   }
 
-  Future<String> createReview(int patientId, Map<String, dynamic> reviewData) async {
+  Future<Review> createReview(int patientId, Map<String, dynamic> reviewData) async {
     final headers = await _getAuthHeaders();
     var response = await http.post(
       Uri.parse('$baseUrl/reviews?patientId=$patientId'),
@@ -286,10 +263,36 @@ class ApiService with ChangeNotifier {
     );
 
     if (response.statusCode == 200) {
+      var decodedResponse = utf8.decode(response.bodyBytes);
+      var jsonResponse = json.decode(decodedResponse);
+      Review review = Review.fromJson(jsonResponse);
       notifyListeners();
-      return response.body;
+      return review;
     } else {
       throw Exception('Failed to create review');
+    }
+  }
+
+  Future<List<Review>> getReviewsFromPatient(int patientId) async {
+    final headers = await _getAuthHeaders();
+
+    var response = await http.get(
+      Uri.parse('$baseUrl/patients/$patientId/reviews'),
+      headers: headers,
+    );
+
+    if (response.statusCode == 200) {
+      var decodedResponse = utf8.decode(response.bodyBytes);
+      var jsonResponse = json.decode(decodedResponse);
+      if (jsonResponse is! List) {
+        throw Exception('Expected list of reviews');
+      }
+      List<Review> reviews = jsonResponse.map<Review>((reviewJson) => Review.fromJson(reviewJson)).toList();
+      notifyListeners();
+      return reviews;
+    } else {
+      log(response.body);
+      throw Exception('Failed to load review data');
     }
   }
 
@@ -305,6 +308,23 @@ class ApiService with ChangeNotifier {
       return response.body;
     } else {
       throw Exception('Failed to load review data');
+    }
+  }
+
+  Future<void> deleteReview(int reviewId) async {
+    final headers = await _getAuthHeaders();
+
+    var response = await http.delete(
+      Uri.parse('$baseUrl/reviews/$reviewId'),
+      headers: headers,
+    );
+
+    if (response.statusCode == 200) {
+      notifyListeners();
+    }
+    else {
+      var decodedResponse = utf8.decode(response.bodyBytes);
+      throw PsException(decodedResponse);
     }
   }
 }

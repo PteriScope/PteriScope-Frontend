@@ -98,18 +98,16 @@ class _ConfirmPictureScreenState extends State<ConfirmPictureScreen> {
     try {
       bool _ = await Shared.checkConnectivity();
 
-      String reviewResponse =
+      Review reviewResponse =
           await Provider.of<ApiService>(context, listen: false).createReview(
               widget.patient.id, {'imageBase64': widget.imageBase64});
 
       if (mounted) {
         Navigator.of(context, rootNavigator: true).pop();
-        final reviewData = jsonDecode(reviewResponse);
-        Review review = Review.fromJson(reviewData);
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) => ReviewDetailScreen(
-              review: review,
+              review: reviewResponse,
               patient: widget.patient,
             ),
           ),

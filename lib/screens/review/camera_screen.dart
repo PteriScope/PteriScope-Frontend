@@ -150,7 +150,6 @@ class _CameraScreenState extends State<CameraScreen> {
   Future<void> _handleFocusTap(Offset localPosition) async {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-    ;
 
     final x = localPosition.dx / screenWidth;
     final y = localPosition.dy / screenHeight;

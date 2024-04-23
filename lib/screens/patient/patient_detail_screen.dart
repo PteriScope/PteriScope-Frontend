@@ -56,9 +56,11 @@ class _PatientDetailScreen extends State<PatientDetailScreen> {
     loadReviews();
   }
 
-  void loadReviews() async {
+  Future<void> loadReviews() async {
     setState(() {
       loading = true;
+      serverError = false;
+      internetError = false;
     });
 
     try {
@@ -79,11 +81,13 @@ class _PatientDetailScreen extends State<PatientDetailScreen> {
       setState(() {
         loading = false;
         internetError = true;
+        serverError = false;
         log(e.toString());
       });
     } catch (e) {
       setState(() {
         loading = false;
+        internetError = false;
         serverError = true;
         log(e.toString());
       });
@@ -160,56 +164,59 @@ class _PatientDetailScreen extends State<PatientDetailScreen> {
 
   Future<void> _deletePatient() async {
     if (internetError || serverError) {
-      Shared.showPSSnackBar(
-          context,
-          "Compruebe su conexión a Internet",
-          SnackBarType.onlyText,
-          AppConstants.shortSnackBarDuration);
-    }
-    else {
-      setState(() {
-        _isDeleting = true;
-      });
-
-      try {
-        bool __ = await Shared.checkConnectivity();
-
-        var apiService = Provider.of<ApiService>(context, listen: false);
+      await loadReviews();
+      if (internetError || serverError) {
         Shared.showPSSnackBar(
             context,
-            //TODO: CHECK WITH EXCEL
-            'Eliminando paciente...',
-            SnackBarType.loading,
-            AppConstants.longSnackBarDuration);
-
-        await apiService.deletePatient(
-            widget.patient.id);
-
-        Shared.showPSSnackBar(context, 'Eliminación exitosa',
-            SnackBarType.onlyText, AppConstants.shortSnackBarDuration);
-
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => const HomeScreen(),
-          ),
-        );
-      } on PsException catch (e) {
-        Shared.showPSSnackBar(context, 'Error: ${e.message}',
-            SnackBarType.onlyText, AppConstants.shortSnackBarDuration);
-      } on SocketException catch (_) {
-        Shared.showPSSnackBar(
-            context,
-            'Hubo un error al tratar de conectarse al servidor. Inténtelo más tarde, por favor',
+            internetError ? "Compruebe su conexión a Internet" : "Hubo un error al tratar de conectarse al servidor. Inténtelo más tarde, por favor",
             SnackBarType.onlyText,
             AppConstants.shortSnackBarDuration);
-      } catch (e) {
-        Shared.showPSSnackBar(context, 'Registro fallido', SnackBarType.onlyText,
-            AppConstants.shortSnackBarDuration);
+        return;
       }
-      setState(() {
-        _isDeleting = false;
-      });
     }
+
+    setState(() {
+      _isDeleting = true;
+    });
+
+    try {
+      bool __ = await Shared.checkConnectivity();
+
+      var apiService = Provider.of<ApiService>(context, listen: false);
+      Shared.showPSSnackBar(
+          context,
+          //TODO: CHECK WITH EXCEL
+          'Eliminando paciente...',
+          SnackBarType.loading,
+          AppConstants.longSnackBarDuration);
+
+      await apiService.deletePatient(
+          widget.patient.id);
+
+      Shared.showPSSnackBar(context, 'Eliminación exitosa',
+          SnackBarType.onlyText, AppConstants.shortSnackBarDuration);
+
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => const HomeScreen(),
+        ),
+      );
+    } on PsException catch (e) {
+      Shared.showPSSnackBar(context, 'Error: ${e.message}',
+          SnackBarType.onlyText, AppConstants.shortSnackBarDuration);
+    } on SocketException catch (_) {
+      Shared.showPSSnackBar(
+          context,
+          'Hubo un error al tratar de conectarse al servidor. Inténtelo más tarde, por favor',
+          SnackBarType.onlyText,
+          AppConstants.shortSnackBarDuration);
+    } catch (e) {
+      Shared.showPSSnackBar(context, 'Eliminación fallida', SnackBarType.onlyText,
+          AppConstants.shortSnackBarDuration);
+    }
+    setState(() {
+      _isDeleting = false;
+    });
   }
 
   @override
