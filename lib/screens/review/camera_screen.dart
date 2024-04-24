@@ -42,7 +42,6 @@ class _CameraScreenState extends State<CameraScreen> {
   final specialistId = SharedPreferencesService().getId();
   ApiService apiService = ApiService();
 
-
   @override
   void initState() {
     super.initState();
@@ -86,11 +85,21 @@ class _CameraScreenState extends State<CameraScreen> {
 
   void _initAdvices() async {
     List<Advice> advices = [
-      Advice(adviceMessage: AppConstants.advice1, imagePath: AppConstants.advice1ImagePath),
-      Advice(adviceMessage: AppConstants.advice2, imagePath: AppConstants.advice2ImagePath),
-      Advice(adviceMessage: AppConstants.advice3, imagePath: AppConstants.advice3ImagePath),
-      Advice(adviceMessage: AppConstants.advice4, imagePath: AppConstants.advice4ImagePath),
-      Advice(adviceMessage: AppConstants.advice5, imagePath: AppConstants.advice5ImagePath),
+      Advice(
+          adviceMessage: AppConstants.advice1,
+          imagePath: AppConstants.advice1ImagePath),
+      Advice(
+          adviceMessage: AppConstants.advice2,
+          imagePath: AppConstants.advice2ImagePath),
+      Advice(
+          adviceMessage: AppConstants.advice3,
+          imagePath: AppConstants.advice3ImagePath),
+      Advice(
+          adviceMessage: AppConstants.advice4,
+          imagePath: AppConstants.advice4ImagePath),
+      Advice(
+          adviceMessage: AppConstants.advice5,
+          imagePath: AppConstants.advice5ImagePath),
     ];
     bool willShowAdvice = await apiService.willShowAdvice(specialistId!);
     if (willShowAdvice) {

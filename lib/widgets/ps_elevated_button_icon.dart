@@ -28,7 +28,8 @@ class PsElevatedButtonIcon extends StatelessWidget {
         style: TextStyle(color: textColor),
       ),
       style: ElevatedButton.styleFrom(
-        backgroundColor: isPrimary ? AppConstants.primaryColor : AppConstants.secondaryColor,
+        backgroundColor:
+            isPrimary ? AppConstants.primaryColor : AppConstants.secondaryColor,
         padding: const EdgeInsets.symmetric(
           horizontal: 12.0,
           vertical: 8.0,

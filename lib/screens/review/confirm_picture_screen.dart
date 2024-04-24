@@ -133,9 +133,8 @@ class _ConfirmPictureScreenState extends State<ConfirmPictureScreen> {
             DialogType.error,
             'Error al crear la revisión: ${e is PsException ? e.message : "Inténtelo más tarde, por favor"}',
             'Cerrar',
-                () => {Navigator.of(context).pop()},
-            Icons.close
-        );
+            () => {Navigator.of(context).pop()},
+            Icons.close);
       }
     }
   }

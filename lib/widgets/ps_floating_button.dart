@@ -11,15 +11,14 @@ class PsFloatingButton extends StatelessWidget {
   final bool? disabled;
   final bool isMini;
 
-  const PsFloatingButton({
-    super.key,
-    required this.heroTag,
-    required this.buttonType,
-    required this.onTap,
-    required this.iconData,
-    this.disabled,
-    this.isMini = false
-  });
+  const PsFloatingButton(
+      {super.key,
+      required this.heroTag,
+      required this.buttonType,
+      required this.onTap,
+      required this.iconData,
+      this.disabled,
+      this.isMini = false});
 
   @override
   Widget build(BuildContext context) {

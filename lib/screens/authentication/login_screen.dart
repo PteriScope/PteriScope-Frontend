@@ -26,9 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _dniController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isButtonDisabled = true;
-  List<Validation> dniValidations = [
-    Validation("8 dígitos numéricos", false)
-  ];
+  List<Validation> dniValidations = [Validation("8 dígitos numéricos", false)];
   List<Validation> passwordValidations = [
     Validation("Al menos 8 caracteres", false),
     Validation("Al menos 1 letra del alfabeto", false),
@@ -44,12 +42,16 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _checkFields() {
-    final dniLengthValidation = RegExp(r'^\d{8}$').hasMatch(_dniController.text);
+    final dniLengthValidation =
+        RegExp(r'^\d{8}$').hasMatch(_dniController.text);
 
     final passwordLengthValidation = _passwordController.text.length >= 8;
-    final passwordAlphabetValidation = RegExp(r'[a-zA-Z]').hasMatch(_passwordController.text);
-    final passwordNumberValidation = RegExp(r'\d').hasMatch(_passwordController.text);
-    final passwordSpecialCharacterValidation = RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(_passwordController.text);
+    final passwordAlphabetValidation =
+        RegExp(r'[a-zA-Z]').hasMatch(_passwordController.text);
+    final passwordNumberValidation =
+        RegExp(r'\d').hasMatch(_passwordController.text);
+    final passwordSpecialCharacterValidation =
+        RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(_passwordController.text);
 
     setState(() {
       dniValidations[0].isValid = dniLengthValidation;
@@ -89,30 +91,21 @@ class _LoginScreenState extends State<LoginScreen> {
         Navigator.of(context).pushReplacement(
             MaterialPageRoute(builder: (_) => const HomeScreen()));
       } else {
-        Shared.showPSSnackBar(
-            context,
-            'Credenciales incorrectas',
-            SnackBarType.onlyText,
-            AppConstants.shortSnackBarDuration);
+        Shared.showPSSnackBar(context, 'Credenciales incorrectas',
+            SnackBarType.onlyText, AppConstants.shortSnackBarDuration);
       }
-    } on PsException catch(e){
-      Shared.showPSSnackBar(
-          context,
-          'Error: ${e.message}',
-          SnackBarType.onlyText,
-          AppConstants.shortSnackBarDuration);
-    } on SocketException catch(_) {
+    } on PsException catch (e) {
+      Shared.showPSSnackBar(context, 'Error: ${e.message}',
+          SnackBarType.onlyText, AppConstants.shortSnackBarDuration);
+    } on SocketException catch (_) {
       Shared.showPSSnackBar(
           context,
           'Hubo un error al tratar de conectarse al servidor. Inténtelo más tarde, por favor',
           SnackBarType.onlyText,
           AppConstants.shortSnackBarDuration);
     } catch (e) {
-      Shared.showPSSnackBar(
-          context,
-          'Inicio de sesión fallido',
-          SnackBarType.onlyText,
-          AppConstants.shortSnackBarDuration);
+      Shared.showPSSnackBar(context, 'Inicio de sesión fallido',
+          SnackBarType.onlyText, AppConstants.shortSnackBarDuration);
     }
     setState(() {
       _isButtonDisabled = false;
@@ -148,7 +141,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   hintText: 'DNI',
                   obscureText: false,
                   inputType: TextInputType.number,
-                  isValid: dniValidations.every((validation) => validation.isValid),
+                  isValid:
+                      dniValidations.every((validation) => validation.isValid),
                   validations: dniValidations),
               const SizedBox(height: 20),
               PsTextField(
@@ -156,7 +150,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   hintText: 'Contraseña',
                   obscureText: true,
                   inputType: TextInputType.text,
-                  isValid: passwordValidations.every((validation) => validation.isValid),
+                  isValid: passwordValidations
+                      .every((validation) => validation.isValid),
                   validations: passwordValidations),
               const SizedBox(height: 20),
               PsElevatedButton(

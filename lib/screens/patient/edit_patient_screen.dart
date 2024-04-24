@@ -154,15 +154,14 @@ class _EditPatientScreenState extends State<EditPatientScreen> {
               age: int.parse(_ageController.text),
               email: _emailController.text));
 
-      Shared.showPSSnackBar(context, 'Registro exitoso',
-          SnackBarType.onlyText, AppConstants.shortSnackBarDuration);
+      Shared.showPSSnackBar(context, 'Registro exitoso', SnackBarType.onlyText,
+          AppConstants.shortSnackBarDuration);
 
       Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => PatientDetailScreen(patient: patient),
         ),
       );
-
     } on PsException catch (e) {
       Shared.showPSSnackBar(context, 'Error: ${e.message}',
           SnackBarType.onlyText, AppConstants.shortSnackBarDuration);
@@ -195,7 +194,9 @@ class _EditPatientScreenState extends State<EditPatientScreen> {
       },
       child: Scaffold(
         appBar: PsAppBar(
-            title: 'Editar paciente', titleSize: AppConstants.bigAppBarTitleSize, disabled: _isUpdating),
+            title: 'Editar paciente',
+            titleSize: AppConstants.bigAppBarTitleSize,
+            disabled: _isUpdating),
         drawer: const PsMenuBar(currentView: CurrentScreen.other),
         body: SingleChildScrollView(
           child: Card(

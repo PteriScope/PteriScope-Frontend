@@ -8,12 +8,11 @@ class PsAppBar extends StatelessWidget implements PreferredSizeWidget {
   final double titleSize;
   final bool disabled;
 
-  const PsAppBar({
-    super.key,
-    required this.title,
-    required this.titleSize,
-    required this.disabled
-  });
+  const PsAppBar(
+      {super.key,
+      required this.title,
+      required this.titleSize,
+      required this.disabled});
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +20,9 @@ class PsAppBar extends StatelessWidget implements PreferredSizeWidget {
       title: Text(
         title,
         style: TextStyle(
-            fontSize: titleSize, fontWeight: FontWeight.bold, color: Colors.white),
+            fontSize: titleSize,
+            fontWeight: FontWeight.bold,
+            color: Colors.white),
       ),
       leading: IconButton(
         icon: const Icon(Icons.menu),

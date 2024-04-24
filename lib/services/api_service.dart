@@ -49,7 +49,7 @@ class ApiService with ChangeNotifier {
     } else if (response.statusCode == 404) {
       notifyListeners();
       return false;
-    }else {
+    } else {
       log(response.statusCode.toString());
       throw Exception('Failed to login');
     }
@@ -107,7 +107,7 @@ class ApiService with ChangeNotifier {
     }
   }
 
-  Future<void> markDoNotShowAdvice(int specialistId) async{
+  Future<void> markDoNotShowAdvice(int specialistId) async {
     final headers = await _getAuthHeaders();
     var response = await http.put(
       Uri.parse('$baseUrl/specialists/$specialistId/markDoNotShowAdvice'),
@@ -121,13 +121,13 @@ class ApiService with ChangeNotifier {
     }
   }
 
-  Future<Specialist> updateSpecialist(int specialistId, RegisterUser updatedSpecialist) async {
+  Future<Specialist> updateSpecialist(
+      int specialistId, RegisterUser updatedSpecialist) async {
     final headers = await _getAuthHeaders();
     var response = await http.put(
-      Uri.parse('$baseUrl/specialists/$specialistId'),
-      headers: headers,
-      body: json.encode(updatedSpecialist.toJson())
-    );
+        Uri.parse('$baseUrl/specialists/$specialistId'),
+        headers: headers,
+        body: json.encode(updatedSpecialist.toJson()));
 
     if (response.statusCode == 200) {
       var decodedResponse = utf8.decode(response.bodyBytes);
@@ -154,7 +154,8 @@ class ApiService with ChangeNotifier {
       if (jsonResponse is! List) {
         throw Exception('Expected list of reviews');
       }
-      List<Patient> patients = jsonResponse.map<Patient>((json) => Patient.fromJson(json)).toList();
+      List<Patient> patients =
+          jsonResponse.map<Patient>((json) => Patient.fromJson(json)).toList();
       notifyListeners();
       return patients;
     } else if (response.statusCode == 401) {
@@ -186,13 +187,11 @@ class ApiService with ChangeNotifier {
     }
   }
 
-  Future<Patient> updatePatient(int patientId, RegisterPatient updatedPatient) async {
+  Future<Patient> updatePatient(
+      int patientId, RegisterPatient updatedPatient) async {
     final headers = await _getAuthHeaders();
-    var response = await http.put(
-        Uri.parse('$baseUrl/patients/$patientId'),
-        headers: headers,
-        body: json.encode(updatedPatient.toJson())
-    );
+    var response = await http.put(Uri.parse('$baseUrl/patients/$patientId'),
+        headers: headers, body: json.encode(updatedPatient.toJson()));
 
     if (response.statusCode == 200) {
       var decodedResponse = utf8.decode(response.bodyBytes);
@@ -215,14 +214,14 @@ class ApiService with ChangeNotifier {
 
     if (response.statusCode == 200) {
       notifyListeners();
-    }
-    else {
+    } else {
       var decodedResponse = utf8.decode(response.bodyBytes);
       throw PsException(decodedResponse);
     }
   }
 
-  Future<Review> createReview(int patientId, Map<String, dynamic> reviewData) async {
+  Future<Review> createReview(
+      int patientId, Map<String, dynamic> reviewData) async {
     final headers = await _getAuthHeaders();
     var response = await http.post(
       Uri.parse('$baseUrl/reviews?patientId=$patientId'),
@@ -255,7 +254,9 @@ class ApiService with ChangeNotifier {
       if (jsonResponse is! List) {
         throw Exception('Expected list of reviews');
       }
-      List<Review> reviews = jsonResponse.map<Review>((reviewJson) => Review.fromJson(reviewJson)).toList();
+      List<Review> reviews = jsonResponse
+          .map<Review>((reviewJson) => Review.fromJson(reviewJson))
+          .toList();
       notifyListeners();
       return reviews;
     } else {
@@ -274,8 +275,7 @@ class ApiService with ChangeNotifier {
 
     if (response.statusCode == 200) {
       notifyListeners();
-    }
-    else {
+    } else {
       var decodedResponse = utf8.decode(response.bodyBytes);
       throw PsException(decodedResponse);
     }

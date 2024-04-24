@@ -64,7 +64,8 @@ class _PsAdviceDialogState extends State<PsAdviceDialog> {
             children: [
               if (widget.advices[currentIndex].imagePath != null)
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(AppConstants.padding / 2.0),
+                  borderRadius:
+                      BorderRadius.circular(AppConstants.padding / 2.0),
                   child: Image(
                     image: AssetImage(widget.advices[currentIndex].imagePath!),
                     height: 100,

@@ -1,6 +1,1 @@
-enum CurrentScreen{
-  patientList,
-  newPatient,
-  profile,
-  other
-}
+enum CurrentScreen { patientList, newPatient, profile, other }

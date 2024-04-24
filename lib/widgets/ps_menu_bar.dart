@@ -10,10 +10,7 @@ import '../util/shared.dart';
 class PsMenuBar extends StatelessWidget {
   final CurrentScreen currentView;
 
-  const PsMenuBar({
-    Key? key,
-    required this.currentView
-  }) : super(key: key);
+  const PsMenuBar({Key? key, required this.currentView}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +26,7 @@ class PsMenuBar extends StatelessWidget {
               text: 'Lista de pacientes',
               isSelected: currentView == CurrentScreen.patientList,
               onTap: () {
-                if(currentView != CurrentScreen.patientList) {
+                if (currentView != CurrentScreen.patientList) {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => const HomeScreen(),
@@ -43,7 +40,7 @@ class PsMenuBar extends StatelessWidget {
               text: 'Nuevo paciente',
               isSelected: currentView == CurrentScreen.newPatient,
               onTap: () {
-                if(currentView != CurrentScreen.newPatient) {
+                if (currentView != CurrentScreen.newPatient) {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => const NewPatientScreen(),
@@ -58,7 +55,7 @@ class PsMenuBar extends StatelessWidget {
               text: 'Perfil',
               isSelected: currentView == CurrentScreen.profile,
               onTap: () {
-                if(currentView != CurrentScreen.profile) {
+                if (currentView != CurrentScreen.profile) {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => const ProfileScreen(),

@@ -2,7 +2,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPreferencesService {
   SharedPreferencesService._privateConstructor();
-  static final SharedPreferencesService _instance = SharedPreferencesService._privateConstructor();
+  static final SharedPreferencesService _instance =
+      SharedPreferencesService._privateConstructor();
   factory SharedPreferencesService() {
     return _instance;
   }
@@ -45,7 +46,7 @@ class SharedPreferencesService {
     return _prefs?.remove('authToken') ?? Future.value(false);
   }
 
-  Future<bool> isLogged() async{
+  Future<bool> isLogged() async {
     String? token = _prefs?.getString('authToken');
     return token != null ? true : false;
   }

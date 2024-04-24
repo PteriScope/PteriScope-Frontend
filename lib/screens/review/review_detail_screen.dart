@@ -164,8 +164,7 @@ class _ReviewDetailScreenState extends State<ReviewDetailScreen> {
         Advice(adviceMessage: AppConstants.noPterygiumAdvice3),
         Advice(adviceMessage: AppConstants.noPterygiumAdvice4),
       ];
-    }
-    else if (widget.review.reviewResult == AppConstants.mildPterygium) {
+    } else if (widget.review.reviewResult == AppConstants.mildPterygium) {
       advices = [
         Advice(adviceMessage: AppConstants.mildPterygiumAdvice1),
         Advice(adviceMessage: AppConstants.mildPterygiumAdvice2),
@@ -173,8 +172,7 @@ class _ReviewDetailScreenState extends State<ReviewDetailScreen> {
         Advice(adviceMessage: AppConstants.mildPterygiumAdvice4),
         Advice(adviceMessage: AppConstants.mildPterygiumAdvice5),
       ];
-    }
-    else if (widget.review.reviewResult == AppConstants.severePterygium) {
+    } else if (widget.review.reviewResult == AppConstants.severePterygium) {
       advices = [
         Advice(adviceMessage: AppConstants.severePterygiumAdvice1),
         Advice(adviceMessage: AppConstants.severePterygiumAdvice2),
@@ -218,7 +216,8 @@ class _ReviewDetailScreenState extends State<ReviewDetailScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(AppConstants.padding / 2.0),
+                  borderRadius:
+                      BorderRadius.circular(AppConstants.padding / 2.0),
                   child: Image.memory(
                     base64Decode(widget.review.imageBase64!),
                     fit: BoxFit.cover,
@@ -263,21 +262,19 @@ class _ReviewDetailScreenState extends State<ReviewDetailScreen> {
                                   text: "Encargado de la revisión: ",
                                   isBold: true),
                               PsColumnText(
-                                  text:
-                                      specialist == null ? "-" : specialist!.name,
+                                  text: specialist == null
+                                      ? "-"
+                                      : specialist!.name,
                                   isBold: false),
                             ]),
                           ],
                         ),
                         const SizedBox(height: AppConstants.padding * 2),
-
                         PsElevatedButtonIcon(
                             isPrimary: true,
                             icon: Icons.health_and_safety_sharp,
                             text: "Sugerencias",
-                            onTap: viewAdvices
-                        ),
-
+                            onTap: viewAdvices),
                         if (loading)
                           const Center(child: CircularProgressIndicator())
                         else if (internetError || serverError)
@@ -342,8 +339,8 @@ class _ReviewDetailScreenState extends State<ReviewDetailScreen> {
                       onTap: () => {
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (context) =>
-                                    PatientDetailScreen(patient: widget.patient),
+                                builder: (context) => PatientDetailScreen(
+                                    patient: widget.patient),
                               ),
                             )
                           },

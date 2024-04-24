@@ -135,8 +135,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       bottom: AppConstants.padding),
                   child: Divider(thickness: 1.5)),
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: AppConstants.padding),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: AppConstants.padding),
                 child: TextField(
                   controller: _searchController,
                   decoration: InputDecoration(
@@ -271,7 +271,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                         textAlign: TextAlign.center,
                                       ),
                                       Text(
-                                        patient.email == "" ? "-" : patient.email,
+                                        patient.email == ""
+                                            ? "-"
+                                            : patient.email,
                                         style: const TextStyle(fontSize: 10),
                                       ),
                                     ],

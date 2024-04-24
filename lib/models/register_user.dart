@@ -5,13 +5,12 @@ class RegisterUser {
   final String hospital;
   final String position;
 
-  RegisterUser({
-    required this.name,
-    required this.dni,
-    required this.password,
-    required this.hospital,
-    required this.position
-  });
+  RegisterUser(
+      {required this.name,
+      required this.dni,
+      required this.password,
+      required this.hospital,
+      required this.position});
 
   factory RegisterUser.fromJson(Map<String, dynamic> json) {
     return RegisterUser(

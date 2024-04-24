@@ -1,5 +1,1 @@
-enum DialogType{
-  confirmation,
-  warning,
-  error
-}
+enum DialogType { confirmation, warning, error }

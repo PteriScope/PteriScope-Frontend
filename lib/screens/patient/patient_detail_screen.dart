@@ -143,22 +143,21 @@ class _PatientDetailScreen extends State<PatientDetailScreen> {
   void goToEditPatientScreen() {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => EditPatientScreen(
-            patient: widget.patient),
+        builder: (context) => EditPatientScreen(patient: widget.patient),
       ),
     );
   }
 
-  void showAlertDialog(){
+  void showAlertDialog() {
     Shared.showPsDialog(
         context,
         DialogType.warning,
         "¿Estás seguro que deseas eliminar este paciente?",
         "Eliminar",
-            () => {_deletePatient(), Navigator.of(context).pop()},
+        () => {_deletePatient(), Navigator.of(context).pop()},
         Icons.check_circle,
         "Cancelar",
-            () => {Navigator.of(context).pop()},
+        () => {Navigator.of(context).pop()},
         Icons.cancel);
   }
 
@@ -168,7 +167,9 @@ class _PatientDetailScreen extends State<PatientDetailScreen> {
       if (internetError || serverError) {
         Shared.showPSSnackBar(
             context,
-            internetError ? "Compruebe su conexión a Internet" : "Hubo un error al tratar de conectarse al servidor. Inténtelo más tarde, por favor",
+            internetError
+                ? "Compruebe su conexión a Internet"
+                : "Hubo un error al tratar de conectarse al servidor. Inténtelo más tarde, por favor",
             SnackBarType.onlyText,
             AppConstants.shortSnackBarDuration);
         return;
@@ -190,8 +191,7 @@ class _PatientDetailScreen extends State<PatientDetailScreen> {
           SnackBarType.loading,
           AppConstants.longSnackBarDuration);
 
-      await apiService.deletePatient(
-          widget.patient.id);
+      await apiService.deletePatient(widget.patient.id);
 
       Shared.showPSSnackBar(context, 'Eliminación exitosa',
           SnackBarType.onlyText, AppConstants.shortSnackBarDuration);
@@ -211,8 +211,8 @@ class _PatientDetailScreen extends State<PatientDetailScreen> {
           SnackBarType.onlyText,
           AppConstants.shortSnackBarDuration);
     } catch (e) {
-      Shared.showPSSnackBar(context, 'Eliminación fallida', SnackBarType.onlyText,
-          AppConstants.shortSnackBarDuration);
+      Shared.showPSSnackBar(context, 'Eliminación fallida',
+          SnackBarType.onlyText, AppConstants.shortSnackBarDuration);
     }
     setState(() {
       _isDeleting = false;
@@ -232,10 +232,9 @@ class _PatientDetailScreen extends State<PatientDetailScreen> {
       },
       child: Scaffold(
         appBar: PsAppBar(
-          title: '${patient.firstName} ${patient.lastName}',
-          titleSize: AppConstants.smallAppBarTitleSize,
-          disabled: _isDeleting
-        ),
+            title: '${patient.firstName} ${patient.lastName}',
+            titleSize: AppConstants.smallAppBarTitleSize,
+            disabled: _isDeleting),
         drawer: const PsMenuBar(currentView: CurrentScreen.other),
         body: Column(
           children: [

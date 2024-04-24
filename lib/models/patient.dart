@@ -34,7 +34,8 @@ class Patient {
       specialistId: json['specialistId'],
       lastReviewResult: json['lastReviewResult'],
       lastReviewDate: json['lastReviewDate'] == null
-          ? null : DateFormat("yyyy-MM-dd").parse(json['lastReviewDate']),
+          ? null
+          : DateFormat("yyyy-MM-dd").parse(json['lastReviewDate']),
     );
   }
 

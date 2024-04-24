@@ -13,6 +13,7 @@ import '../../util/validation.dart';
 import '../../services/api_service.dart';
 import '../../util/constants.dart';
 import '../../widgets/ps_elevated_button.dart';
+
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({super.key});
 
@@ -32,9 +33,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     Validation("Al menos un nombre y dos apellidos", false),
     Validation("Solo valores alfanuméricos", false),
   ];
-  List<Validation> dniValidations = [
-    Validation("8 dígitos numéricos", false)
-  ];
+  List<Validation> dniValidations = [Validation("8 dígitos numéricos", false)];
   List<Validation> passwordValidations = [
     Validation("Al menos 8 caracteres", false),
     Validation("Al menos 1 letra del alfabeto", false),
@@ -62,15 +61,21 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     final nameSurnameValidation = _nameController.text
             .split(' ')
             .where((word) => word.isNotEmpty)
-            .length >= 3;
-    final nameAlphanumericValidation = RegExp(r'^[a-zA-Z0-9\s]+$').hasMatch(_nameController.text);
+            .length >=
+        3;
+    final nameAlphanumericValidation =
+        RegExp(r'^[a-zA-Z0-9\s]+$').hasMatch(_nameController.text);
 
-    final dniLengthValidation = RegExp(r'^\d{8}$').hasMatch(_dniController.text);
+    final dniLengthValidation =
+        RegExp(r'^\d{8}$').hasMatch(_dniController.text);
 
     final passwordLengthValidation = _passwordController.text.length >= 8;
-    final passwordAlphabetValidation = RegExp(r'[a-zA-Z]').hasMatch(_passwordController.text);
-    final passwordNumberValidation = RegExp(r'\d').hasMatch(_passwordController.text);
-    final passwordSpecialCharacterValidation = RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(_passwordController.text);
+    final passwordAlphabetValidation =
+        RegExp(r'[a-zA-Z]').hasMatch(_passwordController.text);
+    final passwordNumberValidation =
+        RegExp(r'\d').hasMatch(_passwordController.text);
+    final passwordSpecialCharacterValidation =
+        RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(_passwordController.text);
 
     final hospitalLengthValidation = _hospitalController.text.length >= 3;
 
@@ -111,10 +116,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       bool _ = await Shared.checkConnectivity();
 
       var apiService = Provider.of<ApiService>(context, listen: false);
-      Shared.showPSSnackBar(
-          context,
-          'Registrando...',
-          SnackBarType.loading,
+      Shared.showPSSnackBar(context, 'Registrando...', SnackBarType.loading,
           AppConstants.longSnackBarDuration);
       bool registered = await apiService.registerSpecialist(RegisterUser(
           name: _nameController.text,
@@ -124,36 +126,24 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           position: _positionController.text));
 
       if (registered) {
-        Shared.showPSSnackBar(
-            context,
-            'Registro exitoso',
-            SnackBarType.onlyText,
-            AppConstants.shortSnackBarDuration);
+        Shared.showPSSnackBar(context, 'Registro exitoso',
+            SnackBarType.onlyText, AppConstants.shortSnackBarDuration);
         Navigator.of(context).pop();
       } else {
-        Shared.showPSSnackBar(
-            context,
-            'Registro fallido',
-            SnackBarType.onlyText,
-            AppConstants.shortSnackBarDuration);
+        Shared.showPSSnackBar(context, 'Registro fallido',
+            SnackBarType.onlyText, AppConstants.shortSnackBarDuration);
       }
-    } on PsException catch(e){
-      Shared.showPSSnackBar(
-          context,
-          'Error: ${e.message}',
-          SnackBarType.onlyText,
-          AppConstants.shortSnackBarDuration);
-    } on SocketException catch(_) {
+    } on PsException catch (e) {
+      Shared.showPSSnackBar(context, 'Error: ${e.message}',
+          SnackBarType.onlyText, AppConstants.shortSnackBarDuration);
+    } on SocketException catch (_) {
       Shared.showPSSnackBar(
           context,
           'Hubo un error al tratar de conectarse al servidor. Inténtelo más tarde, por favor',
           SnackBarType.onlyText,
           AppConstants.shortSnackBarDuration);
     } catch (e) {
-      Shared.showPSSnackBar(
-          context,
-          'Registro fallido',
-          SnackBarType.onlyText,
+      Shared.showPSSnackBar(context, 'Registro fallido', SnackBarType.onlyText,
           AppConstants.shortSnackBarDuration);
     }
     setState(() {
@@ -195,7 +185,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     hintText: 'Nombres completos',
                     obscureText: false,
                     inputType: TextInputType.name,
-                    isValid: nameValidations.every((validation) => validation.isValid),
+                    isValid: nameValidations
+                        .every((validation) => validation.isValid),
                     validations: nameValidations),
                 const SizedBox(height: 15),
                 PsTextField(
@@ -203,7 +194,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     hintText: 'DNI',
                     obscureText: false,
                     inputType: TextInputType.number,
-                    isValid: dniValidations.every((validation) => validation.isValid),
+                    isValid: dniValidations
+                        .every((validation) => validation.isValid),
                     validations: dniValidations),
                 const SizedBox(height: 15),
                 PsTextField(
@@ -211,7 +203,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     hintText: 'Contraseña',
                     obscureText: true,
                     inputType: TextInputType.text,
-                    isValid: passwordValidations.every((validation) => validation.isValid),
+                    isValid: passwordValidations
+                        .every((validation) => validation.isValid),
                     validations: passwordValidations),
                 const SizedBox(height: 15),
                 PsTextField(
@@ -219,7 +212,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     hintText: 'Hospital',
                     obscureText: false,
                     inputType: TextInputType.text,
-                    isValid: hospitalValidations.every((validation) => validation.isValid),
+                    isValid: hospitalValidations
+                        .every((validation) => validation.isValid),
                     validations: hospitalValidations),
                 const SizedBox(height: 15),
                 PsTextField(
@@ -227,7 +221,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     hintText: 'Cargo',
                     obscureText: false,
                     inputType: TextInputType.text,
-                    isValid: positionValidations.every((validation) => validation.isValid),
+                    isValid: positionValidations
+                        .every((validation) => validation.isValid),
                     validations: positionValidations),
                 const SizedBox(height: 95),
                 PsElevatedButton(

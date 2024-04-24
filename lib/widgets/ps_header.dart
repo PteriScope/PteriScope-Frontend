@@ -48,8 +48,7 @@ class PsHeader extends StatelessWidget {
               isPrimary: false,
               icon: Icons.add,
               text: buttonTitle,
-              onTap: action
-          )
+              onTap: action)
         ],
       ),
     );

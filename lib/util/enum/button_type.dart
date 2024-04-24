@@ -1,6 +1,1 @@
-enum ButtonType {
-  primary,
-  secondary,
-  severe,
-  neutral
-}
+enum ButtonType { primary, secondary, severe, neutral }

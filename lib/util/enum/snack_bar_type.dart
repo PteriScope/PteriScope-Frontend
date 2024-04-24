@@ -1,4 +1,1 @@
-enum SnackBarType {
-  onlyText,
-  loading
-}
+enum SnackBarType { onlyText, loading }
