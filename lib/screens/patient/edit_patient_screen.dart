@@ -7,7 +7,6 @@ import 'package:pteriscope_frontend/models/register_patient.dart';
 import 'package:pteriscope_frontend/screens/patient/patient_detail_screen.dart';
 import 'package:pteriscope_frontend/widgets/ps_app_bar.dart';
 
-import '../../util/enum/button_type.dart';
 import '../../util/enum/dialog_type.dart';
 import '../../util/enum/snack_bar_type.dart';
 import '../../util/shared.dart';
@@ -17,10 +16,8 @@ import '../../util/constants.dart';
 import '../../util/ps_exception.dart';
 import '../../util/enum/current_screen.dart';
 import '../../widgets/ps_elevated_button.dart';
-import '../../widgets/ps_floating_button.dart';
 import '../../widgets/ps_menu_bar.dart';
 import '../../widgets/ps_text_field.dart';
-import '../home_screen.dart';
 
 class EditPatientScreen extends StatefulWidget {
   final Patient patient;

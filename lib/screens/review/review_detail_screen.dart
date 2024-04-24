@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:pteriscope_frontend/models/patient.dart';
 import 'package:pteriscope_frontend/models/specialist.dart';
@@ -24,7 +23,6 @@ import '../../widgets/ps_column_text.dart';
 import '../../widgets/ps_elevated_button_icon.dart';
 import '../../widgets/ps_floating_button.dart';
 import '../../widgets/ps_menu_bar.dart';
-import '../home_screen.dart';
 import '../patient/patient_detail_screen.dart';
 
 class ReviewDetailScreen extends StatefulWidget {

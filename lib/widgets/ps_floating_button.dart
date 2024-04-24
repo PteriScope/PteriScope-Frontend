@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pteriscope_frontend/util/enum/button_type.dart';
 
@@ -29,8 +28,8 @@ class PsFloatingButton extends StatelessWidget {
       backgroundColor: _getButtonBackgroundColor(buttonType),
       onPressed: onTap,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-      child: Icon(iconData, color: _getButtonTextColor(buttonType)),
       mini: isMini,
+      child: Icon(iconData, color: _getButtonTextColor(buttonType)),
     );
   }
 
