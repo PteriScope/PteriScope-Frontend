@@ -6,7 +6,9 @@ import 'package:pteriscope_frontend/screens/patient/new_patient_screen.dart';
 import 'package:pteriscope_frontend/screens/patient/patient_detail_screen.dart';
 import 'package:pteriscope_frontend/util/constants.dart';
 import 'package:pteriscope_frontend/services/api_service.dart';
+import 'package:pteriscope_frontend/util/enum/dialog_type.dart';
 import 'package:pteriscope_frontend/util/ps_exception.dart';
+import 'package:pteriscope_frontend/util/ps_token_exception.dart';
 import 'package:pteriscope_frontend/widgets/ps_app_bar.dart';
 import 'package:pteriscope_frontend/widgets/ps_elevated_button_icon.dart';
 import 'package:pteriscope_frontend/widgets/ps_menu_bar.dart';
@@ -80,6 +82,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   internetError = false;
                 })
               });
+    } on PsTokenException catch (e) {
+      Shared.showPsDialog(context, DialogType.warning, e.message,
+          "Volver al login", () => {Shared.logout(context)}, Icons.logout);
     } on PsException catch (e) {
       setState(() {
         loading = false;

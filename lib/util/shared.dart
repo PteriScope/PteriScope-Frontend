@@ -69,6 +69,7 @@ class Shared {
       Function()? secondaryButtonAction,
       IconData? secondaryButtonIcon]) {
     showDialog(
+        barrierDismissible: false,
         context: context,
         builder: (BuildContext context) {
           return PsDialog(

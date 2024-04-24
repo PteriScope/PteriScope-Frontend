@@ -6,6 +6,7 @@ import 'package:pteriscope_frontend/models/register_patient.dart';
 import 'package:pteriscope_frontend/models/register_user.dart';
 import 'package:pteriscope_frontend/services/shared_preferences_service.dart';
 import 'package:pteriscope_frontend/util/ps_exception.dart';
+import 'package:pteriscope_frontend/util/ps_token_exception.dart';
 import 'dart:convert';
 
 import '../models/patient.dart';
@@ -156,31 +157,13 @@ class ApiService with ChangeNotifier {
       List<Patient> patients = jsonResponse.map<Patient>((json) => Patient.fromJson(json)).toList();
       notifyListeners();
       return patients;
+    } else if (response.statusCode == 401) {
+      log(response.body);
+      throw PsTokenException("Su sesión ha expirado");
     } else {
       log(response.body);
       throw Exception('Failed to load specialist data');
     }
-  }
-
-  Future<Review> getLatestReviewFromPatient(int patientId) async {
-    final headers = await _getAuthHeaders();
-    Review latestReview = Review();
-    String decodedResponse;
-    // TODO: DEPURAR PARA SABER TIPO DE DATO
-    var jsonResponse;
-    var _ = await http.get(
-      Uri.parse('$baseUrl/patients/$patientId/latest_reviews'),
-      headers: headers
-    ).then((value) => {
-      if (value.statusCode == 200) {
-        decodedResponse = utf8.decode(value.bodyBytes),
-        jsonResponse = json.decode(decodedResponse),
-        latestReview = Review.fromJson(jsonResponse),
-      } else {
-        throw Exception('Failed to load latest review')
-      }
-    });
-    return latestReview;
   }
 
   Future<Patient?> createPatient(RegisterPatient patient) async {
@@ -239,21 +222,6 @@ class ApiService with ChangeNotifier {
     }
   }
 
-  Future<String> getPatient(String patientId) async {
-    final headers = await _getAuthHeaders();
-    final response = await http.get(
-      Uri.parse('$baseUrl/patients/$patientId'),
-      headers: headers,
-    );
-
-    if (response.statusCode == 200) {
-      notifyListeners();
-      return response.body;
-    } else {
-      throw Exception('Failed to load patient data');
-    }
-  }
-
   Future<Review> createReview(int patientId, Map<String, dynamic> reviewData) async {
     final headers = await _getAuthHeaders();
     var response = await http.post(
@@ -292,21 +260,6 @@ class ApiService with ChangeNotifier {
       return reviews;
     } else {
       log(response.body);
-      throw Exception('Failed to load review data');
-    }
-  }
-
-  Future<String> getReview(String reviewId) async {
-    final headers = await _getAuthHeaders();
-    final response = await http.get(
-      Uri.parse('$baseUrl/reviews/$reviewId'),
-      headers: headers,
-    );
-
-    if (response.statusCode == 200) {
-      notifyListeners();
-      return response.body;
-    } else {
       throw Exception('Failed to load review data');
     }
   }
