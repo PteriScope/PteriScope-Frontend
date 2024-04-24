@@ -199,153 +199,163 @@ class _ReviewDetailScreenState extends State<ReviewDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: PsAppBar(
-          title: '${widget.patient.firstName} ${widget.patient.lastName}',
-          titleSize: AppConstants.smallAppBarTitleSize,
-          disabled: _isDeleting),
-      drawer: const PsMenuBar(currentView: CurrentScreen.other),
-      body: Stack(children: [
-        Card(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(AppConstants.padding / 2.0),
-                child: Image.memory(
-                  base64Decode(widget.review.imageBase64!),
-                  fit: BoxFit.cover,
-                  width: MediaQuery.of(context).size.width,
-                ),
-              ),
-              const SizedBox(height: AppConstants.padding * 2.0),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(AppConstants.padding),
-                  child: Column(
-                    children: [
-                      Table(
-                        children: [
-                          TableRow(children: [
-                            const PsColumnText(
-                                text: "Nombre del paciente: ", isBold: true),
-                            PsColumnText(
-                                text:
-                                    "${widget.patient.firstName}-${widget.patient.lastName}",
-                                isBold: false),
-                          ]),
-                          TableRow(children: [
-                            const PsColumnText(
-                                text: "Fecha de la revisión: ", isBold: true),
-                            PsColumnText(
-                                text: "${widget.review.reviewDate!}",
-                                isBold: false,
-                                isDate: true),
-                          ]),
-                          TableRow(children: [
-                            const PsColumnText(
-                                text: "Resultado de la revisión: ",
-                                isBold: true),
-                            PsColumnText(
-                                text: widget.review.reviewResult!,
-                                isBold: false,
-                                isResult: true),
-                          ]),
-                          TableRow(children: [
-                            const PsColumnText(
-                                text: "Encargado de la revisión: ",
-                                isBold: true),
-                            PsColumnText(
-                                text:
-                                    specialist == null ? "-" : specialist!.name,
-                                isBold: false),
-                          ]),
-                        ],
-                      ),
-                      const SizedBox(height: AppConstants.padding * 2),
-
-                      PsElevatedButtonIcon(
-                          isPrimary: true,
-                          icon: Icons.health_and_safety_sharp,
-                          text: "Sugerencias",
-                          onTap: viewAdvices
-                      ),
-
-                      if (loading)
-                        const Center(child: CircularProgressIndicator())
-                      else if (internetError || serverError)
-                        Center(
-                            child: Padding(
-                          padding: const EdgeInsetsDirectional.symmetric(
-                              horizontal: 5 * AppConstants.padding,
-                              vertical: AppConstants.padding),
-                          child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  "Error al cargar los datos: ${internetError ? "Compruebe su conexión a Internet" : "Inténtelo más tarde, por favor"} ",
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.grey),
-                                ),
-                                const SizedBox(height: 20),
-                                PsElevatedButtonIcon(
-                                    isPrimary: true,
-                                    icon: Icons.refresh,
-                                    text: "Reintentar",
-                                    onTap: () {
-                                      initializeSpecialist();
-                                    })
-                              ]),
-                        ))
-                    ],
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (bool didPop) async {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => PatientDetailScreen(patient: widget.patient),
+          ),
+        );
+      },
+      child: Scaffold(
+        appBar: PsAppBar(
+            title: '${widget.patient.firstName} ${widget.patient.lastName}',
+            titleSize: AppConstants.smallAppBarTitleSize,
+            disabled: _isDeleting),
+        drawer: const PsMenuBar(currentView: CurrentScreen.other),
+        body: Stack(children: [
+          Card(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(AppConstants.padding / 2.0),
+                  child: Image.memory(
+                    base64Decode(widget.review.imageBase64!),
+                    fit: BoxFit.cover,
+                    width: MediaQuery.of(context).size.width,
                   ),
                 ),
-              ),
-            ],
-          ),
-        ),
-        Positioned(
-          bottom: 20.0,
-          left: 20.0,
-          right: 20.0,
-          child: Padding(
-            padding: const EdgeInsets.all(AppConstants.padding),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                PsFloatingButton(
-                    heroTag: 'deleteReview',
-                    buttonType: ButtonType.severe,
-                    onTap: showAlertDialog,
-                    iconData: Icons.delete,
-                    disabled: false),
-                PsFloatingButton(
-                    heroTag: 'sendEmail',
-                    buttonType: ButtonType.secondary,
-                    onTap: () => {
-                          //TODO: Implement functionality
-                        },
-                    iconData: Icons.email_outlined),
-                PsFloatingButton(
-                    heroTag: 'backToPatient',
-                    buttonType: ButtonType.primary,
-                    onTap: () => {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  PatientDetailScreen(patient: widget.patient),
-                            ),
-                          )
-                        },
-                    iconData: Icons.arrow_back),
+                const SizedBox(height: AppConstants.padding * 2.0),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(AppConstants.padding),
+                    child: Column(
+                      children: [
+                        Table(
+                          children: [
+                            TableRow(children: [
+                              const PsColumnText(
+                                  text: "Nombre del paciente: ", isBold: true),
+                              PsColumnText(
+                                  text:
+                                      "${widget.patient.firstName}-${widget.patient.lastName}",
+                                  isBold: false),
+                            ]),
+                            TableRow(children: [
+                              const PsColumnText(
+                                  text: "Fecha de la revisión: ", isBold: true),
+                              PsColumnText(
+                                  text: "${widget.review.reviewDate!}",
+                                  isBold: false,
+                                  isDate: true),
+                            ]),
+                            TableRow(children: [
+                              const PsColumnText(
+                                  text: "Resultado de la revisión: ",
+                                  isBold: true),
+                              PsColumnText(
+                                  text: widget.review.reviewResult!,
+                                  isBold: false,
+                                  isResult: true),
+                            ]),
+                            TableRow(children: [
+                              const PsColumnText(
+                                  text: "Encargado de la revisión: ",
+                                  isBold: true),
+                              PsColumnText(
+                                  text:
+                                      specialist == null ? "-" : specialist!.name,
+                                  isBold: false),
+                            ]),
+                          ],
+                        ),
+                        const SizedBox(height: AppConstants.padding * 2),
+
+                        PsElevatedButtonIcon(
+                            isPrimary: true,
+                            icon: Icons.health_and_safety_sharp,
+                            text: "Sugerencias",
+                            onTap: viewAdvices
+                        ),
+
+                        if (loading)
+                          const Center(child: CircularProgressIndicator())
+                        else if (internetError || serverError)
+                          Center(
+                              child: Padding(
+                            padding: const EdgeInsetsDirectional.symmetric(
+                                horizontal: 5 * AppConstants.padding,
+                                vertical: AppConstants.padding),
+                            child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "Error al cargar los datos: ${internetError ? "Compruebe su conexión a Internet" : "Inténtelo más tarde, por favor"} ",
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.grey),
+                                  ),
+                                  const SizedBox(height: 20),
+                                  PsElevatedButtonIcon(
+                                      isPrimary: true,
+                                      icon: Icons.refresh,
+                                      text: "Reintentar",
+                                      onTap: () {
+                                        initializeSpecialist();
+                                      })
+                                ]),
+                          ))
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
-        ),
-      ]),
+          Positioned(
+            bottom: 20.0,
+            left: 20.0,
+            right: 20.0,
+            child: Padding(
+              padding: const EdgeInsets.all(AppConstants.padding),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  PsFloatingButton(
+                      heroTag: 'deleteReview',
+                      buttonType: ButtonType.severe,
+                      onTap: showAlertDialog,
+                      iconData: Icons.delete,
+                      disabled: false),
+                  PsFloatingButton(
+                      heroTag: 'sendEmail',
+                      buttonType: ButtonType.secondary,
+                      onTap: () => {
+                            //TODO: Implement functionality
+                          },
+                      iconData: Icons.email_outlined),
+                  PsFloatingButton(
+                      heroTag: 'backToPatient',
+                      buttonType: ButtonType.primary,
+                      onTap: () => {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    PatientDetailScreen(patient: widget.patient),
+                              ),
+                            )
+                          },
+                      iconData: Icons.arrow_back),
+                ],
+              ),
+            ),
+          ),
+        ]),
+      ),
     );
   }
 }

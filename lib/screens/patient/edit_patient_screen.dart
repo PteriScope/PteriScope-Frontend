@@ -187,86 +187,96 @@ class _EditPatientScreenState extends State<EditPatientScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: PsAppBar(
-          title: 'Editar paciente', titleSize: AppConstants.bigAppBarTitleSize, disabled: _isUpdating),
-      drawer: const PsMenuBar(currentView: CurrentScreen.newPatient),
-      body: SingleChildScrollView(
-        child: Card(
-          elevation: 0,
-          color: Colors.white,
-          margin: const EdgeInsets.only(
-            top: AppConstants.padding,
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (bool didPop) async {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => PatientDetailScreen(patient: widget.patient),
           ),
-          child: Padding(
-            padding: const EdgeInsets.all(AppConstants.padding),
-            child: Column(
-              children: <Widget>[
-                const SizedBox(height: 15),
-                PsTextField(
-                    controller: _nameController,
-                    hintText: 'Nombre',
-                    obscureText: false,
-                    inputType: TextInputType.name,
-                    isValid: nameValidations
-                        .every((validation) => validation.isValid),
-                    validations: nameValidations),
-                const SizedBox(height: 15),
-                PsTextField(
-                    controller: _lastNameController,
-                    hintText: 'Apellidos',
-                    obscureText: false,
-                    inputType: TextInputType.name,
-                    isValid: lastnameValidations
-                        .every((validation) => validation.isValid),
-                    validations: lastnameValidations),
-                const SizedBox(height: 15),
-                PsTextField(
-                    controller: _dniController,
-                    hintText: 'DNI',
-                    obscureText: false,
-                    inputType: TextInputType.number,
-                    isValid: dniValidations
-                        .every((validation) => validation.isValid),
-                    validations: dniValidations),
-                const SizedBox(height: 15),
-                PsTextField(
-                    controller: _ageController,
-                    hintText: 'Edad',
-                    obscureText: false,
-                    inputType: TextInputType.number,
-                    isValid: ageValidations
-                        .every((validation) => validation.isValid),
-                    validations: ageValidations),
-                const SizedBox(height: 15),
-                PsTextField(
-                    controller: _emailController,
-                    hintText: 'Email',
-                    obscureText: false,
-                    inputType: TextInputType.emailAddress,
-                    isValid: emailValidations
-                        .every((validation) => validation.isValid),
-                    validations: emailValidations),
-                const SizedBox(height: 75),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    PsElevatedButton(
-                        width: MediaQuery.of(context).size.width / 2.5,
-                        disabled: _isUpdating,
-                        onTap: () {
-                          Navigator.of(context).pop();
-                        },
-                        text: 'Cancelar'),
-                    PsElevatedButton(
-                        width: MediaQuery.of(context).size.width / 2.5,
-                        disabled: _isButtonDisabled,
-                        onTap: showConfirmDialog,
-                        text: 'Actualizar datos'),
-                  ],
-                ),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.2),
-              ],
+        );
+      },
+      child: Scaffold(
+        appBar: PsAppBar(
+            title: 'Editar paciente', titleSize: AppConstants.bigAppBarTitleSize, disabled: _isUpdating),
+        drawer: const PsMenuBar(currentView: CurrentScreen.other),
+        body: SingleChildScrollView(
+          child: Card(
+            elevation: 0,
+            color: Colors.white,
+            margin: const EdgeInsets.only(
+              top: AppConstants.padding,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(AppConstants.padding),
+              child: Column(
+                children: <Widget>[
+                  const SizedBox(height: 15),
+                  PsTextField(
+                      controller: _nameController,
+                      hintText: 'Nombre',
+                      obscureText: false,
+                      inputType: TextInputType.name,
+                      isValid: nameValidations
+                          .every((validation) => validation.isValid),
+                      validations: nameValidations),
+                  const SizedBox(height: 15),
+                  PsTextField(
+                      controller: _lastNameController,
+                      hintText: 'Apellidos',
+                      obscureText: false,
+                      inputType: TextInputType.name,
+                      isValid: lastnameValidations
+                          .every((validation) => validation.isValid),
+                      validations: lastnameValidations),
+                  const SizedBox(height: 15),
+                  PsTextField(
+                      controller: _dniController,
+                      hintText: 'DNI',
+                      obscureText: false,
+                      inputType: TextInputType.number,
+                      isValid: dniValidations
+                          .every((validation) => validation.isValid),
+                      validations: dniValidations),
+                  const SizedBox(height: 15),
+                  PsTextField(
+                      controller: _ageController,
+                      hintText: 'Edad',
+                      obscureText: false,
+                      inputType: TextInputType.number,
+                      isValid: ageValidations
+                          .every((validation) => validation.isValid),
+                      validations: ageValidations),
+                  const SizedBox(height: 15),
+                  PsTextField(
+                      controller: _emailController,
+                      hintText: 'Email',
+                      obscureText: false,
+                      inputType: TextInputType.emailAddress,
+                      isValid: emailValidations
+                          .every((validation) => validation.isValid),
+                      validations: emailValidations),
+                  const SizedBox(height: 75),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      PsElevatedButton(
+                          width: MediaQuery.of(context).size.width / 2.5,
+                          disabled: _isUpdating,
+                          onTap: () {
+                            Navigator.of(context).pop();
+                          },
+                          text: 'Cancelar'),
+                      PsElevatedButton(
+                          width: MediaQuery.of(context).size.width / 2.5,
+                          disabled: _isButtonDisabled,
+                          onTap: showConfirmDialog,
+                          text: 'Actualizar datos'),
+                    ],
+                  ),
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.2),
+                ],
+              ),
             ),
           ),
         ),

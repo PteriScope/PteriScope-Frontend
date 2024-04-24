@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:pteriscope_frontend/screens/authentication/registration_screen.dart';
 import 'package:pteriscope_frontend/services/api_service.dart';
@@ -120,55 +121,61 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(AppConstants.padding),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Image(
-              image: AssetImage('assets/Logo_b.png'),
-              height: 50,
-            ),
-            const SizedBox(height: 20),
-            const Text('Bienvenido',
-                style: TextStyle(
-                    fontSize: 36,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black)),
-            const SizedBox(height: 20),
-            PsTextField(
-                controller: _dniController,
-                hintText: 'DNI',
-                obscureText: false,
-                inputType: TextInputType.number,
-                isValid: dniValidations.every((validation) => validation.isValid),
-                validations: dniValidations),
-            const SizedBox(height: 20),
-            PsTextField(
-                controller: _passwordController,
-                hintText: 'Contraseña',
-                obscureText: true,
-                inputType: TextInputType.text,
-                isValid: passwordValidations.every((validation) => validation.isValid),
-                validations: passwordValidations),
-            const SizedBox(height: 20),
-            PsElevatedButton(
-                width: MediaQuery.of(context).size.width,
-                disabled: _isButtonDisabled,
-                onTap: _isButtonDisabled ? null : _login,
-                text: 'Ingresar'),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (_) => const RegistrationScreen()));
-              },
-              child: const Text('¿No tiene una cuenta? Registrarse'),
-            ),
-          ],
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (bool didPop) async {
+        SystemNavigator.pop();
+      },
+      child: Scaffold(
+        body: Padding(
+          padding: const EdgeInsets.all(AppConstants.padding),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Image(
+                image: AssetImage('assets/Logo_b.png'),
+                height: 50,
+              ),
+              const SizedBox(height: 20),
+              const Text('Bienvenido',
+                  style: TextStyle(
+                      fontSize: 36,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black)),
+              const SizedBox(height: 20),
+              PsTextField(
+                  controller: _dniController,
+                  hintText: 'DNI',
+                  obscureText: false,
+                  inputType: TextInputType.number,
+                  isValid: dniValidations.every((validation) => validation.isValid),
+                  validations: dniValidations),
+              const SizedBox(height: 20),
+              PsTextField(
+                  controller: _passwordController,
+                  hintText: 'Contraseña',
+                  obscureText: true,
+                  inputType: TextInputType.text,
+                  isValid: passwordValidations.every((validation) => validation.isValid),
+                  validations: passwordValidations),
+              const SizedBox(height: 20),
+              PsElevatedButton(
+                  width: MediaQuery.of(context).size.width,
+                  disabled: _isButtonDisabled,
+                  onTap: _isButtonDisabled ? null : _login,
+                  text: 'Ingresar'),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (_) => const RegistrationScreen()));
+                },
+                child: const Text('¿No tiene una cuenta? Registrarse'),
+              ),
+            ],
+          ),
         ),
+        backgroundColor: Colors.white,
       ),
-      backgroundColor: Colors.white,
     );
   }
 

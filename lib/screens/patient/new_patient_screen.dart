@@ -160,94 +160,104 @@ class _NewPatientScreenState extends State<NewPatientScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: const PsAppBar(
-          title: 'Nuevo paciente',
-          titleSize: AppConstants.bigAppBarTitleSize,
-          disabled: false),
-      drawer: const PsMenuBar(currentView: CurrentScreen.newPatient),
-      body: SingleChildScrollView(
-        child: Card(
-          elevation: 0,
-          color: Colors.white,
-          margin: const EdgeInsets.only(
-            top: AppConstants.padding,
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (bool didPop) async {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => const HomeScreen(),
           ),
-          child: Padding(
-            padding: const EdgeInsets.all(AppConstants.padding),
-            child: Column(
-              children: <Widget>[
-                const SizedBox(height: 15),
-                PsTextField(
-                    controller: _nameController,
-                    hintText: 'Nombre',
-                    obscureText: false,
-                    inputType: TextInputType.name,
-                    isValid: nameValidations
-                        .every((validation) => validation.isValid),
-                    validations: nameValidations),
-                const SizedBox(height: 15),
-                PsTextField(
-                    controller: _lastNameController,
-                    hintText: 'Apellidos',
-                    obscureText: false,
-                    inputType: TextInputType.name,
-                    isValid: lastnameValidations
-                        .every((validation) => validation.isValid),
-                    validations: lastnameValidations),
-                const SizedBox(height: 15),
-                PsTextField(
-                    controller: _dniController,
-                    hintText: 'DNI',
-                    obscureText: false,
-                    inputType: TextInputType.number,
-                    isValid: dniValidations
-                        .every((validation) => validation.isValid),
-                    validations: dniValidations),
-                const SizedBox(height: 15),
-                PsTextField(
-                    controller: _ageController,
-                    hintText: 'Edad',
-                    obscureText: false,
-                    inputType: TextInputType.number,
-                    isValid: ageValidations
-                        .every((validation) => validation.isValid),
-                    validations: ageValidations),
-                const SizedBox(height: 15),
-                PsTextField(
-                    controller: _emailController,
-                    hintText: 'Email',
-                    obscureText: false,
-                    inputType: TextInputType.emailAddress,
-                    isValid: emailValidations
-                        .every((validation) => validation.isValid),
-                    validations: emailValidations),
-                const SizedBox(height: 75),
-                PsElevatedButton(
-                    width: MediaQuery.of(context).size.width,
-                    disabled: _isButtonDisabled,
-                    onTap: _isButtonDisabled ? null : _register,
-                    text: 'Crear paciente'),
-                const SizedBox(height: 75),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    PsFloatingButton(
-                        heroTag: 'backToHomeFromNewPatient',
-                        buttonType: ButtonType.primary,
-                        onTap: () => {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => const HomeScreen(),
-                                ),
-                              )
-                            },
-                        iconData: Icons.arrow_back,
-                        disabled: false),
-                  ],
-                ),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.2),
-              ],
+        );
+      },
+      child: Scaffold(
+        appBar: const PsAppBar(
+            title: 'Nuevo paciente',
+            titleSize: AppConstants.bigAppBarTitleSize,
+            disabled: false),
+        drawer: const PsMenuBar(currentView: CurrentScreen.newPatient),
+        body: SingleChildScrollView(
+          child: Card(
+            elevation: 0,
+            color: Colors.white,
+            margin: const EdgeInsets.only(
+              top: AppConstants.padding,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(AppConstants.padding),
+              child: Column(
+                children: <Widget>[
+                  const SizedBox(height: 15),
+                  PsTextField(
+                      controller: _nameController,
+                      hintText: 'Nombre',
+                      obscureText: false,
+                      inputType: TextInputType.name,
+                      isValid: nameValidations
+                          .every((validation) => validation.isValid),
+                      validations: nameValidations),
+                  const SizedBox(height: 15),
+                  PsTextField(
+                      controller: _lastNameController,
+                      hintText: 'Apellidos',
+                      obscureText: false,
+                      inputType: TextInputType.name,
+                      isValid: lastnameValidations
+                          .every((validation) => validation.isValid),
+                      validations: lastnameValidations),
+                  const SizedBox(height: 15),
+                  PsTextField(
+                      controller: _dniController,
+                      hintText: 'DNI',
+                      obscureText: false,
+                      inputType: TextInputType.number,
+                      isValid: dniValidations
+                          .every((validation) => validation.isValid),
+                      validations: dniValidations),
+                  const SizedBox(height: 15),
+                  PsTextField(
+                      controller: _ageController,
+                      hintText: 'Edad',
+                      obscureText: false,
+                      inputType: TextInputType.number,
+                      isValid: ageValidations
+                          .every((validation) => validation.isValid),
+                      validations: ageValidations),
+                  const SizedBox(height: 15),
+                  PsTextField(
+                      controller: _emailController,
+                      hintText: 'Email',
+                      obscureText: false,
+                      inputType: TextInputType.emailAddress,
+                      isValid: emailValidations
+                          .every((validation) => validation.isValid),
+                      validations: emailValidations),
+                  const SizedBox(height: 75),
+                  PsElevatedButton(
+                      width: MediaQuery.of(context).size.width,
+                      disabled: _isButtonDisabled,
+                      onTap: _isButtonDisabled ? null : _register,
+                      text: 'Crear paciente'),
+                  const SizedBox(height: 75),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      PsFloatingButton(
+                          heroTag: 'backToHomeFromNewPatient',
+                          buttonType: ButtonType.primary,
+                          onTap: () => {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => const HomeScreen(),
+                                  ),
+                                )
+                              },
+                          iconData: Icons.arrow_back,
+                          disabled: false),
+                    ],
+                  ),
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.2),
+                ],
+              ),
             ),
           ),
         ),

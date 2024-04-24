@@ -221,101 +221,111 @@ class _PatientDetailScreen extends State<PatientDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: PsAppBar(
-        title: '${patient.firstName} ${patient.lastName}',
-        titleSize: AppConstants.smallAppBarTitleSize,
-        disabled: _isDeleting
-      ),
-      drawer: const PsMenuBar(currentView: CurrentScreen.other),
-      body: Column(
-        children: [
-          PsHeader(
-            title: 'Revisiones',
-            subtitle: 'Total de revisiones: ${totalReviews ?? 0}',
-            buttonTitle: 'Nueva revisión',
-            action: goToCameraScreen,
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (bool didPop) async {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => const HomeScreen(),
           ),
-          const Padding(
-              padding: EdgeInsets.only(
-                  left: AppConstants.padding,
-                  right: AppConstants.padding,
-                  bottom: AppConstants.padding),
-              child: Divider(thickness: 1.5)),
-          Expanded(
-              child: Stack(
-            children: [
-              Card(
-                  child: loading
-                      ? const Center(child: CircularProgressIndicator())
-                      : !internetError && !serverError
-                          ? _buildReviewList()
-                          : Center(
-                              child: Padding(
-                              padding: const EdgeInsetsDirectional.symmetric(
-                                  horizontal: 5 * AppConstants.padding,
-                                  vertical: AppConstants.padding),
-                              child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      "Error al cargar los datos. ${internetError ? "Compruebe su conexión a Internet" : "Inténtelo más tarde, por favor"} ",
-                                      textAlign: TextAlign.center,
-                                      style: const TextStyle(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.grey),
+        );
+      },
+      child: Scaffold(
+        appBar: PsAppBar(
+          title: '${patient.firstName} ${patient.lastName}',
+          titleSize: AppConstants.smallAppBarTitleSize,
+          disabled: _isDeleting
+        ),
+        drawer: const PsMenuBar(currentView: CurrentScreen.other),
+        body: Column(
+          children: [
+            PsHeader(
+              title: 'Revisiones',
+              subtitle: 'Total de revisiones: ${totalReviews ?? 0}',
+              buttonTitle: 'Nueva revisión',
+              action: goToCameraScreen,
+            ),
+            const Padding(
+                padding: EdgeInsets.only(
+                    left: AppConstants.padding,
+                    right: AppConstants.padding,
+                    bottom: AppConstants.padding),
+                child: Divider(thickness: 1.5)),
+            Expanded(
+                child: Stack(
+              children: [
+                Card(
+                    child: loading
+                        ? const Center(child: CircularProgressIndicator())
+                        : !internetError && !serverError
+                            ? _buildReviewList()
+                            : Center(
+                                child: Padding(
+                                padding: const EdgeInsetsDirectional.symmetric(
+                                    horizontal: 5 * AppConstants.padding,
+                                    vertical: AppConstants.padding),
+                                child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        "Error al cargar los datos. ${internetError ? "Compruebe su conexión a Internet" : "Inténtelo más tarde, por favor"} ",
+                                        textAlign: TextAlign.center,
+                                        style: const TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.grey),
+                                      ),
+                                      const SizedBox(height: 20),
+                                      PsElevatedButtonIcon(
+                                          isPrimary: true,
+                                          icon: Icons.refresh,
+                                          text: "Reintentar",
+                                          onTap: () {
+                                            loadReviews();
+                                          })
+                                    ]),
+                              ))),
+                Positioned(
+                  bottom: 20.0,
+                  left: 20.0,
+                  right: 20.0,
+                  child: Padding(
+                    padding: const EdgeInsets.all(AppConstants.padding),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        PsFloatingButton(
+                            heroTag: 'deletePatient',
+                            buttonType: ButtonType.severe,
+                            onTap: showAlertDialog,
+                            iconData: Icons.delete,
+                            disabled: false),
+                        PsFloatingButton(
+                            heroTag: 'editPatient',
+                            buttonType: ButtonType.secondary,
+                            onTap: goToEditPatientScreen,
+                            iconData: Icons.edit,
+                            disabled: false),
+                        PsFloatingButton(
+                            heroTag: 'backToHomeFromPatient',
+                            buttonType: ButtonType.primary,
+                            onTap: () => {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) => const HomeScreen(),
                                     ),
-                                    const SizedBox(height: 20),
-                                    PsElevatedButtonIcon(
-                                        isPrimary: true,
-                                        icon: Icons.refresh,
-                                        text: "Reintentar",
-                                        onTap: () {
-                                          loadReviews();
-                                        })
-                                  ]),
-                            ))),
-              Positioned(
-                bottom: 20.0,
-                left: 20.0,
-                right: 20.0,
-                child: Padding(
-                  padding: const EdgeInsets.all(AppConstants.padding),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      PsFloatingButton(
-                          heroTag: 'deletePatient',
-                          buttonType: ButtonType.severe,
-                          onTap: showAlertDialog,
-                          iconData: Icons.delete,
-                          disabled: false),
-                      PsFloatingButton(
-                          heroTag: 'editPatient',
-                          buttonType: ButtonType.secondary,
-                          onTap: goToEditPatientScreen,
-                          iconData: Icons.edit,
-                          disabled: false),
-                      PsFloatingButton(
-                          heroTag: 'backToHomeFromPatient',
-                          buttonType: ButtonType.primary,
-                          onTap: () => {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (context) => const HomeScreen(),
-                                  ),
-                                )
-                              },
-                          iconData: Icons.arrow_back,
-                          disabled: false),
-                    ],
+                                  )
+                                },
+                            iconData: Icons.arrow_back,
+                            disabled: false),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
-          ))
-        ],
+              ],
+            ))
+          ],
+        ),
       ),
     );
   }

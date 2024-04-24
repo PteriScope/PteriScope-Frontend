@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:image/image.dart' as img;
+import 'package:pteriscope_frontend/screens/patient/patient_detail_screen.dart';
 
 import '../../models/patient.dart';
 import '../../services/api_service.dart';
@@ -183,97 +184,107 @@ class _CameraScreenState extends State<CameraScreen> {
       return const Center(child: CircularProgressIndicator());
     }
 
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: GestureDetector(
-        onTapDown: (details) => _handleFocusTap(details.localPosition),
-        child: Stack(
-          children: <Widget>[
-            Transform.scale(
-              scale: 1,
-              child: Center(
-                child: CameraPreview(_controller!),
-              ),
-            ),
-            if (_showFocusIndicator && _focusPoint != null)
-              AnimatedPositioned(
-                duration: const Duration(milliseconds: 500),
-                left: _focusPoint!.dx - 25,
-                top: _focusPoint!.dy - 25,
-                child: Container(
-                  width: 50,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    color: Colors.transparent,
-                    border: Border.all(color: Colors.green, width: 2),
-                    borderRadius: BorderRadius.circular(25),
-                  ),
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (bool didPop) async {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => PatientDetailScreen(patient: widget.patient),
+          ),
+        );
+      },
+      child: Scaffold(
+        backgroundColor: Colors.black,
+        body: GestureDetector(
+          onTapDown: (details) => _handleFocusTap(details.localPosition),
+          child: Stack(
+            children: <Widget>[
+              Transform.scale(
+                scale: 1,
+                child: Center(
+                  child: CameraPreview(_controller!),
                 ),
               ),
-            if (_takingPicture)
-              const Center(child: CircularProgressIndicator()),
-            Positioned(
-              bottom: 40.0,
-              left: 20.0,
-              right: 20.0,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: <Widget>[
-                  PsFloatingButton(
-                      heroTag: 'closeCamera',
-                      buttonType: ButtonType.neutral,
-                      onTap: () => {
-                            if (!_takingPicture) {Navigator.pop(context)}
-                          },
-                      iconData: Icons.arrow_back),
-                  PsFloatingButton(
-                      heroTag: 'takePicture',
-                      buttonType: ButtonType.neutral,
-                      onTap: () => {
-                            if (!_takingPicture) {_onCapturePressed(context)}
-                          },
-                      iconData: Icons.camera),
-                  PsFloatingButton(
-                      heroTag: 'enableDisableFlash',
-                      buttonType: ButtonType.neutral,
-                      onTap: () {
-                        if (!_takingPicture) {
-                          if (_flashMode == FlashMode.off) {
-                            _controller!.setFlashMode(FlashMode.torch);
-                            setState(() {
-                              _flashMode = FlashMode.torch;
-                            });
-                          } else {
-                            _controller!.setFlashMode(FlashMode.off);
-                            setState(() {
-                              _flashMode = FlashMode.off;
-                            });
+              if (_showFocusIndicator && _focusPoint != null)
+                AnimatedPositioned(
+                  duration: const Duration(milliseconds: 500),
+                  left: _focusPoint!.dx - 25,
+                  top: _focusPoint!.dy - 25,
+                  child: Container(
+                    width: 50,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      color: Colors.transparent,
+                      border: Border.all(color: Colors.green, width: 2),
+                      borderRadius: BorderRadius.circular(25),
+                    ),
+                  ),
+                ),
+              if (_takingPicture)
+                const Center(child: CircularProgressIndicator()),
+              Positioned(
+                bottom: 40.0,
+                left: 20.0,
+                right: 20.0,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: <Widget>[
+                    PsFloatingButton(
+                        heroTag: 'closeCamera',
+                        buttonType: ButtonType.neutral,
+                        onTap: () => {
+                              if (!_takingPicture) {Navigator.pop(context)}
+                            },
+                        iconData: Icons.arrow_back),
+                    PsFloatingButton(
+                        heroTag: 'takePicture',
+                        buttonType: ButtonType.neutral,
+                        onTap: () => {
+                              if (!_takingPicture) {_onCapturePressed(context)}
+                            },
+                        iconData: Icons.camera),
+                    PsFloatingButton(
+                        heroTag: 'enableDisableFlash',
+                        buttonType: ButtonType.neutral,
+                        onTap: () {
+                          if (!_takingPicture) {
+                            if (_flashMode == FlashMode.off) {
+                              _controller!.setFlashMode(FlashMode.torch);
+                              setState(() {
+                                _flashMode = FlashMode.torch;
+                              });
+                            } else {
+                              _controller!.setFlashMode(FlashMode.off);
+                              setState(() {
+                                _flashMode = FlashMode.off;
+                              });
+                            }
                           }
-                        }
-                      },
-                      iconData: _flashMode == FlashMode.off
-                          ? Icons.flash_off
-                          : Icons.flash_on),
-                ],
+                        },
+                        iconData: _flashMode == FlashMode.off
+                            ? Icons.flash_off
+                            : Icons.flash_on),
+                  ],
+                ),
               ),
-            ),
-            Positioned(
-              bottom: 120.0,
-              left: 20.0,
-              right: 20.0,
-              child: Slider(
-                value: _currentZoomLevel,
-                min: _minAvailableZoom,
-                max: _maxAvailableZoom,
-                onChanged: (newZoomLevel) {
-                  setState(() {
-                    _currentZoomLevel = newZoomLevel;
-                  });
-                  _controller!.setZoomLevel(_currentZoomLevel);
-                },
+              Positioned(
+                bottom: 120.0,
+                left: 20.0,
+                right: 20.0,
+                child: Slider(
+                  value: _currentZoomLevel,
+                  min: _minAvailableZoom,
+                  max: _maxAvailableZoom,
+                  onChanged: (newZoomLevel) {
+                    setState(() {
+                      _currentZoomLevel = newZoomLevel;
+                    });
+                    _controller!.setZoomLevel(_currentZoomLevel);
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:pteriscope_frontend/screens/review/camera_screen.dart';
 import 'package:pteriscope_frontend/screens/review/review_detail_screen.dart';
 import 'package:pteriscope_frontend/util/enum/dialog_type.dart';
 import 'package:pteriscope_frontend/widgets/ps_floating_button.dart';
@@ -35,39 +36,49 @@ class _ConfirmPictureScreenState extends State<ConfirmPictureScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: Stack(
-        children: <Widget>[
-          Transform.scale(
-            scale: 1,
-            child: Center(
-              child: Image.memory(base64Decode(widget.imageBase64)),
-            ),
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (bool didPop) async {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => CameraScreen(patient: widget.patient),
           ),
-          Positioned(
-            bottom: 40.0,
-            left: 20.0,
-            right: 20.0,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: <Widget>[
-                PsFloatingButton(
-                    heroTag: 'retake',
-                    buttonType: ButtonType.neutral,
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    iconData: Icons.arrow_back),
-                PsFloatingButton(
-                    heroTag: 'loadPicture',
-                    buttonType: ButtonType.neutral,
-                    onTap: () => {uploadPicture(context)},
-                    iconData: Icons.check),
-              ],
+        );
+      },
+      child: Scaffold(
+        backgroundColor: Colors.black,
+        body: Stack(
+          children: <Widget>[
+            Transform.scale(
+              scale: 1,
+              child: Center(
+                child: Image.memory(base64Decode(widget.imageBase64)),
+              ),
             ),
-          ),
-        ],
+            Positioned(
+              bottom: 40.0,
+              left: 20.0,
+              right: 20.0,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: <Widget>[
+                  PsFloatingButton(
+                      heroTag: 'retake',
+                      buttonType: ButtonType.neutral,
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      iconData: Icons.arrow_back),
+                  PsFloatingButton(
+                      heroTag: 'loadPicture',
+                      buttonType: ButtonType.neutral,
+                      onTap: () => {uploadPicture(context)},
+                      iconData: Icons.check),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -184,84 +184,94 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: PsAppBar(
-        title: 'Actualizar perfil',
-        titleSize: AppConstants.bigAppBarTitleSize,
-        disabled: _isUpdating,
-      ),
-      drawer: const PsMenuBar(currentView: CurrentScreen.other),
-      body: SingleChildScrollView(
-        child: Card(
-          elevation: 0,
-          color: Colors.white,
-          margin: const EdgeInsets.only(
-            top: AppConstants.padding,
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (bool didPop) async {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => const ProfileScreen(),
           ),
-          child: Padding(
-            padding: const EdgeInsets.all(AppConstants.padding),
-            child: Column(
-              children: <Widget>[
-                const SizedBox(height: 15),
-                PsTextField(
-                    controller: _nameController,
-                    hintText: 'Nombre',
-                    obscureText: false,
-                    inputType: TextInputType.name,
-                    isValid: nameValidations
-                        .every((validation) => validation.isValid),
-                    validations: nameValidations),
-                const SizedBox(height: 15),
-                PsTextField(
-                    controller: _passwordController,
-                    hintText: 'Contraseña',
-                    obscureText: true,
-                    inputType: TextInputType.text,
-                    isValid: passwordValidations
-                        .every((validation) => validation.isValid),
-                    validations: passwordValidations),
-                const SizedBox(height: 15),
-                PsTextField(
-                    controller: _hospitalController,
-                    hintText: 'Hospital',
-                    obscureText: false,
-                    inputType: TextInputType.text,
-                    isValid: hospitalValidations
-                        .every((validation) => validation.isValid),
-                    validations: hospitalValidations),
-                const SizedBox(height: 15),
-                PsTextField(
-                    controller: _positionController,
-                    hintText: 'Cargo',
-                    obscureText: false,
-                    inputType: TextInputType.text,
-                    isValid: positionValidations
-                        .every((validation) => validation.isValid),
-                    validations: positionValidations),
-                const SizedBox(height: 75),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    PsElevatedButton(
-                        width: MediaQuery.of(context).size.width / 2.5,
-                        disabled: _isUpdating,
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => const ProfileScreen(),
-                            ),
-                          );
-                        },
-                        text: 'Cancelar'),
-                    PsElevatedButton(
-                        width: MediaQuery.of(context).size.width / 2.5,
-                        disabled: _isButtonDisabled,
-                        onTap: showConfirmDialog,
-                        text: 'Actualizar datos'),
-                  ],
-                ),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.3),
-              ],
+        );
+      },
+      child: Scaffold(
+        appBar: PsAppBar(
+          title: 'Actualizar perfil',
+          titleSize: AppConstants.bigAppBarTitleSize,
+          disabled: _isUpdating,
+        ),
+        drawer: const PsMenuBar(currentView: CurrentScreen.other),
+        body: SingleChildScrollView(
+          child: Card(
+            elevation: 0,
+            color: Colors.white,
+            margin: const EdgeInsets.only(
+              top: AppConstants.padding,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(AppConstants.padding),
+              child: Column(
+                children: <Widget>[
+                  const SizedBox(height: 15),
+                  PsTextField(
+                      controller: _nameController,
+                      hintText: 'Nombre',
+                      obscureText: false,
+                      inputType: TextInputType.name,
+                      isValid: nameValidations
+                          .every((validation) => validation.isValid),
+                      validations: nameValidations),
+                  const SizedBox(height: 15),
+                  PsTextField(
+                      controller: _passwordController,
+                      hintText: 'Contraseña',
+                      obscureText: true,
+                      inputType: TextInputType.text,
+                      isValid: passwordValidations
+                          .every((validation) => validation.isValid),
+                      validations: passwordValidations),
+                  const SizedBox(height: 15),
+                  PsTextField(
+                      controller: _hospitalController,
+                      hintText: 'Hospital',
+                      obscureText: false,
+                      inputType: TextInputType.text,
+                      isValid: hospitalValidations
+                          .every((validation) => validation.isValid),
+                      validations: hospitalValidations),
+                  const SizedBox(height: 15),
+                  PsTextField(
+                      controller: _positionController,
+                      hintText: 'Cargo',
+                      obscureText: false,
+                      inputType: TextInputType.text,
+                      isValid: positionValidations
+                          .every((validation) => validation.isValid),
+                      validations: positionValidations),
+                  const SizedBox(height: 75),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      PsElevatedButton(
+                          width: MediaQuery.of(context).size.width / 2.5,
+                          disabled: _isUpdating,
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => const ProfileScreen(),
+                              ),
+                            );
+                          },
+                          text: 'Cancelar'),
+                      PsElevatedButton(
+                          width: MediaQuery.of(context).size.width / 2.5,
+                          disabled: _isButtonDisabled,
+                          onTap: showConfirmDialog,
+                          text: 'Actualizar datos'),
+                    ],
+                  ),
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.3),
+                ],
+              ),
             ),
           ),
         ),

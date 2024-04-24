@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pteriscope_frontend/models/register_user.dart';
+import 'package:pteriscope_frontend/screens/authentication/login_screen.dart';
 import 'package:pteriscope_frontend/util/ps_exception.dart';
 import 'package:pteriscope_frontend/widgets/ps_text_field.dart';
 
@@ -162,81 +163,91 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(AppConstants.padding),
-          child: Column(
-            children: <Widget>[
-              SizedBox(height: MediaQuery.of(context).size.height * 0.09),
-              const Image(
-                image: AssetImage('assets/Logo_b.png'),
-                height: 50,
-              ),
-              const SizedBox(height: 20),
-              const Text('Registrarse',
-                  style: TextStyle(
-                      fontSize: 36,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black)),
-              const SizedBox(height: 15),
-              PsTextField(
-                  controller: _nameController,
-                  hintText: 'Nombres completos',
-                  obscureText: false,
-                  inputType: TextInputType.name,
-                  isValid: nameValidations.every((validation) => validation.isValid),
-                  validations: nameValidations),
-              const SizedBox(height: 15),
-              PsTextField(
-                  controller: _dniController,
-                  hintText: 'DNI',
-                  obscureText: false,
-                  inputType: TextInputType.number,
-                  isValid: dniValidations.every((validation) => validation.isValid),
-                  validations: dniValidations),
-              const SizedBox(height: 15),
-              PsTextField(
-                  controller: _passwordController,
-                  hintText: 'Contraseña',
-                  obscureText: true,
-                  inputType: TextInputType.text,
-                  isValid: passwordValidations.every((validation) => validation.isValid),
-                  validations: passwordValidations),
-              const SizedBox(height: 15),
-              PsTextField(
-                  controller: _hospitalController,
-                  hintText: 'Hospital',
-                  obscureText: false,
-                  inputType: TextInputType.text,
-                  isValid: hospitalValidations.every((validation) => validation.isValid),
-                  validations: hospitalValidations),
-              const SizedBox(height: 15),
-              PsTextField(
-                  controller: _positionController,
-                  hintText: 'Cargo',
-                  obscureText: false,
-                  inputType: TextInputType.text,
-                  isValid: positionValidations.every((validation) => validation.isValid),
-                  validations: positionValidations),
-              const SizedBox(height: 95),
-              PsElevatedButton(
-                  width: MediaQuery.of(context).size.width,
-                  disabled: _isButtonDisabled,
-                  onTap: _isButtonDisabled ? null : _register,
-                  text: 'Crear cuenta'),
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text('¿Ya tiene una cuenta? Ingresar'),
-              ),
-              SizedBox(height: MediaQuery.of(context).size.height * 0.09),
-            ],
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (bool didPop) async {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => const LoginScreen(),
+          ),
+        );
+      },
+      child: Scaffold(
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(AppConstants.padding),
+            child: Column(
+              children: <Widget>[
+                SizedBox(height: MediaQuery.of(context).size.height * 0.09),
+                const Image(
+                  image: AssetImage('assets/Logo_b.png'),
+                  height: 50,
+                ),
+                const SizedBox(height: 20),
+                const Text('Registrarse',
+                    style: TextStyle(
+                        fontSize: 36,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black)),
+                const SizedBox(height: 15),
+                PsTextField(
+                    controller: _nameController,
+                    hintText: 'Nombres completos',
+                    obscureText: false,
+                    inputType: TextInputType.name,
+                    isValid: nameValidations.every((validation) => validation.isValid),
+                    validations: nameValidations),
+                const SizedBox(height: 15),
+                PsTextField(
+                    controller: _dniController,
+                    hintText: 'DNI',
+                    obscureText: false,
+                    inputType: TextInputType.number,
+                    isValid: dniValidations.every((validation) => validation.isValid),
+                    validations: dniValidations),
+                const SizedBox(height: 15),
+                PsTextField(
+                    controller: _passwordController,
+                    hintText: 'Contraseña',
+                    obscureText: true,
+                    inputType: TextInputType.text,
+                    isValid: passwordValidations.every((validation) => validation.isValid),
+                    validations: passwordValidations),
+                const SizedBox(height: 15),
+                PsTextField(
+                    controller: _hospitalController,
+                    hintText: 'Hospital',
+                    obscureText: false,
+                    inputType: TextInputType.text,
+                    isValid: hospitalValidations.every((validation) => validation.isValid),
+                    validations: hospitalValidations),
+                const SizedBox(height: 15),
+                PsTextField(
+                    controller: _positionController,
+                    hintText: 'Cargo',
+                    obscureText: false,
+                    inputType: TextInputType.text,
+                    isValid: positionValidations.every((validation) => validation.isValid),
+                    validations: positionValidations),
+                const SizedBox(height: 95),
+                PsElevatedButton(
+                    width: MediaQuery.of(context).size.width,
+                    disabled: _isButtonDisabled,
+                    onTap: _isButtonDisabled ? null : _register,
+                    text: 'Crear cuenta'),
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('¿Ya tiene una cuenta? Ingresar'),
+                ),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.09),
+              ],
+            ),
           ),
         ),
+        backgroundColor: Colors.white,
       ),
-      backgroundColor: Colors.white,
     );
   }
 

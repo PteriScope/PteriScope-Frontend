@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:pteriscope_frontend/screens/patient/new_patient_screen.dart';
 import 'package:pteriscope_frontend/screens/patient/patient_detail_screen.dart';
@@ -102,93 +103,99 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: const PsAppBar(
-            title: 'PteriScope',
-            titleSize: AppConstants.bigAppBarTitleSize,
-            disabled: false),
-        drawer: const PsMenuBar(currentView: CurrentScreen.patientList),
-        body: Column(
-          children: [
-            PsHeader(
-              title: 'Lista de pacientes',
-              subtitle: 'Total de pacientes: ${totalPatients ?? 0}',
-              buttonTitle: 'Nuevo paciente',
-              action: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const NewPatientScreen(),
-                  ),
-                );
-              },
-            ),
-            const Padding(
-                padding: EdgeInsets.only(
-                    left: AppConstants.padding,
-                    right: AppConstants.padding,
-                    bottom: AppConstants.padding),
-                child: Divider(thickness: 1.5)),
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: AppConstants.padding),
-              child: TextField(
-                controller: _searchController,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.white,
-                  hintText: 'Busca a un paciente',
-                  hintStyle: const TextStyle(color: Colors.grey),
-                  prefixIcon: const Icon(Icons.search),
-                  suffixIcon: _searchController.text.isNotEmpty
-                      ? IconButton(
-                          icon: const Icon(Icons.close),
-                          onPressed: () {
-                            _searchController.clear();
-                            setState(() {});
-                          },
-                        )
-                      : null,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(50),
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (bool didPop) async {
+        SystemNavigator.pop();
+      },
+      child: Scaffold(
+          appBar: const PsAppBar(
+              title: 'PteriScope',
+              titleSize: AppConstants.bigAppBarTitleSize,
+              disabled: false),
+          drawer: const PsMenuBar(currentView: CurrentScreen.patientList),
+          body: Column(
+            children: [
+              PsHeader(
+                title: 'Lista de pacientes',
+                subtitle: 'Total de pacientes: ${totalPatients ?? 0}',
+                buttonTitle: 'Nuevo paciente',
+                action: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const NewPatientScreen(),
+                    ),
+                  );
+                },
+              ),
+              const Padding(
+                  padding: EdgeInsets.only(
+                      left: AppConstants.padding,
+                      right: AppConstants.padding,
+                      bottom: AppConstants.padding),
+                  child: Divider(thickness: 1.5)),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: AppConstants.padding),
+                child: TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.white,
+                    hintText: 'Busca a un paciente',
+                    hintStyle: const TextStyle(color: Colors.grey),
+                    prefixIcon: const Icon(Icons.search),
+                    suffixIcon: _searchController.text.isNotEmpty
+                        ? IconButton(
+                            icon: const Icon(Icons.close),
+                            onPressed: () {
+                              _searchController.clear();
+                              setState(() {});
+                            },
+                          )
+                        : null,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(50),
+                    ),
                   ),
                 ),
               ),
-            ),
-            Expanded(
-              child: Card(
-                  child: loading
-                      ? const Center(child: CircularProgressIndicator())
-                      : !internetError && !serverError
-                          ? _buildPatientList()
-                          : Center(
-                              child: Padding(
-                              padding: const EdgeInsetsDirectional.symmetric(
-                                  horizontal: 5 * AppConstants.padding,
-                                  vertical: AppConstants.padding),
-                              child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      "Error al cargar los datos. ${internetError ? "Compruebe su conexión a Internet" : "Inténtelo más tarde, por favor"} ",
-                                      textAlign: TextAlign.center,
-                                      style: const TextStyle(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.grey),
-                                    ),
-                                    const SizedBox(height: 20),
-                                    PsElevatedButtonIcon(
-                                        isPrimary: true,
-                                        icon: Icons.refresh,
-                                        text: "Reintentar",
-                                        onTap: () {
-                                          loadPatients();
-                                        })
-                                  ]),
-                            ))),
-            )
-          ],
-        ));
+              Expanded(
+                child: Card(
+                    child: loading
+                        ? const Center(child: CircularProgressIndicator())
+                        : !internetError && !serverError
+                            ? _buildPatientList()
+                            : Center(
+                                child: Padding(
+                                padding: const EdgeInsetsDirectional.symmetric(
+                                    horizontal: 5 * AppConstants.padding,
+                                    vertical: AppConstants.padding),
+                                child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        "Error al cargar los datos. ${internetError ? "Compruebe su conexión a Internet" : "Inténtelo más tarde, por favor"} ",
+                                        textAlign: TextAlign.center,
+                                        style: const TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.grey),
+                                      ),
+                                      const SizedBox(height: 20),
+                                      PsElevatedButtonIcon(
+                                          isPrimary: true,
+                                          icon: Icons.refresh,
+                                          text: "Reintentar",
+                                          onTap: () {
+                                            loadPatients();
+                                          })
+                                    ]),
+                              ))),
+              )
+            ],
+          )),
+    );
   }
 
   Widget _buildPatientList() {
