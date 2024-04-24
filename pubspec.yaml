@@ -50,6 +50,13 @@ dependencies:
   just_the_tooltip: ^0.0.12
   connectivity_plus: ^6.0.2
   permission_handler: ^11.3.1
+  flutter_launcher_icons: ^0.13.1
+
+flutter_launcher_icons:
+  image_path_android: "assets/logo_b.png"
+  image_path_ios: "assets/logo_b.png"
+  android: true
+  ios: true
 
 dev_dependencies:
   flutter_test:

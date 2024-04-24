@@ -170,7 +170,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               children: <Widget>[
                 SizedBox(height: MediaQuery.of(context).size.height * 0.09),
                 const Image(
-                  image: AssetImage('assets/Logo_b.png'),
+                  image: AssetImage('assets/logo_b.png'),
                   height: 50,
                 ),
                 const SizedBox(height: 20),
