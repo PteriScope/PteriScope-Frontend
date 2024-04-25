@@ -350,7 +350,7 @@ class _PatientDetailScreen extends State<PatientDetailScreen> {
                       bottom: AppConstants.padding,
                       top: AppConstants.padding * 8),
                   child: Text(
-                    "Este paciente aún no cuenta con revisiones.\n\nPresiona el botón “Nueva revisión” para añadir una",
+                    "Este paciente aún no cuenta con revisiones.\n\nPresione el botón “Nueva revisión” para añadir una",
                     textAlign: TextAlign.center,
                     style: TextStyle(
                         fontSize: 25,

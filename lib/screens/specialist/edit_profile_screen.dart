@@ -80,7 +80,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             .length >=
         3;
     final nameAlphanumericValidation =
-        RegExp(r'^[a-zA-Z0-9\s]+$').hasMatch(_nameController.text);
+        RegExp(r'^[a-zA-Z0-9\sáéíóúÁÉÍÓÚüÜ]+$').hasMatch(_nameController.text);
 
     final passwordLengthValidation = _passwordController.text.length >= 8;
     final passwordAlphabetValidation =
@@ -122,7 +122,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         context,
         DialogType.confirmation,
         "¿Estás seguro que deseas actualizar tus datos?",
-        "Actualizar",
+        "Aceptar",
         () => {_updateProfile(), Navigator.of(context).pop()},
         Icons.check_circle,
         "Cancelar",
@@ -155,7 +155,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               hospital: _hospitalController.text,
               position: _positionController.text));
 
-      Shared.showPSSnackBar(context, 'Actualización exitosa',
+      Shared.showPSSnackBar(context, 'Edición exitosa',
           SnackBarType.onlyText, AppConstants.shortSnackBarDuration);
 
       Navigator.of(context).push(
@@ -266,7 +266,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           width: MediaQuery.of(context).size.width / 2.5,
                           disabled: _isButtonDisabled,
                           onTap: showConfirmDialog,
-                          text: 'Actualizar datos'),
+                          text: 'Actualizar'),
                     ],
                   ),
                   SizedBox(height: MediaQuery.of(context).size.height * 0.3),

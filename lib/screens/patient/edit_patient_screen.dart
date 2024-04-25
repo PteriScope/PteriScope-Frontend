@@ -72,7 +72,7 @@ class _EditPatientScreenState extends State<EditPatientScreen> {
 
   void _checkFields() {
     final nameAlphanumericValidation =
-        RegExp(r'^[a-zA-Z0-9\s]+$').hasMatch(_nameController.text);
+        RegExp(r'^[a-zA-Z0-9\sáéíóúÁÉÍÓÚüÜ]+$').hasMatch(_nameController.text);
 
     final twoLastnameValidation = _lastNameController.text
             .split(' ')
@@ -80,7 +80,7 @@ class _EditPatientScreenState extends State<EditPatientScreen> {
             .length >=
         2;
     final lastnameAlphanumericValidation =
-        RegExp(r'^[a-zA-Z0-9\s]+$').hasMatch(_lastNameController.text);
+        RegExp(r'^[a-zA-Z0-9\sáéíóúÁÉÍÓÚüÜ]+$').hasMatch(_lastNameController.text);
 
     final dniLengthValidation =
         RegExp(r'^\d{8}$').hasMatch(_dniController.text);
@@ -124,7 +124,7 @@ class _EditPatientScreenState extends State<EditPatientScreen> {
         context,
         DialogType.confirmation,
         "¿Estás seguro que deseas actualizar los datos del paciente?",
-        "Actualizar",
+        "Aceptar",
         () => {_updatePatient(), Navigator.of(context).pop()},
         Icons.check_circle,
         "Cancelar",
@@ -154,7 +154,7 @@ class _EditPatientScreenState extends State<EditPatientScreen> {
               age: int.parse(_ageController.text),
               email: _emailController.text));
 
-      Shared.showPSSnackBar(context, 'Registro exitoso', SnackBarType.onlyText,
+      Shared.showPSSnackBar(context, 'Edición exitosa', SnackBarType.onlyText,
           AppConstants.shortSnackBarDuration);
 
       Navigator.of(context).push(
@@ -269,7 +269,7 @@ class _EditPatientScreenState extends State<EditPatientScreen> {
                           width: MediaQuery.of(context).size.width / 2.5,
                           disabled: _isButtonDisabled,
                           onTap: showConfirmDialog,
-                          text: 'Actualizar datos'),
+                          text: 'Actualizar'),
                     ],
                   ),
                   SizedBox(height: MediaQuery.of(context).size.height * 0.2),

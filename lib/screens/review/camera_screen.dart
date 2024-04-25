@@ -67,13 +67,14 @@ class _CameraScreenState extends State<CameraScreen> {
         if (!mounted) {
           return;
         }
+
+        setState(() {});
+        _initAdvices();
       } on CameraException catch (_) {
         Navigator.pop(context);
       } catch (e) {
         Navigator.pop(context);
       }
-      setState(() {});
-      _initAdvices();
     }
   }
 

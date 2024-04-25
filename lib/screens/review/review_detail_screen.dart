@@ -88,7 +88,7 @@ class _ReviewDetailScreenState extends State<ReviewDetailScreen> {
         context,
         DialogType.warning,
         "¿Estás seguro que deseas eliminar esta revisión?",
-        "Eliminar",
+        "Aceptar",
         () => {_deleteReview(), Navigator.of(context).pop()},
         Icons.check_circle,
         "Cancelar",
@@ -126,7 +126,7 @@ class _ReviewDetailScreenState extends State<ReviewDetailScreen> {
           SnackBarType.loading,
           AppConstants.longSnackBarDuration);
 
-      await apiService.deleteReview(widget.review.id!);
+      await apiService.deleteReview(widget.patient.id, widget.review.id!);
 
       Shared.showPSSnackBar(context, 'Eliminación exitosa',
           SnackBarType.onlyText, AppConstants.shortSnackBarDuration);
@@ -237,7 +237,7 @@ class _ReviewDetailScreenState extends State<ReviewDetailScreen> {
                                   text: "Nombre del paciente: ", isBold: true),
                               PsColumnText(
                                   text:
-                                      "${widget.patient.firstName}-${widget.patient.lastName}",
+                                      "${widget.patient.firstName} ${widget.patient.lastName}",
                                   isBold: false),
                             ]),
                             TableRow(children: [

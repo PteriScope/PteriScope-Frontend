@@ -219,8 +219,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         bottom: AppConstants.padding,
                         top: AppConstants.padding * 8),
                     child: Text(
-                      // TODO: Verificar texto
-                      "Aún no ha creado a ningún paciente.\n\nPresiona el botón “Nuevo paciente” para añadir uno",
+                      "No existen pacientes registrados.\n\nPresione el botón “Nuevo paciente” para añadir uno",
                       textAlign: TextAlign.center,
                       style: TextStyle(
                           fontSize: 25,

@@ -37,6 +37,7 @@ class ApiService with ChangeNotifier {
       headers: headers,
       body: json.encode({'dni': dni, 'password': password}),
     );
+    var decodedResponse = utf8.decode(response.bodyBytes);
     if (response.statusCode == 200) {
       var data = json.decode(response.body);
       String token = data['token'];
@@ -46,7 +47,7 @@ class ApiService with ChangeNotifier {
       await SharedPreferencesService().setId(specialistId);
       notifyListeners();
       return true;
-    } else if (response.statusCode == 404) {
+    } else if (response.statusCode == 404 || decodedResponse == "Specialist not found") {
       notifyListeners();
       return false;
     } else {
@@ -265,11 +266,11 @@ class ApiService with ChangeNotifier {
     }
   }
 
-  Future<void> deleteReview(int reviewId) async {
+  Future<void> deleteReview(int patientId, int reviewId) async {
     final headers = await _getAuthHeaders();
 
     var response = await http.delete(
-      Uri.parse('$baseUrl/reviews/$reviewId'),
+      Uri.parse('$baseUrl/patients/$patientId/reviews/$reviewId'),
       headers: headers,
     );
 

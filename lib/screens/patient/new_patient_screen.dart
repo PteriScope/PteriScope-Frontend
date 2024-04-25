@@ -62,7 +62,7 @@ class _NewPatientScreenState extends State<NewPatientScreen> {
 
   void _checkFields() {
     final nameAlphanumericValidation =
-        RegExp(r'^[a-zA-Z0-9\s]+$').hasMatch(_nameController.text);
+        RegExp(r'^[a-zA-Z0-9\sáéíóúÁÉÍÓÚüÜ]+$').hasMatch(_nameController.text);
 
     final twoLastnameValidation = _lastNameController.text
             .split(' ')
@@ -70,7 +70,7 @@ class _NewPatientScreenState extends State<NewPatientScreen> {
             .length >=
         2;
     final lastnameAlphanumericValidation =
-        RegExp(r'^[a-zA-Z0-9\s]+$').hasMatch(_lastNameController.text);
+        RegExp(r'^[a-zA-Z0-9\sáéíóúÁÉÍÓÚüÜ]+$').hasMatch(_lastNameController.text);
 
     final dniLengthValidation =
         RegExp(r'^\d{8}$').hasMatch(_dniController.text);

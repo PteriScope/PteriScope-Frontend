@@ -64,7 +64,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             .length >=
         3;
     final nameAlphanumericValidation =
-        RegExp(r'^[a-zA-Z0-9\s]+$').hasMatch(_nameController.text);
+        RegExp(r'^[a-zA-Z0-9\sáéíóúÁÉÍÓÚüÜ]+$').hasMatch(_nameController.text);
 
     final dniLengthValidation =
         RegExp(r'^\d{8}$').hasMatch(_dniController.text);
@@ -170,7 +170,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               children: <Widget>[
                 SizedBox(height: MediaQuery.of(context).size.height * 0.09),
                 const Image(
-                  image: AssetImage('assets/logo_b.png'),
+                  image: AssetImage('assets/Logo_b.png'),
                   height: 50,
                 ),
                 const SizedBox(height: 20),
