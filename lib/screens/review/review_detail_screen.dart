@@ -327,13 +327,6 @@ class _ReviewDetailScreenState extends State<ReviewDetailScreen> {
                       iconData: Icons.delete,
                       disabled: false),
                   PsFloatingButton(
-                      heroTag: 'sendEmail',
-                      buttonType: ButtonType.secondary,
-                      onTap: () => {
-                            //TODO: Implement functionality
-                          },
-                      iconData: Icons.email_outlined),
-                  PsFloatingButton(
                       heroTag: 'backToPatient',
                       buttonType: ButtonType.primary,
                       onTap: () => {

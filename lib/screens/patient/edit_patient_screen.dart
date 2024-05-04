@@ -37,11 +37,11 @@ class _EditPatientScreenState extends State<EditPatientScreen> {
   bool _isButtonDisabled = true;
 
   List<Validation> nameValidations = [
-    Validation("Solo valores alfanuméricos", false),
+    Validation("Solo valores alfabéticos", false),
   ];
   List<Validation> lastnameValidations = [
     Validation("2 apellidos", false),
-    Validation("Solo valores alfanuméricos", false),
+    Validation("Solo valores alfabéticos", false),
   ];
   List<Validation> dniValidations = [Validation("8 dígitos numéricos", false)];
   List<Validation> ageValidations = [
@@ -72,7 +72,7 @@ class _EditPatientScreenState extends State<EditPatientScreen> {
 
   void _checkFields() {
     final nameAlphanumericValidation =
-        RegExp(r'^[a-zA-Z0-9\sáéíóúÁÉÍÓÚüÜ]+$').hasMatch(_nameController.text);
+        RegExp(r'^[a-zA-Z\sáéíóúÁÉÍÓÚüÜ]+$').hasMatch(_nameController.text);
 
     final twoLastnameValidation = _lastNameController.text
             .split(' ')
@@ -80,7 +80,7 @@ class _EditPatientScreenState extends State<EditPatientScreen> {
             .length >=
         2;
     final lastnameAlphanumericValidation =
-        RegExp(r'^[a-zA-Z0-9\sáéíóúÁÉÍÓÚüÜ]+$').hasMatch(_lastNameController.text);
+        RegExp(r'^[a-zA-Z\sáéíóúÁÉÍÓÚüÜ]+$').hasMatch(_lastNameController.text);
 
     final dniLengthValidation =
         RegExp(r'^\d{8}$').hasMatch(_dniController.text);
@@ -115,7 +115,7 @@ class _EditPatientScreenState extends State<EditPatientScreen> {
           dniLengthValidation &&
           ageNumericValidation &&
           ageNotZeroStartingValidation &&
-          (emailValidation || _emailController.text == ""));
+          emailValidation);
     });
   }
 
@@ -248,7 +248,7 @@ class _EditPatientScreenState extends State<EditPatientScreen> {
                   const SizedBox(height: 15),
                   PsTextField(
                       controller: _emailController,
-                      hintText: 'Email (opcional)',
+                      hintText: 'Email',
                       obscureText: false,
                       inputType: TextInputType.emailAddress,
                       isValid: emailValidations

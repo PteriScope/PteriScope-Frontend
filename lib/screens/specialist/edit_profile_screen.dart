@@ -39,7 +39,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   List<Validation> nameValidations = [
     Validation("Al menos un nombre y dos apellidos", false),
-    Validation("Solo valores alfanuméricos", false),
+    Validation("Solo valores alfabéticos", false),
   ];
   List<Validation> passwordValidations = [
     Validation("Al menos 8 caracteres", false),
@@ -80,7 +80,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             .length >=
         3;
     final nameAlphanumericValidation =
-        RegExp(r'^[a-zA-Z0-9\sáéíóúÁÉÍÓÚüÜ]+$').hasMatch(_nameController.text);
+        RegExp(r'^[a-zA-Z\sáéíóúÁÉÍÓÚüÜ]+$').hasMatch(_nameController.text);
 
     final passwordLengthValidation = _passwordController.text.length >= 8;
     final passwordAlphabetValidation =

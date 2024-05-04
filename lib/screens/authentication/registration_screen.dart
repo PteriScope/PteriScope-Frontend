@@ -31,7 +31,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   List<Validation> nameValidations = [
     Validation("Al menos un nombre y dos apellidos", false),
-    Validation("Solo valores alfanuméricos", false),
+    Validation("Solo valores alfabéticos", false),
   ];
   List<Validation> dniValidations = [Validation("8 dígitos numéricos", false)];
   List<Validation> passwordValidations = [
@@ -64,7 +64,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             .length >=
         3;
     final nameAlphanumericValidation =
-        RegExp(r'^[a-zA-Z0-9\sáéíóúÁÉÍÓÚüÜ]+$').hasMatch(_nameController.text);
+        RegExp(r'^[a-zA-Z\sáéíóúÁÉÍÓÚüÜ]+$').hasMatch(_nameController.text);
 
     final dniLengthValidation =
         RegExp(r'^\d{8}$').hasMatch(_dniController.text);
