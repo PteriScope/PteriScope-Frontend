@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:pteriscope_frontend/screens/home_screen.dart';
 import 'package:pteriscope_frontend/services/shared_preferences_service.dart';
 
 import '../util/constants.dart';
+import '../util/shared.dart';
 import 'authentication/login_screen.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -25,8 +25,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
     bool isLoggedIn = await SharedPreferencesService().isLogged();
     if (isLoggedIn) {
-      Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => const HomeScreen()));
+      Shared.logout(context);
     } else {
       Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (_) => const LoginScreen()));
