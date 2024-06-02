@@ -31,7 +31,9 @@ class EditProfileScreen extends StatefulWidget {
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
+  final TextEditingController _newPasswordController = TextEditingController();
   final TextEditingController _hospitalController = TextEditingController();
   final TextEditingController _positionController = TextEditingController();
   bool _isButtonDisabled = true;
@@ -41,7 +43,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     Validation("Al menos un nombre y dos apellidos", false),
     Validation("Solo valores alfabéticos", false),
   ];
-  List<Validation> passwordValidations = [
+  List<Validation> confirmPasswordValidations = [
+    Validation("Al menos 8 caracteres", false),
+  ];
+  List<Validation> newPasswordValidations = [
     Validation("Al menos 8 caracteres", false),
     Validation("Al menos 1 letra del alfabeto", false),
     Validation("Al menos 1 número", false),
@@ -60,7 +65,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   void initState() {
     super.initState();
     _nameController.addListener(_checkFields);
-    _passwordController.addListener(_checkFields);
+    _confirmPasswordController.addListener(_checkFields);
+    _newPasswordController.addListener(_checkFields);
     _hospitalController.addListener(_checkFields);
     _positionController.addListener(_checkFields);
     specialistId = SharedPreferencesService().getId()!;
@@ -82,13 +88,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     final nameAlphanumericValidation =
         RegExp(r'^[a-zA-Z\sáéíóúÁÉÍÓÚüÜ]+$').hasMatch(_nameController.text);
 
-    final passwordLengthValidation = _passwordController.text.length >= 8;
-    final passwordAlphabetValidation =
-        RegExp(r'[a-zA-Z]').hasMatch(_passwordController.text);
-    final passwordNumberValidation =
-        RegExp(r'\d').hasMatch(_passwordController.text);
-    final passwordSpecialCharacterValidation =
-        RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(_passwordController.text);
+    final confirmPasswordLengthValidation =
+        _confirmPasswordController.text.length >= 8;
+
+    final newPasswordLengthValidation = _newPasswordController.text.length >= 8;
+    final newPasswordAlphabetValidation =
+        RegExp(r'[a-zA-Z]').hasMatch(_newPasswordController.text);
+    final newPasswordNumberValidation =
+        RegExp(r'\d').hasMatch(_newPasswordController.text);
+    final newPasswordSpecialCharacterValidation =
+        RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(_newPasswordController.text);
 
     final hospitalLengthValidation = _hospitalController.text.length >= 3;
 
@@ -98,20 +107,24 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       nameValidations[0].isValid = nameSurnameValidation;
       nameValidations[1].isValid = nameAlphanumericValidation;
 
-      passwordValidations[0].isValid = passwordLengthValidation;
-      passwordValidations[1].isValid = passwordAlphabetValidation;
-      passwordValidations[2].isValid = passwordNumberValidation;
-      passwordValidations[3].isValid = passwordSpecialCharacterValidation;
+      confirmPasswordValidations[0].isValid = confirmPasswordLengthValidation;
+
+      newPasswordValidations[0].isValid = newPasswordLengthValidation;
+      newPasswordValidations[1].isValid = newPasswordAlphabetValidation;
+      newPasswordValidations[2].isValid = newPasswordNumberValidation;
+      newPasswordValidations[3].isValid = newPasswordSpecialCharacterValidation;
 
       hospitalValidations[0].isValid = hospitalLengthValidation;
       positionValidations[0].isValid = positionLengthValidation;
 
       _isButtonDisabled = !(nameSurnameValidation &&
           nameAlphanumericValidation &&
-          passwordLengthValidation &&
-          passwordAlphabetValidation &&
-          passwordNumberValidation &&
-          passwordSpecialCharacterValidation &&
+          confirmPasswordLengthValidation &&
+          ((newPasswordLengthValidation &&
+                  newPasswordAlphabetValidation &&
+                  newPasswordNumberValidation &&
+                  newPasswordSpecialCharacterValidation) ||
+              _newPasswordController.text == "") &&
           hospitalLengthValidation &&
           positionLengthValidation);
     });
@@ -130,6 +143,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         Icons.cancel);
   }
 
+  void showInvalidPasswordDialog() {
+    Shared.showPsDialog(
+        context,
+        DialogType.warning,
+        "La contraseña indicada no coincide con la actual",
+        "Aceptar",
+        () => {Navigator.of(context).pop()},
+        Icons.check_circle);
+  }
+
   void _updateProfile() async {
     setState(() {
       _isButtonDisabled = true;
@@ -140,29 +163,40 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       bool __ = await Shared.checkConnectivity();
 
       var apiService = Provider.of<ApiService>(context, listen: false);
-      Shared.showPSSnackBar(
-          context,
-          //TODO: CHECK WITH EXCEL
-          'Actualizando datos...',
-          SnackBarType.loading,
+      Shared.showPSSnackBar(context, 'Validando...', SnackBarType.loading,
           AppConstants.longSnackBarDuration);
-      Specialist? _ = await apiService.updateSpecialist(
-          specialistId,
-          RegisterUser(
-              name: _nameController.text,
-              dni: widget.specialist.dni,
-              password: _passwordController.text,
-              hospital: _hospitalController.text,
-              position: _positionController.text));
+      bool isCurrentPasswordValidated =
+          await apiService.validateCurrentPassword(
+              specialistId, _confirmPasswordController.text);
 
-      Shared.showPSSnackBar(context, 'Edición exitosa',
-          SnackBarType.onlyText, AppConstants.shortSnackBarDuration);
+      if (!isCurrentPasswordValidated) {
+        showInvalidPasswordDialog();
+        Shared.showPSSnackBar(context, 'Registro fallido', SnackBarType.onlyText,
+            AppConstants.shortSnackBarDuration);
+      } else {
+        Shared.showPSSnackBar(context, 'Actualizando datos...',
+            SnackBarType.loading, AppConstants.longSnackBarDuration);
 
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => const ProfileScreen(),
-        ),
-      );
+        Specialist? _ = await apiService.updateSpecialist(
+            specialistId,
+            RegisterUser(
+                name: _nameController.text,
+                dni: widget.specialist.dni,
+                password: (_newPasswordController.text == "")
+                    ? _confirmPasswordController.text
+                    : _newPasswordController.text,
+                hospital: _hospitalController.text,
+                position: _positionController.text));
+
+        Shared.showPSSnackBar(context, 'Edición exitosa', SnackBarType.onlyText,
+            AppConstants.shortSnackBarDuration);
+
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => const ProfileScreen(),
+          ),
+        );
+      }
     } on PsException catch (e) {
       Shared.showPSSnackBar(context, 'Error: ${e.message}',
           SnackBarType.onlyText, AppConstants.shortSnackBarDuration);
@@ -222,13 +256,22 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       validations: nameValidations),
                   const SizedBox(height: 15),
                   PsTextField(
-                      controller: _passwordController,
-                      hintText: 'Contraseña',
+                      controller: _confirmPasswordController,
+                      hintText: 'Confirmar contraseña actual',
                       obscureText: true,
                       inputType: TextInputType.text,
-                      isValid: passwordValidations
+                      isValid: confirmPasswordValidations
                           .every((validation) => validation.isValid),
-                      validations: passwordValidations),
+                      validations: confirmPasswordValidations),
+                  const SizedBox(height: 15),
+                  PsTextField(
+                      controller: _newPasswordController,
+                      hintText: 'Contraseña nueva (opcional)',
+                      obscureText: true,
+                      inputType: TextInputType.text,
+                      isValid: newPasswordValidations
+                          .every((validation) => validation.isValid),
+                      validations: newPasswordValidations),
                   const SizedBox(height: 15),
                   PsTextField(
                       controller: _hospitalController,

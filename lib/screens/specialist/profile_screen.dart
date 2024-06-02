@@ -47,7 +47,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       bool __ = await Shared.checkConnectivity();
 
       Shared.showPSSnackBar(context, 'Obteniendo datos', SnackBarType.loading,
-          AppConstants.longSnackBarDuration);
+          AppConstants.shortSnackBarDuration);
       final specialistId = SharedPreferencesService().getId();
       await apiService.getSpecialist(specialistId!).then((value) => {
             setState(() {

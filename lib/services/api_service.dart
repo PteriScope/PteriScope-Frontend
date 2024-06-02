@@ -281,4 +281,21 @@ class ApiService with ChangeNotifier {
       throw PsException(decodedResponse);
     }
   }
+
+  Future<bool> validateCurrentPassword(int specialistId, String currentPassword) async {
+    final headers = await _getAuthHeaders();
+    var response = await http.post(
+      Uri.parse('$baseUrl/specialists/$specialistId/validateCurrentPassword'),
+      headers: headers,
+      body: json.encode({'currentPassword': currentPassword})
+    );
+
+    if (response.statusCode == 200) {
+      bool decodedResponse = jsonDecode(response.body);
+      notifyListeners();
+      return decodedResponse;
+    } else {
+      throw Exception('Failed to load data');
+    }
+  }
 }
