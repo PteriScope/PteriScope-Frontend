@@ -18,6 +18,8 @@ class PsHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+
     return Padding(
       padding: const EdgeInsets.all(AppConstants.padding),
       child: Row(
@@ -27,8 +29,9 @@ class PsHeader extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: const TextStyle(
-                  fontSize: 24,
+                style: TextStyle(
+                  fontSize:
+                      screenWidth * 22 / AppConstants.referenceDeviceWidth,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
                 ),

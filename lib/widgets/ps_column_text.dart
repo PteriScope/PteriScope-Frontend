@@ -30,6 +30,9 @@ class PsColumnText extends StatelessWidget {
         style: (isBold || isResult)
             ? TextStyle(
                 fontWeight: FontWeight.bold,
+                fontSize: MediaQuery.of(context).size.width *
+                    14 /
+                    AppConstants.referenceDeviceWidth,
                 color: isResult ? Shared.getColorResult(text) : null)
             : null,
       ),

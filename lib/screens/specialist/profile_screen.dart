@@ -86,6 +86,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    double deviceHeight = MediaQuery.of(context).size.height;
+
     return PopScope(
       canPop: false,
       onPopInvoked: (bool didPop) async {
@@ -133,9 +135,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ClipRRect(
                               borderRadius: BorderRadius.circular(
                                   AppConstants.padding / 2.0),
-                              child: const Image(
-                                image: AssetImage('assets/specialist_icon.png'),
-                                height: 150,
+                              child: Image(
+                                image: const AssetImage(
+                                    'assets/specialist_icon.png'),
+                                height: deviceHeight *
+                                    150 /
+                                    AppConstants.referenceDeviceHeight,
                               ),
                             ),
                             Column(

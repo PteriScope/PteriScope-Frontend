@@ -171,8 +171,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
       if (!isCurrentPasswordValidated) {
         showInvalidPasswordDialog();
-        Shared.showPSSnackBar(context, 'Registro fallido', SnackBarType.onlyText,
-            AppConstants.shortSnackBarDuration);
+        Shared.showPSSnackBar(context, 'Registro fallido',
+            SnackBarType.onlyText, AppConstants.shortSnackBarDuration);
       } else {
         Shared.showPSSnackBar(context, 'Actualizando datos...',
             SnackBarType.loading, AppConstants.shortSnackBarDuration);
@@ -248,7 +248,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   const SizedBox(height: 15),
                   PsTextField(
                       controller: _nameController,
-                      hintText: 'Nombre',
+                      hintText: 'Nombres completos',
                       obscureText: false,
                       inputType: TextInputType.name,
                       isValid: nameValidations

@@ -5,6 +5,8 @@ class AppConstants {
   static const Color primaryColor = Color(0xFF475BD8);
   static const Color secondaryColor = Color(0xFFFFFBFE);
   static const double padding = 16.0;
+  static const double referenceDeviceWidth = 392.73;
+  static const double referenceDeviceHeight = 825.45;
 
   static const String severePterygium = "Pterigión grave";
   static const Color severeColor = Color(0xFFD70505);

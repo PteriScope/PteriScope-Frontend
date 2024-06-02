@@ -47,7 +47,8 @@ class ApiService with ChangeNotifier {
       await SharedPreferencesService().setId(specialistId);
       notifyListeners();
       return true;
-    } else if (response.statusCode == 404 || decodedResponse == "Specialist not found") {
+    } else if (response.statusCode == 404 ||
+        decodedResponse == "Specialist not found") {
       notifyListeners();
       return false;
     } else {
@@ -184,7 +185,8 @@ class ApiService with ChangeNotifier {
       notifyListeners();
       return patient;
     } else {
-      return null;
+      var decodedResponse = utf8.decode(response.bodyBytes);
+      throw PsException(decodedResponse);
     }
   }
 
@@ -201,7 +203,8 @@ class ApiService with ChangeNotifier {
       notifyListeners();
       return patient;
     } else {
-      throw Exception('Failed to update patient data');
+      var decodedResponse = utf8.decode(response.bodyBytes);
+      throw PsException(decodedResponse);
     }
   }
 
@@ -282,13 +285,13 @@ class ApiService with ChangeNotifier {
     }
   }
 
-  Future<bool> validateCurrentPassword(int specialistId, String currentPassword) async {
+  Future<bool> validateCurrentPassword(
+      int specialistId, String currentPassword) async {
     final headers = await _getAuthHeaders();
     var response = await http.post(
-      Uri.parse('$baseUrl/specialists/$specialistId/validateCurrentPassword'),
-      headers: headers,
-      body: json.encode({'currentPassword': currentPassword})
-    );
+        Uri.parse('$baseUrl/specialists/$specialistId/validateCurrentPassword'),
+        headers: headers,
+        body: json.encode({'currentPassword': currentPassword}));
 
     if (response.statusCode == 200) {
       bool decodedResponse = jsonDecode(response.body);
