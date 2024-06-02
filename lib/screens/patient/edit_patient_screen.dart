@@ -115,7 +115,7 @@ class _EditPatientScreenState extends State<EditPatientScreen> {
           dniLengthValidation &&
           ageNumericValidation &&
           ageNotZeroStartingValidation &&
-          emailValidation);
+          (emailValidation || _emailController.text == ""));
     });
   }
 
@@ -142,7 +142,6 @@ class _EditPatientScreenState extends State<EditPatientScreen> {
       bool _ = await Shared.checkConnectivity();
 
       var apiService = Provider.of<ApiService>(context, listen: false);
-      //TODO: CHECK WITH EXCEL
       Shared.showPSSnackBar(context, 'Actualizando datos...',
           SnackBarType.loading, AppConstants.longSnackBarDuration);
       Patient? patient = await apiService.updatePatient(
@@ -248,7 +247,7 @@ class _EditPatientScreenState extends State<EditPatientScreen> {
                   const SizedBox(height: 15),
                   PsTextField(
                       controller: _emailController,
-                      hintText: 'Email',
+                      hintText: 'Email (opcional)',
                       obscureText: false,
                       inputType: TextInputType.emailAddress,
                       isValid: emailValidations

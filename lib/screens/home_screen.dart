@@ -270,7 +270,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                         textAlign: TextAlign.center,
                                       ),
                                       Text(
-                                        patient.email,
+                                        patient.email == ""
+                                            ? "-"
+                                            : patient.email,
                                         style: const TextStyle(fontSize: 10),
                                       ),
                                     ],

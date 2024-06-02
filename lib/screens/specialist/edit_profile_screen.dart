@@ -175,7 +175,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             AppConstants.shortSnackBarDuration);
       } else {
         Shared.showPSSnackBar(context, 'Actualizando datos...',
-            SnackBarType.loading, AppConstants.longSnackBarDuration);
+            SnackBarType.loading, AppConstants.shortSnackBarDuration);
 
         Specialist? _ = await apiService.updateSpecialist(
             specialistId,

@@ -105,7 +105,7 @@ class _NewPatientScreenState extends State<NewPatientScreen> {
           dniLengthValidation &&
           ageNumericValidation &&
           ageNotZeroStartingValidation &&
-          emailValidation);
+          (emailValidation || _emailController.text == ""));
     });
   }
 
@@ -225,7 +225,7 @@ class _NewPatientScreenState extends State<NewPatientScreen> {
                   const SizedBox(height: 15),
                   PsTextField(
                       controller: _emailController,
-                      hintText: 'Email',
+                      hintText: 'Email (opcional)',
                       obscureText: false,
                       inputType: TextInputType.emailAddress,
                       isValid: emailValidations
