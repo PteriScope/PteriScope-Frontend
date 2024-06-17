@@ -4,7 +4,7 @@
     <application
         android:label="PteriScope"
         android:name="${applicationName}"
-        android:icon="@mipmap/logo_b">
+        android:icon="@mipmap/logo_c">
         <activity
             android:name=".MainActivity"
             android:exported="true"

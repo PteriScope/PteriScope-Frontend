@@ -47,7 +47,7 @@ class PsAppBar extends StatelessWidget implements PreferredSizeWidget {
           child: const Padding(
             padding: EdgeInsets.only(right: AppConstants.padding),
             child: Image(
-              image: AssetImage('assets/Logo_w.png'),
+              image: AssetImage('assets/newLogo_bw.png'),
               height: 40,
             ),
           ),

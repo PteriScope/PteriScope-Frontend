@@ -25,10 +25,10 @@ class _SplashScreenState extends State<SplashScreen> {
 
     bool isLoggedIn = await SharedPreferencesService().isLogged();
     if (isLoggedIn) {
-      Shared.logout(context);
+      //Shared.logout(context);
     } else {
-      Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => const LoginScreen()));
+      //Navigator.of(context).pushReplacement(
+      //    MaterialPageRoute(builder: (_) => const LoginScreen()));
     }
   }
 
@@ -37,21 +37,25 @@ class _SplashScreenState extends State<SplashScreen> {
     return const Scaffold(
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            SizedBox(height: 100,),
             Image(
-              image: AssetImage('assets/Logo_w.png'),
+              image: AssetImage('assets/newLogo_bw.png'),
               height: 100,
             ),
-            SizedBox(height: 10),
-            Text('PteriScope',
-                style: TextStyle(
-                    fontSize: 35,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white)),
+            Padding(
+              padding: EdgeInsets.only(bottom: AppConstants.padding),
+              child: Text('PteriScope',
+                  style: TextStyle(
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey)),
+            ),
           ],
         ),
       ),
+      backgroundColor: AppConstants.secondaryColor,
     );
   }
 }
