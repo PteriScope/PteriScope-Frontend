@@ -25,10 +25,10 @@ class _SplashScreenState extends State<SplashScreen> {
 
     bool isLoggedIn = await SharedPreferencesService().isLogged();
     if (isLoggedIn) {
-      //Shared.logout(context);
+      Shared.logout(context);
     } else {
-      //Navigator.of(context).pushReplacement(
-      //    MaterialPageRoute(builder: (_) => const LoginScreen()));
+      Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (_) => const LoginScreen()));
     }
   }
 

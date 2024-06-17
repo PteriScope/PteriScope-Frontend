@@ -14,7 +14,7 @@ import '../models/review.dart';
 import '../models/specialist.dart';
 
 class ApiService with ChangeNotifier {
-  final String baseUrl = 'http://52.3.118.68:8080/api';
+  final String baseUrl = 'http://192.168.0.104:8080/api';
   final Map<String, String> headers = {
     'Content-Type': 'application/json; charset=utf-8',
   };

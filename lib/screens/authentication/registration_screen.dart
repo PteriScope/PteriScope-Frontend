@@ -171,7 +171,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 SizedBox(height: MediaQuery.of(context).size.height * 0.09),
                 const Image(
                   image: AssetImage('assets/newLogo_c.png'),
-                  height: 50,
+                  height: 100,
                 ),
                 const SizedBox(height: 20),
                 const Text('Registrarse',
@@ -224,7 +224,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     isValid: positionValidations
                         .every((validation) => validation.isValid),
                     validations: positionValidations),
-                const SizedBox(height: 95),
+                const SizedBox(height: 50),
                 PsElevatedButton(
                     width: MediaQuery.of(context).size.width,
                     disabled: _isButtonDisabled,

@@ -127,15 +127,15 @@ class _LoginScreenState extends State<LoginScreen> {
             children: [
               const Image(
                 image: AssetImage('assets/newLogo_c.png'),
-                height: 50,
+                height: 100,
               ),
               const SizedBox(height: 20),
-              const Text('Bienvenido',
+              const Text('PteriScope',
                   style: TextStyle(
                       fontSize: 36,
                       fontWeight: FontWeight.bold,
                       color: Colors.black)),
-              const SizedBox(height: 20),
+              const SizedBox(height: 50),
               PsTextField(
                   controller: _dniController,
                   hintText: 'DNI',
@@ -153,18 +153,19 @@ class _LoginScreenState extends State<LoginScreen> {
                   isValid: passwordValidations
                       .every((validation) => validation.isValid),
                   validations: passwordValidations),
-              const SizedBox(height: 20),
+              const SizedBox(height: 25),
               PsElevatedButton(
                   width: MediaQuery.of(context).size.width,
                   disabled: _isButtonDisabled,
                   onTap: _isButtonDisabled ? null : _login,
                   text: 'Ingresar'),
+              const SizedBox(height: 25),
               TextButton(
                 onPressed: () {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (_) => const RegistrationScreen()));
                 },
-                child: const Text('¿No tiene una cuenta? Registrarse'),
+                child: const Text('Registrarse'),
               ),
             ],
           ),
