@@ -9,6 +9,7 @@ class PsColumnText extends StatelessWidget {
   final bool isBold;
   final bool isDate;
   final bool isResult;
+  final bool isLong;
 
   const PsColumnText({
     super.key,
@@ -16,13 +17,14 @@ class PsColumnText extends StatelessWidget {
     required this.isBold,
     this.isDate = false,
     this.isResult = false,
+    this.isLong = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: AppConstants.padding / 4),
-      width: MediaQuery.of(context).size.width * 0.49,
+      width: isLong ? MediaQuery.of(context).size.width * 0.8 : MediaQuery.of(context).size.width * 0.49,
       child: Text(
         !isDate
             ? text

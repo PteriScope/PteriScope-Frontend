@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../screens/home_screen.dart';
 import '../util/constants.dart';
 
 class PsAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -9,21 +8,11 @@ class PsAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool disabled;
 
   const PsAppBar(
-      {super.key,
-      required this.title,
-      required this.titleSize,
-      required this.disabled});
+      {super.key, this.title = "", this.titleSize = 0, required this.disabled});
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      title: Text(
-        title,
-        style: TextStyle(
-            fontSize: titleSize,
-            fontWeight: FontWeight.bold,
-            color: Colors.white),
-      ),
       leading: IconButton(
         icon: const Icon(Icons.menu),
         color: Colors.white,
@@ -33,26 +22,6 @@ class PsAppBar extends StatelessWidget implements PreferredSizeWidget {
           }
         },
       ),
-      actions: [
-        InkWell(
-          onTap: () {
-            if (!disabled) {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const HomeScreen(),
-                ),
-              );
-            }
-          },
-          child: const Padding(
-            padding: EdgeInsets.only(right: AppConstants.padding),
-            child: Image(
-              image: AssetImage('assets/newLogo_bw.png'),
-              height: 40,
-            ),
-          ),
-        ),
-      ],
       backgroundColor: AppConstants.primaryColor,
       centerTitle: true,
     );

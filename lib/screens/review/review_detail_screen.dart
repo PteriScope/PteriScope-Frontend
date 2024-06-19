@@ -121,7 +121,6 @@ class _ReviewDetailScreenState extends State<ReviewDetailScreen> {
       var apiService = Provider.of<ApiService>(context, listen: false);
       Shared.showPSSnackBar(
           context,
-          //TODO: CHECK WITH EXCEL
           'Eliminando revisión...',
           SnackBarType.loading,
           AppConstants.longSnackBarDuration);

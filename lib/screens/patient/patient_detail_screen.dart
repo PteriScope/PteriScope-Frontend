@@ -184,12 +184,8 @@ class _PatientDetailScreen extends State<PatientDetailScreen> {
       bool __ = await Shared.checkConnectivity();
 
       var apiService = Provider.of<ApiService>(context, listen: false);
-      Shared.showPSSnackBar(
-          context,
-          //TODO: CHECK WITH EXCEL
-          'Eliminando paciente...',
-          SnackBarType.loading,
-          AppConstants.longSnackBarDuration);
+      Shared.showPSSnackBar(context, 'Eliminando paciente...',
+          SnackBarType.loading, AppConstants.longSnackBarDuration);
 
       await apiService.deletePatient(widget.patient.id);
 
@@ -241,8 +237,8 @@ class _PatientDetailScreen extends State<PatientDetailScreen> {
             PsHeader(
               title: 'Revisiones',
               subtitle: 'Total de revisiones: ${totalReviews ?? 0}',
-              buttonTitle: 'Nueva revisión',
-              action: goToCameraScreen,
+              //buttonTitle: 'Nueva revisión',
+              //action: goToCameraScreen,
             ),
             const Padding(
                 padding: EdgeInsets.only(
@@ -359,6 +355,7 @@ class _PatientDetailScreen extends State<PatientDetailScreen> {
                   ),
                 )
               : ListView.builder(
+                  // TODO: Retrieve only an initial amount an get on demand when scrolling
                   itemCount: reviews.length,
                   itemBuilder: (context, index) {
                     final review = reviews[index];

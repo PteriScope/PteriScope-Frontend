@@ -1,5 +1,7 @@
 import 'dart:developer';
+import 'dart:ui';
 
+import 'package:blur/blur.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -11,13 +13,14 @@ import 'package:pteriscope_frontend/util/enum/dialog_type.dart';
 import 'package:pteriscope_frontend/util/ps_exception.dart';
 import 'package:pteriscope_frontend/util/ps_token_exception.dart';
 import 'package:pteriscope_frontend/widgets/ps_app_bar.dart';
+import 'package:pteriscope_frontend/widgets/ps_elevated_button.dart';
 import 'package:pteriscope_frontend/widgets/ps_elevated_button_icon.dart';
+import 'package:pteriscope_frontend/widgets/ps_item_card.dart';
 import 'package:pteriscope_frontend/widgets/ps_menu_bar.dart';
 
 import '../models/patient.dart';
 import '../util/enum/current_screen.dart';
 import '../util/shared.dart';
-import '../widgets/ps_colum_header.dart';
 import '../widgets/ps_header.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -109,34 +112,19 @@ class _HomeScreenState extends State<HomeScreen> {
         SystemNavigator.pop();
       },
       child: Scaffold(
-          appBar: const PsAppBar(
-              title: 'PteriScope',
-              titleSize: AppConstants.bigAppBarTitleSize,
-              disabled: false),
+          appBar: const PsAppBar(disabled: false),
           drawer: const PsMenuBar(currentView: CurrentScreen.patientList),
           body: Column(
             children: [
               PsHeader(
                 title: 'Lista de pacientes',
                 subtitle: 'Total de pacientes: ${totalPatients ?? 0}',
-                buttonTitle: 'Nuevo paciente',
-                action: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => const NewPatientScreen(),
-                    ),
-                  );
-                },
               ),
-              const Padding(
-                  padding: EdgeInsets.only(
-                      left: AppConstants.padding,
-                      right: AppConstants.padding,
-                      bottom: AppConstants.padding),
-                  child: Divider(thickness: 1.5)),
               Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: AppConstants.padding),
+                padding: const EdgeInsets.only(
+                    right: AppConstants.padding,
+                    left: AppConstants.padding,
+                    bottom: AppConstants.padding),
                 child: TextField(
                   controller: _searchController,
                   decoration: InputDecoration(
@@ -161,37 +149,89 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               Expanded(
-                child: Card(
-                    child: loading
-                        ? const Center(child: CircularProgressIndicator())
-                        : !internetError && !serverError
-                            ? _buildPatientList()
-                            : Center(
-                                child: Padding(
-                                padding: const EdgeInsetsDirectional.symmetric(
-                                    horizontal: 5 * AppConstants.padding,
-                                    vertical: AppConstants.padding),
-                                child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        "Error al cargar los datos. ${internetError ? "Compruebe su conexión a Internet" : "Inténtelo más tarde, por favor"} ",
-                                        textAlign: TextAlign.center,
-                                        style: const TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.grey),
-                                      ),
-                                      const SizedBox(height: 20),
-                                      PsElevatedButtonIcon(
-                                          isPrimary: true,
-                                          icon: Icons.refresh,
-                                          text: "Reintentar",
-                                          onTap: () {
-                                            loadPatients();
-                                          })
-                                    ]),
-                              ))),
+                child: Stack(
+                  children: [
+                    Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 5,
+                              blurRadius: 7,
+                              offset: const Offset(0,
+                                  3), // Cambia estos valores si quieres sombra
+                            ),
+                          ],
+                        ),
+                        child: loading
+                            ? const Center(child: CircularProgressIndicator())
+                            : !internetError && !serverError
+                                ? _buildPatientList()
+                                : Center(
+                                    child: Padding(
+                                    padding:
+                                        const EdgeInsetsDirectional.symmetric(
+                                            horizontal:
+                                                5 * AppConstants.padding,
+                                            vertical: AppConstants.padding),
+                                    child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            "Error al cargar los datos. ${internetError ? "Compruebe su conexión a Internet" : "Inténtelo más tarde, por favor"} ",
+                                            textAlign: TextAlign.center,
+                                            style: const TextStyle(
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.grey),
+                                          ),
+                                          const SizedBox(height: 20),
+                                          PsElevatedButtonIcon(
+                                              isPrimary: true,
+                                              icon: Icons.refresh,
+                                              text: "Reintentar",
+                                              onTap: () {
+                                                loadPatients();
+                                              })
+                                        ]),
+                                  ))),
+                    const Positioned(
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      child: Blur(
+                        blur: 2,
+                        blurColor: Colors.white,
+                        child: Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: SizedBox(
+                              height: 80,
+                            )),
+                      ),
+                    ),
+                    Positioned(
+                      bottom: 20.0,
+                      right: 0,
+                      left: 0,
+                      child: Align(
+                          alignment: Alignment.center,
+                          child: PsElevatedButton(
+                              width: MediaQuery.of(context).size.width * 0.8,
+                              disabled: false,
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const NewPatientScreen(),
+                                  ),
+                                );
+                              },
+                              text: "Agregar paciente")),
+                    ),
+                  ],
+                ),
               )
             ],
           )),
@@ -199,117 +239,59 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildPatientList() {
-    return Column(
-      children: [
-        const PsColumnHeader(
-          firstTitle: 'Datos del paciente',
-          secondTitle: 'Última revisión',
-          thirdTitle: 'Resultado',
-        ),
-        Expanded(
-          child: RefreshIndicator(
-            onRefresh: () async {
-              loadPatients();
-            },
-            child: patients.isEmpty
-                ? const Padding(
-                    padding: EdgeInsets.only(
-                        left: AppConstants.padding,
-                        right: AppConstants.padding,
-                        bottom: AppConstants.padding,
-                        top: AppConstants.padding * 8),
-                    child: Text(
-                      "No existen pacientes registrados.\n\nPresione el botón “Nuevo paciente” para añadir uno",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontSize: 25,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey),
-                    ),
-                  )
-                : ListView.builder(
-                    itemCount: _filterPatients(patients, _searchController.text)
-                        .length,
-                    itemBuilder: (context, index) {
-                      final patient = _filterPatients(
-                          patients, _searchController.text)[index];
+    return Padding(
+      padding: const EdgeInsets.all(AppConstants.padding),
+      child: RefreshIndicator(
+        onRefresh: () async {
+          loadPatients();
+        },
+        child: patients.isEmpty
+            ? const Padding(
+                padding: EdgeInsets.only(
+                    left: AppConstants.padding,
+                    right: AppConstants.padding,
+                    bottom: AppConstants.padding,
+                    top: AppConstants.padding * 8),
+                child: Text(
+                  "No existen pacientes registrados.\n\nPresione el botón “Nuevo paciente” para añadir uno",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontSize: 25,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey),
+                ),
+              )
+            : ListView.builder(
+                padding: const EdgeInsets.only(bottom: 80),
+                itemCount:
+                    _filterPatients(patients, _searchController.text).length,
+                itemBuilder: (context, index) {
+                  final patient =
+                      _filterPatients(patients, _searchController.text)[index];
 
-                      String? lastReviewDate = patient.lastReviewDate != null
-                          ? DateFormat('dd/MM/yyyy')
-                              .format(patient.lastReviewDate!)
-                          : '-';
+                  String? lastReviewDate = patient.lastReviewDate != null
+                      ? DateFormat('dd/MM/yyyy').format(patient.lastReviewDate!)
+                      : '-';
 
-                      String? lastReviewResult =
-                          patient.lastReviewResult ?? '-';
+                  String? lastReviewResult = patient.lastReviewResult ?? '-';
 
-                      return InkWell(
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  PatientDetailScreen(patient: patient),
-                            ),
-                          );
-                        },
-                        child: Card(
-                          child: Padding(
-                            padding: const EdgeInsets.all(
-                                AppConstants.padding / 2.0),
-                            child: Row(
-                              children: <Widget>[
-                                Expanded(
-                                  flex: 2,
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: <Widget>[
-                                      Text(
-                                        '${patient.firstName} ${patient.lastName}',
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold),
-                                        textAlign: TextAlign.center,
-                                      ),
-                                      Text(
-                                        patient.email == ""
-                                            ? "-"
-                                            : patient.email,
-                                        style: const TextStyle(fontSize: 10),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 1,
-                                  child: Center(
-                                      child: Text(
-                                    lastReviewDate,
-                                    style: const TextStyle(
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.bold),
-                                  )),
-                                ),
-                                Expanded(
-                                  flex: 1,
-                                  child: Center(
-                                      child: Text(
-                                    lastReviewResult,
-                                    style: TextStyle(
-                                        fontSize: 10,
-                                        color: Shared.getColorResult(
-                                            lastReviewResult),
-                                        fontWeight: FontWeight.bold),
-                                  )),
-                                ),
-                              ],
-                            ),
+                  return InkWell(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                PatientDetailScreen(patient: patient),
                           ),
-                        ),
-                      );
-                    },
-                  ),
-          ),
-        ),
-      ],
+                        );
+                      },
+                      child: PsItemCard(
+                          patientName:
+                              '${patient.firstName} ${patient.lastName}',
+                          lastReviewDate: lastReviewDate,
+                          result: lastReviewResult));
+                },
+              ),
+      ),
     );
   }
 }
