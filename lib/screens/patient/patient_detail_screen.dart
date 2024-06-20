@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
@@ -11,11 +10,9 @@ import 'package:pteriscope_frontend/screens/patient/edit_patient_screen.dart';
 import 'package:pteriscope_frontend/screens/review/camera_screen.dart';
 import 'package:pteriscope_frontend/screens/review/review_detail_screen.dart';
 import 'package:pteriscope_frontend/services/api_service.dart';
-import 'package:pteriscope_frontend/util/enum/button_type.dart';
 import 'package:pteriscope_frontend/util/enum/dialog_type.dart';
 import 'package:pteriscope_frontend/util/enum/snack_bar_type.dart';
 import 'package:pteriscope_frontend/widgets/ps_app_bar.dart';
-import 'package:pteriscope_frontend/widgets/ps_colum_header.dart';
 import 'package:pteriscope_frontend/widgets/ps_floating_button.dart';
 import 'package:pteriscope_frontend/widgets/ps_header.dart';
 import 'package:pteriscope_frontend/widgets/ps_item_card.dart';
@@ -24,6 +21,7 @@ import '../../models/patient.dart';
 import '../../models/review.dart';
 import '../../services/shared_preferences_service.dart';
 import '../../util/constants.dart';
+import '../../util/enum/button_type.dart';
 import '../../util/ps_exception.dart';
 import '../../widgets/ps_elevated_button.dart';
 import '../../widgets/ps_elevated_button_icon.dart';
@@ -51,12 +49,19 @@ class _PatientDetailScreen extends State<PatientDetailScreen> {
   bool serverError = false;
   bool internetError = false;
   bool _isDeleting = false;
+  bool showMainButton = true;
 
   @override
   void initState() {
     super.initState();
     patient = widget.patient;
     loadReviews();
+  }
+
+  void toggleButtons() {
+    setState(() {
+      showMainButton = !showMainButton;
+    });
   }
 
   Future<void> loadReviews() async {
@@ -285,7 +290,7 @@ class _PatientDetailScreen extends State<PatientDetailScreen> {
                                           })
                                     ]),
                               ))),
-                const Positioned(
+                Positioned(
                   bottom: 0,
                   left: 0,
                   right: 0,
@@ -293,23 +298,124 @@ class _PatientDetailScreen extends State<PatientDetailScreen> {
                     blur: 2,
                     blurColor: Colors.white,
                     child: Padding(
-                        padding: EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(8.0),
                         child: SizedBox(
-                          height: 80,
+                          height: showMainButton
+                              ? 80
+                              : MediaQuery.of(context).size.height,
                         )),
                   ),
                 ),
+
                 Positioned(
                   bottom: 20.0,
                   right: 0,
                   left: 0,
                   child: Align(
-                      alignment: Alignment.center,
-                      child: PsElevatedButton(
-                          width: MediaQuery.of(context).size.width * 0.8,
-                          disabled: false,
-                          onTap: goToCameraScreen,
-                          text: "Nueva revisión")),
+                    alignment: Alignment.center,
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 300),
+                      transitionBuilder:
+                          (Widget child, Animation<double> animation) {
+                        return FadeTransition(opacity: animation, child: child);
+                      },
+                      child: showMainButton
+                          ? PsElevatedButton(
+                              key: ValueKey<bool>(showMainButton),
+                              width: MediaQuery.of(context).size.width * 0.8,
+                              disabled: false,
+                              onTap: goToCameraScreen,
+                              text: "Nueva revisión",
+                            )
+                          : Container(), // Espacio vacío cuando el botón no está visible
+                    ),
+                  ),
+                ),
+                // El botón de flecha y los iconos
+                Positioned(
+                  bottom: 80.0,
+                  right: 44,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 300),
+                        transitionBuilder:
+                            (Widget child, Animation<double> animation) {
+                          return FadeTransition(
+                              opacity: animation, child: child);
+                        },
+                        child: !showMainButton
+                            ? Column(
+                                key: ValueKey<bool>(showMainButton),
+                                children: [
+                                  PsFloatingButton(
+                                    heroTag: 'editPatient',
+                                    buttonType: ButtonType.secondary,
+                                    onTap: goToEditPatientScreen,
+                                    iconData: Icons.edit,
+                                    disabled: false,
+                                  ),
+                                  SizedBox(height: 10),
+                                  PsFloatingButton(
+                                    heroTag: 'deletePatient',
+                                    buttonType: ButtonType.severe,
+                                    onTap: showAlertDialog,
+                                    iconData: Icons.delete,
+                                    disabled: false,
+                                  ),
+                                ],
+                              )
+                            : Container(), // Espacio vacío cuando los iconos no están visibles
+                      ),
+                    ],
+                  ),
+                ),
+                AnimatedPositioned(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOut,
+                  bottom: showMainButton ? 90.0 : 20.0,
+                  right: 40,
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: ElevatedButton(
+                      onPressed: toggleButtons,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppConstants.secondaryColor,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12.0,
+                          vertical: 8.0,
+                        ),
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.all(AppConstants.padding / 2.0),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Text(
+                              "Acciones",
+                              style:
+                                  TextStyle(color: AppConstants.primaryColor),
+                            ),
+                            const SizedBox(
+                                width:
+                                    8.0), // Espacio entre el texto y el ícono
+                            Icon(
+                              showMainButton
+                                  ? Icons.keyboard_arrow_up
+                                  : Icons.keyboard_arrow_down,
+                              color: AppConstants.primaryColor,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    //FloatingActionButton(
+                    //  onPressed: toggleButtons,
+                    //  child: Icon(Icons.arrow_upward),
+                    //),
+                  ),
                 ),
 
                 //Positioned(
@@ -358,56 +464,57 @@ class _PatientDetailScreen extends State<PatientDetailScreen> {
   }
 
   Widget _buildReviewList() {
-    return Padding(
-        padding: const EdgeInsets.all(AppConstants.padding),
-        child: RefreshIndicator(
-          onRefresh: () async {
-            loadReviews();
-          },
-          child: reviews.isEmpty
-              ? const Padding(
-            padding: EdgeInsets.only(
-                left: AppConstants.padding,
-                right: AppConstants.padding,
-                bottom: AppConstants.padding,
-                top: AppConstants.padding * 8),
-            child: Text(
-              "Este paciente aún no cuenta con revisiones.\n\nPresione el botón “Nueva revisión” para añadir una",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontSize: 25,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey),
-            ),
-          )
-              : ListView.builder(
-            // TODO: Retrieve only an initial amount an get on demand when scrolling
-              padding: const EdgeInsets.only(bottom: 80),
-              itemCount: reviews.length,
-              itemBuilder: (context, index) {
-                final review = reviews[index];
+    return Center(
+      child: Padding(
+          padding: const EdgeInsets.all(AppConstants.padding),
+          child: RefreshIndicator(
+            onRefresh: () async {
+              loadReviews();
+            },
+            child: reviews.isEmpty
+                ? const Padding(
+                    padding: EdgeInsets.only(
+                        left: AppConstants.padding,
+                        right: AppConstants.padding,
+                        bottom: AppConstants.padding,
+                        top: AppConstants.padding),
+                    child: Text(
+                      "Este paciente aún no cuenta con revisiones.\n\nPresione el botón “Nueva revisión” para añadir una",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontSize: 25,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey),
+                    ),
+                  )
+                : ListView.builder(
+                    // TODO: Retrieve only an initial amount an get on demand when scrolling
+                    padding: const EdgeInsets.only(bottom: 100),
+                    itemCount: reviews.length,
+                    itemBuilder: (context, index) {
+                      final review = reviews[index];
 
-                String reviewDate =
-                DateFormat('dd/MM/yyyy').format(review.reviewDate!);
+                      String reviewDate =
+                          DateFormat('dd/MM/yyyy').format(review.reviewDate!);
 
-                String reviewResult = review.reviewResult!;
+                      String reviewResult = review.reviewResult!;
 
-                return InkWell(
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => ReviewDetailScreen(
-                            review: review, patient: patient),
-                      ),
-                    );
-                  },
-                  child: PsItemCard(
-                    base64Image: review.imageBase64!,
-                      reviewDate: reviewDate,
-                      result: reviewResult
-                  ),
-                );
-              }),
-        ));
+                      return InkWell(
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => ReviewDetailScreen(
+                                  review: review, patient: patient),
+                            ),
+                          );
+                        },
+                        child: PsItemCard(
+                            base64Image: review.imageBase64!,
+                            reviewDate: reviewDate,
+                            result: reviewResult),
+                      );
+                    }),
+          )),
+    );
   }
 }

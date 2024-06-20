@@ -239,58 +239,60 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildPatientList() {
-    return Padding(
-      padding: const EdgeInsets.all(AppConstants.padding),
-      child: RefreshIndicator(
-        onRefresh: () async {
-          loadPatients();
-        },
-        child: patients.isEmpty
-            ? const Padding(
-                padding: EdgeInsets.only(
-                    left: AppConstants.padding,
-                    right: AppConstants.padding,
-                    bottom: AppConstants.padding,
-                    top: AppConstants.padding * 8),
-                child: Text(
-                  "No existen pacientes registrados.\n\nPresione el botón “Nuevo paciente” para añadir uno",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontSize: 25,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.grey),
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(AppConstants.padding),
+        child: RefreshIndicator(
+          onRefresh: () async {
+            loadPatients();
+          },
+          child: patients.isEmpty
+              ? const Padding(
+                  padding: EdgeInsets.only(
+                      left: AppConstants.padding,
+                      right: AppConstants.padding,
+                      bottom: AppConstants.padding,
+                      top: AppConstants.padding),
+                  child: Text(
+                    "No existen pacientes registrados.\n\nPresione el botón “Nuevo paciente” para añadir uno",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey),
+                  ),
+                )
+              : ListView.builder(
+                  padding: const EdgeInsets.only(bottom: 80),
+                  itemCount:
+                      _filterPatients(patients, _searchController.text).length,
+                  itemBuilder: (context, index) {
+                    final patient =
+                        _filterPatients(patients, _searchController.text)[index];
+      
+                    String? lastReviewDate = patient.lastReviewDate != null
+                        ? DateFormat('dd/MM/yyyy').format(patient.lastReviewDate!)
+                        : '-';
+      
+                    String? lastReviewResult = patient.lastReviewResult ?? '-';
+      
+                    return InkWell(
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  PatientDetailScreen(patient: patient),
+                            ),
+                          );
+                        },
+                        child: PsItemCard(
+                            patientName:
+                                '${patient.firstName} ${patient.lastName}',
+                            lastReviewDate: lastReviewDate,
+                            result: lastReviewResult));
+                  },
                 ),
-              )
-            : ListView.builder(
-                padding: const EdgeInsets.only(bottom: 80),
-                itemCount:
-                    _filterPatients(patients, _searchController.text).length,
-                itemBuilder: (context, index) {
-                  final patient =
-                      _filterPatients(patients, _searchController.text)[index];
-
-                  String? lastReviewDate = patient.lastReviewDate != null
-                      ? DateFormat('dd/MM/yyyy').format(patient.lastReviewDate!)
-                      : '-';
-
-                  String? lastReviewResult = patient.lastReviewResult ?? '-';
-
-                  return InkWell(
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                PatientDetailScreen(patient: patient),
-                          ),
-                        );
-                      },
-                      child: PsItemCard(
-                          patientName:
-                              '${patient.firstName} ${patient.lastName}',
-                          lastReviewDate: lastReviewDate,
-                          result: lastReviewResult));
-                },
-              ),
+        ),
       ),
     );
   }

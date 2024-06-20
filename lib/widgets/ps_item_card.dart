@@ -30,7 +30,10 @@ class PsItemCard extends StatelessWidget {
         if (base64Image.isNotEmpty)
           Center(
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(8.0),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(8.0),
+                bottomLeft: Radius.circular(8.0),
+              ),
               child: Image.memory(
                 base64Decode(base64Image),
                 fit: BoxFit.cover,
@@ -77,6 +80,7 @@ class PsItemCard extends StatelessWidget {
                     ),
                   ],
                 ),
+              if (reviewDate.isNotEmpty)
                 const SizedBox(
                   height: 10,
                 ),
