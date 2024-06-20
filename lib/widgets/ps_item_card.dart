@@ -50,14 +50,6 @@ class PsItemCard extends StatelessWidget {
                   isBold: true,
                   isLong: true,
                 ),
-              //Text(
-              //  patientName,
-              //  style: const TextStyle(
-              //    fontWeight: FontWeight.bold,
-              //    fontSize: 15,
-              //  ),
-              //  textAlign: TextAlign.left,
-              //),
               if (lastReviewDate.isNotEmpty)
                 Text(
                   'Última revisión: $lastReviewDate',
@@ -67,12 +59,26 @@ class PsItemCard extends StatelessWidget {
                   ),
                 ),
               if (reviewDate.isNotEmpty)
-                Text(
-                  'Fecha: $reviewDate',
-                  style: const TextStyle(
-                    color: Color(0xFF838793),
-                    fontSize: 15,
-                  ),
+                Row(
+                  children: [
+                    const Text(
+                      'Fecha: ',
+                      style: TextStyle(
+                        color: Color(0xFF838793),
+                        fontSize: 15,
+                      ),
+                    ),
+                    Text(
+                      reviewDate,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 10,
                 ),
               Row(
                 children: [

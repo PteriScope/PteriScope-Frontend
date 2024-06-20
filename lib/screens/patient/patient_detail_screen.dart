@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:blur/blur.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -17,12 +18,14 @@ import 'package:pteriscope_frontend/widgets/ps_app_bar.dart';
 import 'package:pteriscope_frontend/widgets/ps_colum_header.dart';
 import 'package:pteriscope_frontend/widgets/ps_floating_button.dart';
 import 'package:pteriscope_frontend/widgets/ps_header.dart';
+import 'package:pteriscope_frontend/widgets/ps_item_card.dart';
 
 import '../../models/patient.dart';
 import '../../models/review.dart';
 import '../../services/shared_preferences_service.dart';
 import '../../util/constants.dart';
 import '../../util/ps_exception.dart';
+import '../../widgets/ps_elevated_button.dart';
 import '../../widgets/ps_elevated_button_icon.dart';
 import '../../widgets/ps_menu_bar.dart';
 import '../../util/enum/current_screen.dart';
@@ -227,29 +230,31 @@ class _PatientDetailScreen extends State<PatientDetailScreen> {
         );
       },
       child: Scaffold(
-        appBar: PsAppBar(
-            title: '${patient.firstName} ${patient.lastName}',
-            titleSize: AppConstants.smallAppBarTitleSize,
-            disabled: _isDeleting),
+        appBar: PsAppBar(disabled: _isDeleting),
         drawer: const PsMenuBar(currentView: CurrentScreen.other),
         body: Column(
           children: [
             PsHeader(
-              title: 'Revisiones',
-              subtitle: 'Total de revisiones: ${totalReviews ?? 0}',
-              //buttonTitle: 'Nueva revisión',
-              //action: goToCameraScreen,
+              title: '${patient.firstName} ${patient.lastName}',
+              subtitle: '${totalReviews ?? 0} revisiones realizadas',
+              hasBack: true,
+              widgetToBack: const HomeScreen(),
             ),
-            const Padding(
-                padding: EdgeInsets.only(
-                    left: AppConstants.padding,
-                    right: AppConstants.padding,
-                    bottom: AppConstants.padding),
-                child: Divider(thickness: 1.5)),
             Expanded(
                 child: Stack(
               children: [
-                Card(
+                Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 5,
+                          blurRadius: 7,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
+                    ),
                     child: loading
                         ? const Center(child: CircularProgressIndicator())
                         : !internetError && !serverError
@@ -280,43 +285,70 @@ class _PatientDetailScreen extends State<PatientDetailScreen> {
                                           })
                                     ]),
                               ))),
-                Positioned(
-                  bottom: 20.0,
-                  left: 20.0,
-                  right: 20.0,
-                  child: Padding(
-                    padding: const EdgeInsets.all(AppConstants.padding),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        PsFloatingButton(
-                            heroTag: 'deletePatient',
-                            buttonType: ButtonType.severe,
-                            onTap: showAlertDialog,
-                            iconData: Icons.delete,
-                            disabled: false),
-                        PsFloatingButton(
-                            heroTag: 'editPatient',
-                            buttonType: ButtonType.secondary,
-                            onTap: goToEditPatientScreen,
-                            iconData: Icons.edit,
-                            disabled: false),
-                        PsFloatingButton(
-                            heroTag: 'backToHomeFromPatient',
-                            buttonType: ButtonType.primary,
-                            onTap: () => {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (context) => const HomeScreen(),
-                                    ),
-                                  )
-                                },
-                            iconData: Icons.arrow_back,
-                            disabled: false),
-                      ],
-                    ),
+                const Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: Blur(
+                    blur: 2,
+                    blurColor: Colors.white,
+                    child: Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: SizedBox(
+                          height: 80,
+                        )),
                   ),
                 ),
+                Positioned(
+                  bottom: 20.0,
+                  right: 0,
+                  left: 0,
+                  child: Align(
+                      alignment: Alignment.center,
+                      child: PsElevatedButton(
+                          width: MediaQuery.of(context).size.width * 0.8,
+                          disabled: false,
+                          onTap: goToCameraScreen,
+                          text: "Nueva revisión")),
+                ),
+
+                //Positioned(
+                //  bottom: 20.0,
+                //  left: 20.0,
+                //  right: 20.0,
+                //  child: Padding(
+                //    padding: const EdgeInsets.all(AppConstants.padding),
+                //    child: Row(
+                //      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //      children: <Widget>[
+                //        PsFloatingButton(
+                //            heroTag: 'deletePatient',
+                //            buttonType: ButtonType.severe,
+                //            onTap: showAlertDialog,
+                //            iconData: Icons.delete,
+                //            disabled: false),
+                //        PsFloatingButton(
+                //            heroTag: 'editPatient',
+                //            buttonType: ButtonType.secondary,
+                //            onTap: goToEditPatientScreen,
+                //            iconData: Icons.edit,
+                //            disabled: false),
+                //        PsFloatingButton(
+                //            heroTag: 'backToHomeFromPatient',
+                //            buttonType: ButtonType.primary,
+                //            onTap: () => {
+                //                  Navigator.of(context).push(
+                //                    MaterialPageRoute(
+                //                      builder: (context) => const HomeScreen(),
+                //                    ),
+                //                  )
+                //                },
+                //            iconData: Icons.arrow_back,
+                //            disabled: false),
+                //      ],
+                //    ),
+                //  ),
+                //),
               ],
             ))
           ],
@@ -326,113 +358,56 @@ class _PatientDetailScreen extends State<PatientDetailScreen> {
   }
 
   Widget _buildReviewList() {
-    return Column(
-      children: [
-        const PsColumnHeader(
-          firstTitle: 'Imagen',
-          secondTitle: 'Fecha',
-          thirdTitle: 'Resultado',
-        ),
-        Expanded(
-            child: RefreshIndicator(
+    return Padding(
+        padding: const EdgeInsets.all(AppConstants.padding),
+        child: RefreshIndicator(
           onRefresh: () async {
             loadReviews();
           },
           child: reviews.isEmpty
               ? const Padding(
-                  padding: EdgeInsets.only(
-                      left: AppConstants.padding,
-                      right: AppConstants.padding,
-                      bottom: AppConstants.padding,
-                      top: AppConstants.padding * 8),
-                  child: Text(
-                    "Este paciente aún no cuenta con revisiones.\n\nPresione el botón “Nueva revisión” para añadir una",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey),
-                  ),
-                )
+            padding: EdgeInsets.only(
+                left: AppConstants.padding,
+                right: AppConstants.padding,
+                bottom: AppConstants.padding,
+                top: AppConstants.padding * 8),
+            child: Text(
+              "Este paciente aún no cuenta con revisiones.\n\nPresione el botón “Nueva revisión” para añadir una",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey),
+            ),
+          )
               : ListView.builder(
-                  // TODO: Retrieve only an initial amount an get on demand when scrolling
-                  itemCount: reviews.length,
-                  itemBuilder: (context, index) {
-                    final review = reviews[index];
+            // TODO: Retrieve only an initial amount an get on demand when scrolling
+              padding: const EdgeInsets.only(bottom: 80),
+              itemCount: reviews.length,
+              itemBuilder: (context, index) {
+                final review = reviews[index];
 
-                    String reviewDate =
-                        DateFormat('dd/MM/yyyy').format(review.reviewDate!);
+                String reviewDate =
+                DateFormat('dd/MM/yyyy').format(review.reviewDate!);
 
-                    String reviewResult = review.reviewResult!;
+                String reviewResult = review.reviewResult!;
 
-                    return InkWell(
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => ReviewDetailScreen(
-                                review: review, patient: patient),
-                          ),
-                        );
-                      },
-                      child: Card(
-                        child: Padding(
-                          padding:
-                              const EdgeInsets.all(AppConstants.padding / 2.0),
-                          child: Row(
-                            children: <Widget>[
-                              Expanded(
-                                  flex: 2,
-                                  child: Center(
-                                    child: review.imageBase64!.isNotEmpty
-                                        ? ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(8.0),
-                                            child: Image.memory(
-                                              base64Decode(review.imageBase64!),
-                                              fit: BoxFit.cover,
-                                              height: 125.0,
-                                              width: 125.0,
-                                            ),
-                                          )
-                                        : const SizedBox(
-                                            height: 100.0,
-                                            width: 100.0,
-                                            child: Icon(
-                                              Icons.image,
-                                              size: 60,
-                                            ),
-                                          ),
-                                  )),
-                              Expanded(
-                                flex: 1,
-                                child: Center(
-                                    child: Text(
-                                  reviewDate,
-                                  style: const TextStyle(
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.bold),
-                                )),
-                              ),
-                              Expanded(
-                                flex: 1,
-                                child: Center(
-                                    child: Text(
-                                  reviewResult,
-                                  style: TextStyle(
-                                      fontSize: 10,
-                                      color:
-                                          Shared.getColorResult(reviewResult),
-                                      fontWeight: FontWeight.bold),
-                                )),
-                              ),
-                            ],
-                          ),
-                        ),
+                return InkWell(
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => ReviewDetailScreen(
+                            review: review, patient: patient),
                       ),
                     );
-                  }),
-        ))
-      ],
-    );
+                  },
+                  child: PsItemCard(
+                    base64Image: review.imageBase64!,
+                      reviewDate: reviewDate,
+                      result: reviewResult
+                  ),
+                );
+              }),
+        ));
   }
 }

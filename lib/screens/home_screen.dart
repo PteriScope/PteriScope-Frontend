@@ -118,7 +118,7 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               PsHeader(
                 title: 'Lista de pacientes',
-                subtitle: 'Total de pacientes: ${totalPatients ?? 0}',
+                subtitle: '${totalPatients ?? 0} pacientes',
               ),
               Padding(
                 padding: const EdgeInsets.only(
@@ -160,7 +160,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               spreadRadius: 5,
                               blurRadius: 7,
                               offset: const Offset(0,
-                                  3), // Cambia estos valores si quieres sombra
+                                  3),
                             ),
                           ],
                         ),
