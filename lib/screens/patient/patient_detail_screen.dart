@@ -356,7 +356,7 @@ class _PatientDetailScreen extends State<PatientDetailScreen> {
                                     iconData: Icons.edit,
                                     disabled: false,
                                   ),
-                                  SizedBox(height: 10),
+                                  const SizedBox(height: 10),
                                   PsFloatingButton(
                                     heroTag: 'deletePatient',
                                     buttonType: ButtonType.severe,
@@ -388,7 +388,7 @@ class _PatientDetailScreen extends State<PatientDetailScreen> {
                         ),
                       ),
                       child: Padding(
-                        padding: EdgeInsets.all(AppConstants.padding / 2.0),
+                        padding: const EdgeInsets.all(AppConstants.padding / 2.0),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
@@ -410,51 +410,8 @@ class _PatientDetailScreen extends State<PatientDetailScreen> {
                         ),
                       ),
                     ),
-
-                    //FloatingActionButton(
-                    //  onPressed: toggleButtons,
-                    //  child: Icon(Icons.arrow_upward),
-                    //),
                   ),
                 ),
-
-                //Positioned(
-                //  bottom: 20.0,
-                //  left: 20.0,
-                //  right: 20.0,
-                //  child: Padding(
-                //    padding: const EdgeInsets.all(AppConstants.padding),
-                //    child: Row(
-                //      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //      children: <Widget>[
-                //        PsFloatingButton(
-                //            heroTag: 'deletePatient',
-                //            buttonType: ButtonType.severe,
-                //            onTap: showAlertDialog,
-                //            iconData: Icons.delete,
-                //            disabled: false),
-                //        PsFloatingButton(
-                //            heroTag: 'editPatient',
-                //            buttonType: ButtonType.secondary,
-                //            onTap: goToEditPatientScreen,
-                //            iconData: Icons.edit,
-                //            disabled: false),
-                //        PsFloatingButton(
-                //            heroTag: 'backToHomeFromPatient',
-                //            buttonType: ButtonType.primary,
-                //            onTap: () => {
-                //                  Navigator.of(context).push(
-                //                    MaterialPageRoute(
-                //                      builder: (context) => const HomeScreen(),
-                //                    ),
-                //                  )
-                //                },
-                //            iconData: Icons.arrow_back,
-                //            disabled: false),
-                //      ],
-                //    ),
-                //  ),
-                //),
               ],
             ))
           ],

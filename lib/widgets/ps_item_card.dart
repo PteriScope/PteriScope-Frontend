@@ -24,89 +24,92 @@ class PsItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-        child: Row(
-      children: [
-        if (base64Image.isNotEmpty)
-          Center(
-            child: ClipRRect(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(8.0),
-                bottomLeft: Radius.circular(8.0),
-              ),
-              child: Image.memory(
-                base64Decode(base64Image),
-                fit: BoxFit.cover,
-                height: 125.0,
-                width: 125.0,
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppConstants.padding / 3),
+      child: Card(
+          child: Row(
+        children: [
+          if (base64Image.isNotEmpty)
+            Center(
+              child: ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(8.0),
+                  bottomLeft: Radius.circular(8.0),
+                ),
+                child: Image.memory(
+                  base64Decode(base64Image),
+                  fit: BoxFit.cover,
+                  height: 125.0,
+                  width: 125.0,
+                ),
               ),
             ),
-          ),
-        Padding(
-          padding: const EdgeInsets.all(AppConstants.padding / 1.5),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (patientName.isNotEmpty)
-                PsColumnText(
-                  text: patientName,
-                  isBold: true,
-                  isLong: true,
-                ),
-              if (lastReviewDate.isNotEmpty)
-                Text(
-                  'Última revisión: $lastReviewDate',
-                  style: const TextStyle(
-                    color: Color(0xFF838793),
-                    fontSize: 15,
+          Padding(
+            padding: const EdgeInsets.all(AppConstants.padding / 1.5),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (patientName.isNotEmpty)
+                  PsColumnText(
+                    text: patientName,
+                    isBold: true,
+                    isLong: true,
                   ),
-                ),
-              if (reviewDate.isNotEmpty)
+                if (lastReviewDate.isNotEmpty)
+                  Text(
+                    'Última revisión: $lastReviewDate',
+                    style: const TextStyle(
+                      color: Color(0xFF838793),
+                      fontSize: 15,
+                    ),
+                  ),
+                if (reviewDate.isNotEmpty)
+                  Row(
+                    children: [
+                      const Text(
+                        'Fecha: ',
+                        style: TextStyle(
+                          color: Color(0xFF838793),
+                          fontSize: 15,
+                        ),
+                      ),
+                      Text(
+                        reviewDate,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                        ),
+                      ),
+                    ],
+                  ),
+                if (reviewDate.isNotEmpty)
+                  const SizedBox(
+                    height: 10,
+                  ),
                 Row(
                   children: [
                     const Text(
-                      'Fecha: ',
+                      'Resultado: ',
                       style: TextStyle(
                         color: Color(0xFF838793),
                         fontSize: 15,
                       ),
                     ),
                     Text(
-                      reviewDate,
-                      style: const TextStyle(
+                      result,
+                      style: TextStyle(
+                        color: Shared.getColorResult(result),
                         fontWeight: FontWeight.bold,
                         fontSize: 15,
                       ),
                     ),
                   ],
-                ),
-              if (reviewDate.isNotEmpty)
-                const SizedBox(
-                  height: 10,
-                ),
-              Row(
-                children: [
-                  const Text(
-                    'Resultado: ',
-                    style: TextStyle(
-                      color: Color(0xFF838793),
-                      fontSize: 15,
-                    ),
-                  ),
-                  Text(
-                    result,
-                    style: TextStyle(
-                      color: Shared.getColorResult(result),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 15,
-                    ),
-                  ),
-                ],
-              )
-            ],
-          ),
-        )
-      ],
-    ));
+                )
+              ],
+            ),
+          )
+        ],
+      )),
+    );
   }
 }

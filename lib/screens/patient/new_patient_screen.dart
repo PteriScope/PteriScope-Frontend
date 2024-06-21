@@ -7,7 +7,6 @@ import 'package:pteriscope_frontend/models/register_patient.dart';
 import 'package:pteriscope_frontend/screens/patient/patient_detail_screen.dart';
 import 'package:pteriscope_frontend/widgets/ps_app_bar.dart';
 
-import '../../util/enum/button_type.dart';
 import '../../util/enum/snack_bar_type.dart';
 import '../../util/shared.dart';
 import '../../util/validation.dart';
@@ -16,7 +15,7 @@ import '../../util/constants.dart';
 import '../../util/ps_exception.dart';
 import '../../util/enum/current_screen.dart';
 import '../../widgets/ps_elevated_button.dart';
-import '../../widgets/ps_floating_button.dart';
+import '../../widgets/ps_header.dart';
 import '../../widgets/ps_menu_bar.dart';
 import '../../widgets/ps_text_field.dart';
 import '../home_screen.dart';
@@ -175,91 +174,101 @@ class _NewPatientScreenState extends State<NewPatientScreen> {
             titleSize: AppConstants.bigAppBarTitleSize,
             disabled: false),
         drawer: const PsMenuBar(currentView: CurrentScreen.newPatient),
-        body: SingleChildScrollView(
-          child: Card(
-            elevation: 0,
-            color: Colors.white,
-            margin: const EdgeInsets.only(
-              top: AppConstants.padding,
+        body: Column(
+          children: [
+            const PsHeader(
+              title: 'Nuevo paciente',
+              subtitle: 'Ingresa la información a continuación',
+              hasBack: true,
+              widgetToBack: HomeScreen(),
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(AppConstants.padding),
-              child: Column(
-                children: <Widget>[
-                  const SizedBox(height: 15),
-                  PsTextField(
-                      controller: _nameController,
-                      hintText: 'Nombre',
-                      obscureText: false,
-                      inputType: TextInputType.name,
-                      isValid: nameValidations
-                          .every((validation) => validation.isValid),
-                      validations: nameValidations),
-                  const SizedBox(height: 15),
-                  PsTextField(
-                      controller: _lastNameController,
-                      hintText: 'Apellidos',
-                      obscureText: false,
-                      inputType: TextInputType.name,
-                      isValid: lastnameValidations
-                          .every((validation) => validation.isValid),
-                      validations: lastnameValidations),
-                  const SizedBox(height: 15),
-                  PsTextField(
-                      controller: _dniController,
-                      hintText: 'DNI',
-                      obscureText: false,
-                      inputType: TextInputType.number,
-                      isValid: dniValidations
-                          .every((validation) => validation.isValid),
-                      validations: dniValidations),
-                  const SizedBox(height: 15),
-                  PsTextField(
-                      controller: _ageController,
-                      hintText: 'Edad',
-                      obscureText: false,
-                      inputType: TextInputType.number,
-                      isValid: ageValidations
-                          .every((validation) => validation.isValid),
-                      validations: ageValidations),
-                  const SizedBox(height: 15),
-                  PsTextField(
-                      controller: _emailController,
-                      hintText: 'Email (opcional)',
-                      obscureText: false,
-                      inputType: TextInputType.emailAddress,
-                      isValid: emailValidations
-                          .every((validation) => validation.isValid),
-                      validations: emailValidations),
-                  const SizedBox(height: 75),
-                  PsElevatedButton(
-                      width: MediaQuery.of(context).size.width,
-                      disabled: _isButtonDisabled,
-                      onTap: _isButtonDisabled ? null : _register,
-                      text: 'Crear paciente'),
-                  const SizedBox(height: 75),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      PsFloatingButton(
-                          heroTag: 'backToHomeFromNewPatient',
-                          buttonType: ButtonType.primary,
-                          onTap: () => {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (context) => const HomeScreen(),
-                                  ),
-                                )
-                              },
-                          iconData: Icons.arrow_back,
-                          disabled: false),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Container(
+                  height: MediaQuery.of(context).size.height,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.5),
+                        spreadRadius: 5,
+                        blurRadius: 7,
+                        offset: const Offset(0, 3),
+                      ),
                     ],
                   ),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.2),
-                ],
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(AppConstants.padding),
+                      child: Column(
+                        children: <Widget>[
+                          const SizedBox(height: 15),
+                          PsTextField(
+                              controller: _nameController,
+                              hintText: 'Nombre',
+                              obscureText: false,
+                              inputType: TextInputType.name,
+                              isValid: nameValidations
+                                  .every((validation) => validation.isValid),
+                              validations: nameValidations),
+                          const SizedBox(height: 15),
+                          PsTextField(
+                              controller: _lastNameController,
+                              hintText: 'Apellidos',
+                              obscureText: false,
+                              inputType: TextInputType.name,
+                              isValid: lastnameValidations
+                                  .every((validation) => validation.isValid),
+                              validations: lastnameValidations),
+                          const SizedBox(height: 15),
+                          PsTextField(
+                              controller: _dniController,
+                              hintText: 'DNI',
+                              obscureText: false,
+                              inputType: TextInputType.number,
+                              isValid: dniValidations
+                                  .every((validation) => validation.isValid),
+                              validations: dniValidations),
+                          const SizedBox(height: 15),
+                          PsTextField(
+                              controller: _ageController,
+                              hintText: 'Edad',
+                              obscureText: false,
+                              inputType: TextInputType.number,
+                              isValid: ageValidations
+                                  .every((validation) => validation.isValid),
+                              validations: ageValidations),
+                          const SizedBox(height: 15),
+                          PsTextField(
+                              controller: _emailController,
+                              hintText: 'Email (opcional)',
+                              obscureText: false,
+                              inputType: TextInputType.emailAddress,
+                              isValid: emailValidations
+                                  .every((validation) => validation.isValid),
+                              validations: emailValidations),
+                          const SizedBox(height: 20),
+                          PsElevatedButton(
+                              width: MediaQuery.of(context).size.width,
+                              disabled: _isButtonDisabled,
+                              onTap: _isButtonDisabled ? null : _register,
+                              text: 'Crear paciente'),
+                          const SizedBox(height: 20),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (_) => const HomeScreen()));
+                            },
+                            child: const Text('Cancelar'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ),
-          ),
+          ],
         ),
       ),
     );
