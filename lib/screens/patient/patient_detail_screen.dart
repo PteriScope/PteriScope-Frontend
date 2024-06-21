@@ -306,7 +306,6 @@ class _PatientDetailScreen extends State<PatientDetailScreen> {
                         )),
                   ),
                 ),
-
                 Positioned(
                   bottom: 20.0,
                   right: 0,
@@ -331,7 +330,6 @@ class _PatientDetailScreen extends State<PatientDetailScreen> {
                     ),
                   ),
                 ),
-                // El botón de flecha y los iconos
                 Positioned(
                   bottom: 80.0,
                   right: 44,
@@ -342,8 +340,12 @@ class _PatientDetailScreen extends State<PatientDetailScreen> {
                         duration: const Duration(milliseconds: 300),
                         transitionBuilder:
                             (Widget child, Animation<double> animation) {
-                          return FadeTransition(
-                              opacity: animation, child: child);
+                          final slideAnimation = Tween<Offset>(
+                            begin: const Offset(0, 1),
+                            end: Offset.zero,
+                          ).animate(animation);
+                          return SlideTransition(
+                              position: slideAnimation, child: child);
                         },
                         child: !showMainButton
                             ? Column(
@@ -388,7 +390,8 @@ class _PatientDetailScreen extends State<PatientDetailScreen> {
                         ),
                       ),
                       child: Padding(
-                        padding: const EdgeInsets.all(AppConstants.padding / 2.0),
+                        padding:
+                            const EdgeInsets.all(AppConstants.padding / 2.0),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [

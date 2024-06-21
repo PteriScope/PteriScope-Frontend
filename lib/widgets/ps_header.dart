@@ -10,7 +10,7 @@ class PsHeader extends StatelessWidget {
   const PsHeader(
       {Key? key,
       required this.title,
-      required this.subtitle,
+      this.subtitle = "",
       this.hasBack = false,
       this.widgetToBack})
       : super(key: key);
@@ -63,14 +63,15 @@ class PsHeader extends StatelessWidget {
                   textAlign: TextAlign.start,
                 ),
               ),
-              Text(
-                subtitle,
-                style: const TextStyle(
-                  fontSize: 15,
-                  color: Colors.white,
+              if (subtitle.isNotEmpty)
+                Text(
+                  subtitle,
+                  style: const TextStyle(
+                    fontSize: 15,
+                    color: Colors.white,
+                  ),
+                  textAlign: TextAlign.left,
                 ),
-                textAlign: TextAlign.left,
-              ),
             ],
           ),
         ],
