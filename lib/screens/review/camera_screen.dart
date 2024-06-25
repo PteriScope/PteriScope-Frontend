@@ -209,10 +209,11 @@ class _CameraScreenState extends State<CameraScreen> {
           onTapDown: (details) => _handleFocusTap(details.localPosition),
           child: Stack(
             children: <Widget>[
-              Transform.scale(
-                scale: 1,
-                child: Center(
-                  child: CameraPreview(_controller!),
+              Center(
+                child: SizedBox(
+                    width: _controller!.value.previewSize!.width,
+                    height: MediaQuery.of(context).size.height,
+                    child: CameraPreview(_controller!)
                 ),
               ),
               if (_showFocusIndicator && _focusPoint != null)
