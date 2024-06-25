@@ -7,6 +7,7 @@ class PsElevatedButton extends StatelessWidget {
   final bool disabled;
   final Function()? onTap;
   final String text;
+  final bool isSecondary;
 
   const PsElevatedButton({
     super.key,
@@ -14,6 +15,7 @@ class PsElevatedButton extends StatelessWidget {
     required this.disabled,
     required this.onTap,
     required this.text,
+    this.isSecondary = false,
   });
 
   @override
@@ -24,12 +26,12 @@ class PsElevatedButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: disabled ? null : onTap,
         style: ElevatedButton.styleFrom(
-            backgroundColor: AppConstants.primaryColor,
+            backgroundColor: isSecondary ? Colors.white : AppConstants.primaryColor,
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(50))),
         child: Text(
           text,
-          style: const TextStyle(color: Colors.white),
+          style: TextStyle(color: isSecondary ? AppConstants.primaryColor : Colors.white),
         ),
       ),
     );

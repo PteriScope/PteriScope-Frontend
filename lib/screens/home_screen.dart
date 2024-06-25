@@ -158,8 +158,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               color: Colors.grey.withOpacity(0.5),
                               spreadRadius: 5,
                               blurRadius: 7,
-                              offset: const Offset(0,
-                                  3),
+                              offset: const Offset(0, 3),
                             ),
                           ],
                         ),
@@ -216,18 +215,22 @@ class _HomeScreenState extends State<HomeScreen> {
                       left: 0,
                       child: Align(
                           alignment: Alignment.center,
-                          child: PsElevatedButton(
-                              width: MediaQuery.of(context).size.width * 0.8,
-                              disabled: false,
-                              onTap: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const NewPatientScreen(),
-                                  ),
-                                );
-                              },
-                              text: "Agregar paciente")),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: AppConstants.padding),
+                            child: PsElevatedButton(
+                                width: MediaQuery.of(context).size.width,
+                                disabled: false,
+                                onTap: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const NewPatientScreen(),
+                                    ),
+                                  );
+                                },
+                                text: "Agregar paciente"),
+                          )),
                     ),
                   ],
                 ),
@@ -266,15 +269,16 @@ class _HomeScreenState extends State<HomeScreen> {
                   itemCount:
                       _filterPatients(patients, _searchController.text).length,
                   itemBuilder: (context, index) {
-                    final patient =
-                        _filterPatients(patients, _searchController.text)[index];
-      
+                    final patient = _filterPatients(
+                        patients, _searchController.text)[index];
+
                     String? lastReviewDate = patient.lastReviewDate != null
-                        ? DateFormat('dd/MM/yyyy').format(patient.lastReviewDate!)
+                        ? DateFormat('dd/MM/yyyy')
+                            .format(patient.lastReviewDate!)
                         : '-';
-      
+
                     String? lastReviewResult = patient.lastReviewResult ?? '-';
-      
+
                     return InkWell(
                         onTap: () {
                           Navigator.of(context).push(

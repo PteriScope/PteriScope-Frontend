@@ -163,9 +163,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         );
       },
       child: Scaffold(
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(AppConstants.padding),
+        body: Padding(
+          padding: const EdgeInsets.all(AppConstants.padding),
+          child: SingleChildScrollView(
             child: Column(
               children: <Widget>[
                 SizedBox(height: MediaQuery.of(context).size.height * 0.09),
@@ -224,7 +224,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     isValid: positionValidations
                         .every((validation) => validation.isValid),
                     validations: positionValidations),
-                const SizedBox(height: 50),
+                const SizedBox(height: 25),
                 PsElevatedButton(
                     width: MediaQuery.of(context).size.width,
                     disabled: _isButtonDisabled,
@@ -236,7 +236,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   },
                   child: const Text('¿Ya tiene una cuenta? Ingresar'),
                 ),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.09),
+                //SizedBox(height: MediaQuery.of(context).size.height * 0.09),
               ],
             ),
           ),

@@ -25,8 +25,9 @@ class PsItemCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: AppConstants.padding / 3),
+      padding: const EdgeInsets.only(bottom: AppConstants.padding / 1.5),
       child: Card(
+        margin: EdgeInsets.zero,
           child: Row(
         children: [
           if (base64Image.isNotEmpty)

@@ -160,13 +160,15 @@ class _LoginScreenState extends State<LoginScreen> {
                   onTap: _isButtonDisabled ? null : _login,
                   text: 'Ingresar'),
               const SizedBox(height: 25),
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (_) => const RegistrationScreen()));
-                },
-                child: const Text('Registrarse'),
-              ),
+              PsElevatedButton(
+                  width: MediaQuery.of(context).size.width,
+                  disabled: false,
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (_) => const RegistrationScreen()));
+                  },
+                  isSecondary: true,
+                  text: 'Registrarse'),
             ],
           ),
         ),

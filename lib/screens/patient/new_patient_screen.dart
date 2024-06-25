@@ -174,6 +174,7 @@ class _NewPatientScreenState extends State<NewPatientScreen> {
             titleSize: AppConstants.bigAppBarTitleSize,
             disabled: false),
         drawer: const PsMenuBar(currentView: CurrentScreen.newPatient),
+        resizeToAvoidBottomInset: false,
         body: Column(
           children: [
             const PsHeader(
@@ -254,13 +255,15 @@ class _NewPatientScreenState extends State<NewPatientScreen> {
                               onTap: _isButtonDisabled ? null : _register,
                               text: 'Crear paciente'),
                           const SizedBox(height: 20),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (_) => const HomeScreen()));
-                            },
-                            child: const Text('Cancelar'),
-                          ),
+                          PsElevatedButton(
+                              width: MediaQuery.of(context).size.width,
+                              disabled: false,
+                              onTap: () {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (_) => const HomeScreen()));
+                              },
+                              isSecondary: true,
+                              text: 'Cancelar'),
                         ],
                       ),
                     ),

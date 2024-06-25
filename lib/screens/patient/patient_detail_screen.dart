@@ -319,12 +319,16 @@ class _PatientDetailScreen extends State<PatientDetailScreen> {
                         return FadeTransition(opacity: animation, child: child);
                       },
                       child: showMainButton
-                          ? PsElevatedButton(
-                              key: ValueKey<bool>(showMainButton),
-                              width: MediaQuery.of(context).size.width * 0.8,
-                              disabled: false,
-                              onTap: goToCameraScreen,
-                              text: "Nueva revisión",
+                          ? Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: AppConstants.padding),
+                              child: PsElevatedButton(
+                                key: ValueKey<bool>(showMainButton),
+                                width: MediaQuery.of(context).size.width,
+                                disabled: false,
+                                onTap: goToCameraScreen,
+                                text: "Nueva revisión",
+                              ),
                             )
                           : Container(), // Espacio vacío cuando el botón no está visible
                     ),
@@ -368,7 +372,7 @@ class _PatientDetailScreen extends State<PatientDetailScreen> {
                                   ),
                                 ],
                               )
-                            : Container(), // Espacio vacío cuando los iconos no están visibles
+                            : Container(),
                       ),
                     ],
                   ),
