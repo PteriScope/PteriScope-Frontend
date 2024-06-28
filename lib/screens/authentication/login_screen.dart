@@ -1,7 +1,9 @@
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:pteriscope_frontend/screens/authentication/registration_screen.dart';
 import 'package:pteriscope_frontend/services/api_service.dart';
@@ -120,59 +122,71 @@ class _LoginScreenState extends State<LoginScreen> {
         SystemNavigator.pop();
       },
       child: Scaffold(
-        body: Padding(
-          padding: const EdgeInsets.all(AppConstants.padding),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Image(
+        resizeToAvoidBottomInset: false,
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            const SizedBox(
+              height: 300,
+              child: Image(
                 image: AssetImage('assets/newLogo_c.png'),
                 height: 100,
               ),
-              const SizedBox(height: 20),
-              const Text('PteriScope',
-                  style: TextStyle(
-                      fontSize: 36,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black)),
-              const SizedBox(height: 50),
-              PsTextField(
-                  controller: _dniController,
-                  hintText: 'DNI',
-                  obscureText: false,
-                  inputType: TextInputType.number,
-                  isValid:
-                      dniValidations.every((validation) => validation.isValid),
-                  validations: dniValidations),
-              const SizedBox(height: 20),
-              PsTextField(
-                  controller: _passwordController,
-                  hintText: 'Contraseña',
-                  obscureText: true,
-                  inputType: TextInputType.text,
-                  isValid: passwordValidations
-                      .every((validation) => validation.isValid),
-                  validations: passwordValidations),
-              const SizedBox(height: 25),
-              PsElevatedButton(
-                  width: MediaQuery.of(context).size.width,
-                  disabled: _isButtonDisabled,
-                  onTap: _isButtonDisabled ? null : _login,
-                  text: 'Ingresar'),
-              const SizedBox(height: 25),
-              PsElevatedButton(
-                  width: MediaQuery.of(context).size.width,
-                  disabled: false,
-                  onTap: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (_) => const RegistrationScreen()));
-                  },
-                  isSecondary: true,
-                  text: 'Registrarse'),
-            ],
-          ),
+            ),
+            Expanded(
+                child: Container(
+              padding: const EdgeInsets.all(AppConstants.padding),
+              decoration: const BoxDecoration(color: Colors.white),
+              child: Column(
+                children: [
+                  const Align(
+                    alignment: Alignment.topLeft,
+                    child: Text('Iniciar sesión',
+                        style: TextStyle(
+                            fontSize: 36,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black)),
+                  ),
+                  const SizedBox(height: 25),
+                  PsTextField(
+                      controller: _dniController,
+                      hintText: 'DNI',
+                      obscureText: false,
+                      inputType: TextInputType.number,
+                      isValid: dniValidations
+                          .every((validation) => validation.isValid),
+                      validations: dniValidations),
+                  const SizedBox(height: 20),
+                  PsTextField(
+                      controller: _passwordController,
+                      hintText: 'Contraseña',
+                      obscureText: true,
+                      inputType: TextInputType.text,
+                      isValid: passwordValidations
+                          .every((validation) => validation.isValid),
+                      validations: passwordValidations),
+                  const SizedBox(height: 25),
+                  PsElevatedButton(
+                      width: MediaQuery.of(context).size.width,
+                      disabled: _isButtonDisabled,
+                      onTap: _isButtonDisabled ? null : _login,
+                      text: 'Ingresar'),
+                  const SizedBox(height: 25),
+                  PsElevatedButton(
+                      width: MediaQuery.of(context).size.width,
+                      disabled: false,
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (_) => const RegistrationScreen()));
+                      },
+                      isSecondary: true,
+                      text: 'Registrarse'),
+                ],
+              ),
+            )),
+          ],
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: AppConstants.primaryColor,
       ),
     );
   }
