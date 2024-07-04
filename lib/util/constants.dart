@@ -3,20 +3,22 @@ import 'package:flutter/material.dart';
 class AppConstants {
   static const int splashDelay = 2;
   static const Color primaryColor = Color(0xFF475BD8);
-  static const Color secondaryColor = Color(0xFFFFFBFE);
-  static const Color greyColor = Color(0xFFA9A9A9);
+  static const Color secondaryColor = Color(0xFFFFFFFF);
+  static const Color greyColor = Color(0xFFA4A4A4);
   static const double padding = 16.0;
   static const double referenceDeviceWidth = 392.73;
   static const double referenceDeviceHeight = 825.45;
 
   static const String severePterygium = "Pterigión grave";
-  static const Color severeColor = Color(0xFFD70505);
+  static const Color severeColor = Color(0xFFDA3636);
 
   static const String mildPterygium = "Pterigión leve";
   static const Color mildColor = Color(0xFFECBA26);
 
   static const String noPterygium = "Sin pterigión";
   static const Color normalColor = Color(0xFF4CAF50);
+
+  static const Color redIconColor = Color(0xFFE84747);
 
   static const int longSnackBarDuration = 30;
   static const int shortSnackBarDuration = 5;
@@ -45,7 +47,7 @@ class AppConstants {
   static const String noPterygiumAdvice3 =
       "Visitar al oftalmólogo regularmente para chequeos oculares de rutina.";
   static const String noPterygiumAdvice4 =
-      "Buscar educación al paciente sobre la importancia de la protección ocular y el cuidado preventivo.";
+      "Buscar educación sobre la importancia de la protección ocular y el cuidado preventivo.";
 
   static const String mildPterygiumAdvice1 =
       "Utilizar gafas de sol de estilo envolvente para proteger los ojos del sol y el viento.";
@@ -54,7 +56,7 @@ class AppConstants {
   static const String mildPterygiumAdvice3 =
       "Monitorear regularmente el crecimiento del pterigión y su impacto en la visión.";
   static const String mildPterygiumAdvice4 =
-      "Buscar educación al paciente sobre la importancia de la protección ocular y el cuidado preventivo.";
+      "Buscar educación sobre la importancia de la protección ocular y el cuidado preventivo.";
   static const String mildPterygiumAdvice5 =
       "Evaluar la necesidad de tratamiento basado en las preferencias estéticas y/o molestias del paciente y el impacto en su calidad de vida.";
 

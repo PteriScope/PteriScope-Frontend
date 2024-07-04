@@ -28,6 +28,7 @@ class PsDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
+      elevation: 0,
       content: Text(
         content,
         style: const TextStyle(fontSize: 17.5),
@@ -41,7 +42,7 @@ class PsDialog extends StatelessWidget {
       backgroundColor: dialogType == DialogType.confirmation
           ? null
           : dialogType == DialogType.warning
-              ? const Color(0xFFFCFBDF)
+              ? const Color(0xFFFFFFFF)
               : const Color(0xFFFFE9E9),
       actionsAlignment: MainAxisAlignment.spaceAround,
       actionsPadding: const EdgeInsets.all(AppConstants.padding),
@@ -50,7 +51,7 @@ class PsDialog extends StatelessWidget {
             secondaryButtonAction != null &&
             secondaryButtonIcon != null)
           PsElevatedButtonIcon(
-            isPrimary: false,
+            isPrimary: true,
             icon: secondaryButtonIcon!,
             text: secondaryButtonText!,
             onTap: secondaryButtonAction!,

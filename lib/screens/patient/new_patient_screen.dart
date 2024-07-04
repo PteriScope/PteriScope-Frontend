@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:pteriscope_frontend/models/patient.dart';
 import 'package:pteriscope_frontend/models/register_patient.dart';
 import 'package:pteriscope_frontend/screens/patient/patient_detail_screen.dart';
+import 'package:pteriscope_frontend/util/enum/button_type.dart';
 import 'package:pteriscope_frontend/widgets/ps_app_bar.dart';
 
 import '../../util/enum/snack_bar_type.dart';
@@ -262,7 +263,7 @@ class _NewPatientScreenState extends State<NewPatientScreen> {
                                 Navigator.of(context).push(MaterialPageRoute(
                                     builder: (_) => const HomeScreen()));
                               },
-                              isSecondary: true,
+                              buttonType: ButtonType.secondary,
                               text: 'Cancelar'),
                         ],
                       ),

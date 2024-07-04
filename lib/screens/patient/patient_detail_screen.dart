@@ -290,20 +290,20 @@ class _PatientDetailScreen extends State<PatientDetailScreen> {
                                           })
                                     ]),
                               ))),
-                Positioned(
+                AnimatedPositioned(
                   bottom: 0,
                   left: 0,
                   right: 0,
+                  duration: const Duration(milliseconds: 3000),
+                  curve: Curves.easeIn,
                   child: Blur(
                     blur: 2,
                     blurColor: Colors.white,
-                    child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: SizedBox(
-                          height: showMainButton
-                              ? 80
-                              : MediaQuery.of(context).size.height,
-                        )),
+                    child: SizedBox(
+                      height: showMainButton
+                          ? 80
+                          : MediaQuery.of(context).size.height,
+                    ),
                   ),
                 ),
                 Positioned(
@@ -334,86 +334,85 @@ class _PatientDetailScreen extends State<PatientDetailScreen> {
                     ),
                   ),
                 ),
-                Positioned(
-                  bottom: 80.0,
-                  right: 44,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 300),
-                        transitionBuilder:
-                            (Widget child, Animation<double> animation) {
-                          final slideAnimation = Tween<Offset>(
-                            begin: const Offset(0, 1),
-                            end: Offset.zero,
-                          ).animate(animation);
-                          return SlideTransition(
-                              position: slideAnimation, child: child);
-                        },
-                        child: !showMainButton
-                            ? Column(
-                                key: ValueKey<bool>(showMainButton),
-                                children: [
-                                  PsFloatingButton(
-                                    heroTag: 'editPatient',
-                                    buttonType: ButtonType.secondary,
-                                    onTap: goToEditPatientScreen,
-                                    iconData: Icons.edit,
-                                    disabled: false,
-                                  ),
-                                  const SizedBox(height: 10),
-                                  PsFloatingButton(
-                                    heroTag: 'deletePatient',
-                                    buttonType: ButtonType.severe,
-                                    onTap: showAlertDialog,
-                                    iconData: Icons.delete,
-                                    disabled: false,
-                                  ),
-                                ],
-                              )
-                            : Container(),
-                      ),
-                    ],
-                  ),
-                ),
+
+                AnimatedPositioned(
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                    bottom: showMainButton ? 90 : 150.0,
+                    right: AppConstants.padding,
+                    child: PsFloatingButton(
+                      heroTag: 'editPatient',
+                      buttonType: ButtonType.primary,
+                      onTap: goToEditPatientScreen,
+                      iconData: Icons.edit,
+                      disabled: false,
+                      isShowing: !showMainButton,
+                    )),
+
+                AnimatedPositioned(
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                    bottom: showMainButton ? 90 : 80.0,
+                    right: AppConstants.padding,
+                    child: PsFloatingButton(
+                      heroTag: 'deletePatient',
+                      buttonType: ButtonType.severe,
+                      onTap: showAlertDialog,
+                      iconData: Icons.delete,
+                      disabled: false,
+                      isShowing: !showMainButton,
+                    )),
+
                 AnimatedPositioned(
                   duration: const Duration(milliseconds: 300),
                   curve: Curves.easeInOut,
                   bottom: showMainButton ? 90.0 : 20.0,
-                  right: 40,
+                  right: AppConstants.padding,
                   child: Align(
                     alignment: Alignment.center,
-                    child: ElevatedButton(
-                      onPressed: toggleButtons,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppConstants.secondaryColor,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12.0,
-                          vertical: 8.0,
-                        ),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 1,
+                            blurRadius: 5,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                        borderRadius: BorderRadius.circular(50),
                       ),
-                      child: Padding(
-                        padding:
-                            const EdgeInsets.all(AppConstants.padding / 2.0),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Text(
-                              "Acciones",
-                              style:
-                                  TextStyle(color: AppConstants.primaryColor),
-                            ),
-                            const SizedBox(
-                                width:
-                                    8.0), // Espacio entre el texto y el ícono
-                            Icon(
-                              showMainButton
-                                  ? Icons.keyboard_arrow_up
-                                  : Icons.keyboard_arrow_down,
-                              color: AppConstants.primaryColor,
-                            ),
-                          ],
+                      child: ElevatedButton(
+                        onPressed: toggleButtons,
+                        style: ElevatedButton.styleFrom(
+                          elevation: 0,
+                          shadowColor: Colors.black,
+                          backgroundColor: AppConstants.secondaryColor,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12.0,
+                            vertical: 8.0,
+                          ),
+                        ),
+                        child: Padding(
+                          padding:
+                              const EdgeInsets.all(AppConstants.padding / 2.0),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Text(
+                                "Acciones",
+                                style:
+                                    TextStyle(color: AppConstants.primaryColor),
+                              ),
+                              const SizedBox(width: 8.0),
+                              Icon(
+                                showMainButton
+                                    ? Icons.keyboard_arrow_up
+                                    : Icons.keyboard_arrow_down,
+                                color: AppConstants.primaryColor,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -475,7 +474,8 @@ class _PatientDetailScreen extends State<PatientDetailScreen> {
                         child: PsItemCard(
                             base64Image: review.imageBase64!,
                             reviewDate: reviewDate,
-                            result: reviewResult),
+                            result: reviewResult,
+                            imageTag: "${patient.id}-${review.id}"),
                       );
                     }),
           )),

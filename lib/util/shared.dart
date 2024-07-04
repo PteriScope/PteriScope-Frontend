@@ -2,12 +2,15 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:pteriscope_frontend/util/enum/dialog_type.dart';
+import 'package:pteriscope_frontend/util/enum/ps_font_type.dart';
+import 'package:pteriscope_frontend/util/enum/ps_font_weight.dart';
 import 'package:pteriscope_frontend/util/ps_exception.dart';
 import 'package:pteriscope_frontend/widgets/ps_dialog.dart';
 
 import '../screens/authentication/login_screen.dart';
 import '../services/shared_preferences_service.dart';
 import 'constants.dart';
+import 'enum/button_type.dart';
 import 'enum/snack_bar_type.dart';
 
 class Shared {
@@ -27,7 +30,7 @@ class Shared {
         }
       default:
         {
-          return Colors.black;
+          return AppConstants.greyColor;
         }
     }
   }
@@ -98,5 +101,63 @@ class Shared {
   static Future<bool> checkCameraPermission() async {
     var cameraStatus = await Permission.camera.status;
     return cameraStatus.isGranted;
+  }
+
+  static double psFontSize(double figmaFont,
+      [PsFontType fontType = PsFontType.roboto,
+      PsFontWeight psFontWeight = PsFontWeight.bold]) {
+    final double finalFont;
+    switch (fontType) {
+      case PsFontType.roboto:
+        switch (psFontWeight) {
+          case PsFontWeight.bold:
+            finalFont = figmaFont + 2;
+          case PsFontWeight.semibold:
+            finalFont = figmaFont + 0.8;
+          case PsFontWeight.regular:
+            finalFont = figmaFont + 2;
+          case PsFontWeight.medium:
+            finalFont = figmaFont;
+        }
+      case PsFontType.inter:
+        finalFont = figmaFont + 1.5;
+      case PsFontType.sfProText:
+        switch (psFontWeight) {
+          case PsFontWeight.bold:
+            finalFont = figmaFont;
+          case PsFontWeight.semibold:
+            finalFont = figmaFont + 1.6;
+          case PsFontWeight.regular:
+            finalFont = figmaFont;
+          case PsFontWeight.medium:
+            finalFont = figmaFont + 1.6;
+        }
+    }
+    return finalFont;
+  }
+
+  static Color getButtonBackgroundColor(ButtonType buttonType) {
+    if (buttonType == ButtonType.primary) {
+      return AppConstants.primaryColor;
+    }
+    if (buttonType == ButtonType.secondary) {
+      return AppConstants.secondaryColor;
+    }
+    if (buttonType == ButtonType.severe) {
+      return AppConstants.redIconColor;
+    } else {
+      return Colors.white;
+    }
+  }
+
+  static Color getButtonTextColor(ButtonType buttonType) {
+    if (buttonType == ButtonType.primary || buttonType == ButtonType.severe) {
+      return Colors.white;
+    }
+    if (buttonType == ButtonType.secondary) {
+      return AppConstants.primaryColor;
+    } else {
+      return Colors.black;
+    }
   }
 }

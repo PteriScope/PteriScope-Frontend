@@ -9,6 +9,8 @@ import 'package:pteriscope_frontend/screens/patient/patient_detail_screen.dart';
 import 'package:pteriscope_frontend/util/constants.dart';
 import 'package:pteriscope_frontend/services/api_service.dart';
 import 'package:pteriscope_frontend/util/enum/dialog_type.dart';
+import 'package:pteriscope_frontend/util/enum/ps_font_type.dart';
+import 'package:pteriscope_frontend/util/enum/ps_font_weight.dart';
 import 'package:pteriscope_frontend/util/ps_exception.dart';
 import 'package:pteriscope_frontend/util/ps_token_exception.dart';
 import 'package:pteriscope_frontend/widgets/ps_app_bar.dart';
@@ -113,10 +115,11 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Scaffold(
           appBar: const PsAppBar(disabled: false),
           drawer: const PsMenuBar(currentView: CurrentScreen.patientList),
+          resizeToAvoidBottomInset: false,
           body: Column(
             children: [
               PsHeader(
-                title: 'Lista de pacientes',
+                title: 'Listado de pacientes',
                 subtitle: '${totalPatients ?? 0} pacientes',
               ),
               Padding(
@@ -129,8 +132,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   decoration: InputDecoration(
                     filled: true,
                     fillColor: Colors.white,
-                    hintText: 'Busca a un paciente',
-                    hintStyle: const TextStyle(color: Colors.grey),
+                    hintText: 'Buscar paciente',
+                    hintStyle: TextStyle(
+                      fontSize: Shared.psFontSize(16, PsFontType.roboto, PsFontWeight.regular),
+                        fontWeight: FontWeight.normal,
+                        color: Colors.grey
+                    ),
                     prefixIcon: const Icon(Icons.search),
                     suffixIcon: _searchController.text.isNotEmpty
                         ? IconButton(
@@ -143,6 +150,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         : null,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(50),
+                      borderSide: BorderSide.none
                     ),
                   ),
                 ),

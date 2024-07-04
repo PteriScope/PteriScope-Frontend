@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:pteriscope_frontend/util/constants.dart';
+import 'package:pteriscope_frontend/util/enum/ps_font_weight.dart';
+
+import '../util/enum/ps_font_type.dart';
+import '../util/shared.dart';
 
 class PsHeader extends StatelessWidget {
   final String title;
@@ -17,7 +21,7 @@ class PsHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
+    //double screenWidth = MediaQuery.of(context).size.width;
 
     return Padding(
       padding: EdgeInsets.only(
@@ -55,9 +59,9 @@ class PsHeader extends StatelessWidget {
                 child: Text(
                   title,
                   style: TextStyle(
-                    fontSize:
-                        screenWidth * 22 / AppConstants.referenceDeviceWidth,
-                    fontWeight: FontWeight.bold,
+                    fontSize: Shared.psFontSize(
+                        18, PsFontType.roboto, PsFontWeight.semibold),
+                    fontWeight: FontWeight.w500,
                     color: Colors.white,
                   ),
                   textAlign: TextAlign.start,
@@ -66,8 +70,9 @@ class PsHeader extends StatelessWidget {
               if (subtitle.isNotEmpty)
                 Text(
                   subtitle,
-                  style: const TextStyle(
-                    fontSize: 15,
+                  style: TextStyle(
+                    fontSize: Shared.psFontSize(
+                        16, PsFontType.sfProText, PsFontWeight.medium),
                     color: Colors.white,
                   ),
                   textAlign: TextAlign.left,

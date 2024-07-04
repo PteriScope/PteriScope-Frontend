@@ -1,0 +1,1 @@
+enum PsFontWeight { regular, bold, semibold, medium }

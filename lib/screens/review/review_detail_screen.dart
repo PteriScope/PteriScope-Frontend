@@ -1,12 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:blur/blur.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pteriscope_frontend/models/patient.dart';
 import 'package:pteriscope_frontend/models/specialist.dart';
+import 'package:pteriscope_frontend/screens/review/image_detail.dart';
 import 'package:pteriscope_frontend/services/shared_preferences_service.dart';
+import 'package:pteriscope_frontend/util/enum/ps_container_size.dart';
 import 'package:pteriscope_frontend/widgets/ps_app_bar.dart';
 
 import '../../models/review.dart';
@@ -21,6 +22,7 @@ import '../../util/ps_exception.dart';
 import '../../util/shared.dart';
 import '../../widgets/ps_advice_dialog.dart';
 import '../../widgets/ps_column_text.dart';
+import '../../widgets/ps_elevated_button.dart';
 import '../../widgets/ps_elevated_button_icon.dart';
 import '../../widgets/ps_floating_button.dart';
 import '../../widgets/ps_header.dart';
@@ -46,18 +48,12 @@ class _ReviewDetailScreenState extends State<ReviewDetailScreen> {
   bool internetError = false;
   bool _isDeleting = false;
   bool loading = true;
-  bool notShowActions = true;
+  double rowsButtonPadding = AppConstants.padding / 1.5;
 
   @override
   void initState() {
     super.initState();
     initializeSpecialist();
-  }
-
-  void toggleButtons() {
-    setState(() {
-      notShowActions = !notShowActions;
-    });
   }
 
   Future<void> initializeSpecialist() async {
@@ -226,8 +222,6 @@ class _ReviewDetailScreenState extends State<ReviewDetailScreen> {
                   boxShadow: [
                     BoxShadow(
                       color: Colors.grey.withOpacity(0.5),
-                      spreadRadius: 5,
-                      blurRadius: 7,
                       offset: const Offset(0, 3),
                     ),
                   ],
@@ -235,65 +229,85 @@ class _ReviewDetailScreenState extends State<ReviewDetailScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    ClipRRect(
-                      child: Image.memory(
-                        base64Decode(widget.review.imageBase64!),
-                        fit: BoxFit.cover,
-                        width: MediaQuery.of(context).size.width,
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ImageDetail(
+                              tag: "${widget.patient.id}-${widget.review.id}",
+                              imageBase64: widget.review.imageBase64!,
+                            ),
+                          ),
+                        );
+                      },
+                      child: Hero(
+                        tag: "${widget.patient.id}-${widget.review.id}",
+                        child: Image.memory(
+                          base64Decode(widget.review.imageBase64!),
+                          fit: BoxFit.cover,
+                          width: MediaQuery.of(context).size.width,
+                        ),
                       ),
                     ),
                     Expanded(
                       child: Padding(
-                        padding: const EdgeInsets.all(AppConstants.padding),
+                        padding:
+                            const EdgeInsets.all(AppConstants.padding * 1.5),
                         child: Column(
                           children: [
-                            Table(
-                              children: [
-                                TableRow(children: [
-                                  const PsColumnText(
-                                      text: "Nombre del paciente: ",
-                                      isBold: true),
-                                  PsColumnText(
-                                      text:
-                                          "${widget.patient.firstName} ${widget.patient.lastName}",
-                                      isBold: false),
-                                ]),
-                                TableRow(children: [
-                                  const PsColumnText(
-                                      text: "Fecha de la revisión: ",
-                                      isBold: true),
-                                  PsColumnText(
-                                      text: "${widget.review.reviewDate!}",
-                                      isBold: false,
-                                      isDate: true),
-                                ]),
-                                TableRow(children: [
-                                  const PsColumnText(
-                                      text: "Resultado de la revisión: ",
-                                      isBold: true),
-                                  PsColumnText(
-                                      text: widget.review.reviewResult!,
-                                      isBold: false,
-                                      isResult: true),
-                                ]),
-                                TableRow(children: [
-                                  const PsColumnText(
-                                      text: "Encargado de la revisión: ",
-                                      isBold: true),
-                                  PsColumnText(
-                                      text: specialist == null
-                                          ? "-"
-                                          : specialist!.name,
-                                      isBold: false),
-                                ]),
-                              ],
+                            const PsColumnText(
+                              text: "Paciente: ",
+                              isBold: true,
+                              size: PsContainerSize.full,
                             ),
-                            const SizedBox(height: AppConstants.padding * 2),
-                            PsElevatedButtonIcon(
-                                isPrimary: true,
-                                icon: Icons.health_and_safety_sharp,
-                                text: "Sugerencias",
-                                onTap: viewAdvices),
+                            PsColumnText(
+                              text:
+                                  "${widget.patient.firstName} ${widget.patient.lastName}",
+                              isBold: false,
+                              size: PsContainerSize.full,
+                              bottomPadding: rowsButtonPadding,
+                            ),
+                            const PsColumnText(
+                              text: "Fecha de revisión: ",
+                              isBold: true,
+                              size: PsContainerSize.full,
+                            ),
+                            PsColumnText(
+                              text: "${widget.review.reviewDate!}",
+                              isBold: false,
+                              isDate: true,
+                              size: PsContainerSize.full,
+                              bottomPadding: rowsButtonPadding,
+                            ),
+                            const PsColumnText(
+                              text: "Resultado de la revisión: ",
+                              isBold: true,
+                              size: PsContainerSize.full,
+                            ),
+                            PsColumnText(
+                              text: widget.review.reviewResult!,
+                              isBold: false,
+                              isResult: true,
+                              size: PsContainerSize.full,
+                              bottomPadding: rowsButtonPadding,
+                            ),
+                            const PsColumnText(
+                              text: "Encargado de la revisión: ",
+                              isBold: true,
+                              size: PsContainerSize.full,
+                            ),
+                            PsColumnText(
+                              text: specialist == null ? "-" : specialist!.name,
+                              isBold: false,
+                              size: PsContainerSize.full,
+                            ),
+                            //const SizedBox(height: AppConstants.padding * 2),
+                            //PsElevatedButtonIcon(
+                            //    isPrimary: true,
+                            //    icon: Icons.health_and_safety_sharp,
+                            //    text: "Sugerencias",
+                            //    onTap: viewAdvices),
                             if (loading)
                               const Center(child: CircularProgressIndicator())
                             else if (internetError || serverError)
@@ -330,101 +344,38 @@ class _ReviewDetailScreenState extends State<ReviewDetailScreen> {
                   ],
                 ),
               ),
-
               Positioned(
-                bottom: 0,
-                left: 0,
+                bottom: 100.0,
                 right: 0,
-                child: Blur(
-                  blur: 2,
-                  blurColor: Colors.white,
-                  child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: SizedBox(
-                        height: notShowActions
-                            ? 80
-                            : MediaQuery.of(context).size.height,
-                      )),
-                ),
-              ),
-
-              Positioned(
-                bottom: 80.0,
-                right: 44,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 300),
-                      transitionBuilder:
-                          (Widget child, Animation<double> animation) {
-                        final slideAnimation = Tween<Offset>(
-                          begin: const Offset(
-                              0, 1), // Comienza fuera de la vista (debajo)
-                          end: Offset.zero, // Termina en su posición original
-                        ).animate(animation);
-
-                        return SlideTransition(
-                          position: slideAnimation,
-                          child: child,
-                        );
-                      },
-                      child: !notShowActions
-                          ? Column(
-                              key: ValueKey<bool>(notShowActions),
-                              children: [
-                                PsFloatingButton(
-                                  heroTag: 'deleteReview',
-                                  buttonType: ButtonType.severe,
-                                  onTap: showAlertDialog,
-                                  iconData: Icons.delete,
-                                  disabled: false,
-                                ),
-                              ],
-                            )
-                          : Container(),
-                    ),
-                  ],
-                ),
-              ),
-
-              AnimatedPositioned(
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeInOut,
-                bottom: 20.0,
-                right: 40,
+                left: 0,
                 child: Align(
-                  alignment: Alignment.center,
-                  child: ElevatedButton(
-                    onPressed: toggleButtons,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppConstants.secondaryColor,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12.0,
-                        vertical: 8.0,
-                      ),
-                    ),
+                    alignment: Alignment.center,
                     child: Padding(
-                      padding: const EdgeInsets.all(AppConstants.padding / 2.0),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Text(
-                            "Acciones",
-                            style: TextStyle(color: AppConstants.primaryColor),
-                          ),
-                          const SizedBox(width: 8.0),
-                          Icon(
-                            notShowActions
-                                ? Icons.keyboard_arrow_up
-                                : Icons.keyboard_arrow_down,
-                            color: AppConstants.primaryColor,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: AppConstants.padding * 1.5),
+                      child: PsElevatedButton(
+                          width: MediaQuery.of(context).size.width,
+                          disabled: false,
+                          onTap: viewAdvices,
+                          text: "Sugerencias para el paciente"),
+                    )),
+              ),
+              Positioned(
+                bottom: 30.0,
+                right: 0,
+                left: 0,
+                child: Align(
+                    alignment: Alignment.center,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: AppConstants.padding * 1.5),
+                      child: PsElevatedButton(
+                          width: MediaQuery.of(context).size.width,
+                          disabled: false,
+                          onTap: showAlertDialog,
+                          buttonType: ButtonType.severe,
+                          text: "Elminar revisón"),
+                    )),
               ),
             ]),
           ),

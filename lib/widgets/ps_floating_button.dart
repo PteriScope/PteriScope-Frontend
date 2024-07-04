@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pteriscope_frontend/util/enum/button_type.dart';
 
 import '../util/constants.dart';
+import '../util/shared.dart';
 
 class PsFloatingButton extends StatelessWidget {
   final String heroTag;
@@ -10,6 +11,7 @@ class PsFloatingButton extends StatelessWidget {
   final IconData iconData;
   final bool? disabled;
   final bool isMini;
+  final bool isShowing;
 
   const PsFloatingButton(
       {super.key,
@@ -18,42 +20,20 @@ class PsFloatingButton extends StatelessWidget {
       required this.onTap,
       required this.iconData,
       this.disabled,
-      this.isMini = false});
+      this.isMini = false,
+      this.isShowing = true});
 
   @override
   Widget build(BuildContext context) {
     return FloatingActionButton(
       heroTag: heroTag,
-      backgroundColor: _getButtonBackgroundColor(buttonType),
+      backgroundColor: Shared.getButtonBackgroundColor(buttonType),
       onPressed: onTap,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
       mini: isMini,
-      child: Icon(iconData, color: _getButtonTextColor(buttonType)),
+      elevation: isShowing ? 6 : 0,
+      highlightElevation: 0,
+      child: Icon(iconData, color: Shared.getButtonTextColor(buttonType)),
     );
-  }
-
-  Color _getButtonBackgroundColor(ButtonType buttonType) {
-    if (buttonType == ButtonType.primary) {
-      return AppConstants.primaryColor;
-    }
-    if (buttonType == ButtonType.secondary) {
-      return AppConstants.secondaryColor;
-    }
-    if (buttonType == ButtonType.severe) {
-      return AppConstants.severeColor;
-    } else {
-      return Colors.white;
-    }
-  }
-
-  Color _getButtonTextColor(ButtonType buttonType) {
-    if (buttonType == ButtonType.primary || buttonType == ButtonType.severe) {
-      return Colors.white;
-    }
-    if (buttonType == ButtonType.secondary) {
-      return AppConstants.primaryColor;
-    } else {
-      return Colors.black;
-    }
   }
 }

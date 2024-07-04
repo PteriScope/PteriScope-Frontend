@@ -1,15 +1,14 @@
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:pteriscope_frontend/screens/authentication/registration_screen.dart';
 import 'package:pteriscope_frontend/services/api_service.dart';
 import 'package:pteriscope_frontend/widgets/ps_elevated_button.dart';
 import 'package:pteriscope_frontend/widgets/ps_text_field.dart';
 
+import '../../util/enum/button_type.dart';
 import '../../util/enum/snack_bar_type.dart';
 import '../../util/shared.dart';
 import '../../util/validation.dart';
@@ -126,11 +125,14 @@ class _LoginScreenState extends State<LoginScreen> {
         body: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            const SizedBox(
+            SizedBox(
               height: 300,
-              child: Image(
-                image: AssetImage('assets/newLogo_c.png'),
-                height: 100,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 40),
+                child: Image(
+                  image: const AssetImage('assets/newLogo_c.png'),
+                  width: MediaQuery.of(context).size.width / 3.2,
+                ),
               ),
             ),
             Expanded(
@@ -139,11 +141,12 @@ class _LoginScreenState extends State<LoginScreen> {
               decoration: const BoxDecoration(color: Colors.white),
               child: Column(
                 children: [
-                  const Align(
+                  const SizedBox(height: 15),
+                  Align(
                     alignment: Alignment.topLeft,
                     child: Text('Iniciar sesión',
                         style: TextStyle(
-                            fontSize: 36,
+                            fontSize: Shared.psFontSize(24),
                             fontWeight: FontWeight.bold,
                             color: Colors.black)),
                   ),
@@ -179,7 +182,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (_) => const RegistrationScreen()));
                       },
-                      isSecondary: true,
+                      buttonType: ButtonType.secondary,
                       text: 'Registrarse'),
                 ],
               ),

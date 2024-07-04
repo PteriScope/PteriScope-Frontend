@@ -29,6 +29,7 @@ class _PsAdviceDialogState extends State<PsAdviceDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
+      elevation: 0,
       title: Text(
         widget.isResultAdvice
             ? "Consejos para el paciente"

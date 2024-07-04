@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:pteriscope_frontend/util/enum/button_type.dart';
+import 'package:pteriscope_frontend/util/enum/ps_font_type.dart';
+import 'package:pteriscope_frontend/util/shared.dart';
 
 import '../util/constants.dart';
 
@@ -7,7 +10,7 @@ class PsElevatedButton extends StatelessWidget {
   final bool disabled;
   final Function()? onTap;
   final String text;
-  final bool isSecondary;
+  final ButtonType buttonType;
 
   const PsElevatedButton({
     super.key,
@@ -15,7 +18,7 @@ class PsElevatedButton extends StatelessWidget {
     required this.disabled,
     required this.onTap,
     required this.text,
-    this.isSecondary = false,
+    this.buttonType = ButtonType.primary,
   });
 
   @override
@@ -26,12 +29,14 @@ class PsElevatedButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: disabled ? null : onTap,
         style: ElevatedButton.styleFrom(
-            backgroundColor: isSecondary ? Colors.white : AppConstants.primaryColor,
+            backgroundColor: Shared.getButtonBackgroundColor(buttonType),
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(50))),
         child: Text(
           text,
-          style: TextStyle(color: isSecondary ? AppConstants.primaryColor : Colors.white),
+          style: TextStyle(
+              color: Shared.getButtonTextColor(buttonType),
+              fontSize: Shared.psFontSize(16, PsFontType.inter)),
         ),
       ),
     );

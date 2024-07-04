@@ -5,11 +5,13 @@ import 'package:provider/provider.dart';
 import 'package:pteriscope_frontend/screens/review/camera_screen.dart';
 import 'package:pteriscope_frontend/screens/review/review_detail_screen.dart';
 import 'package:pteriscope_frontend/util/enum/dialog_type.dart';
+import 'package:pteriscope_frontend/util/enum/snack_bar_type.dart';
 import 'package:pteriscope_frontend/widgets/ps_floating_button.dart';
 
 import '../../../models/patient.dart';
 import '../../../models/review.dart';
 import '../../../services/api_service.dart';
+import '../../util/constants.dart';
 import '../../util/enum/button_type.dart';
 import '../../util/ps_exception.dart';
 import '../../util/shared.dart';
@@ -114,6 +116,8 @@ class _ConfirmPictureScreenState extends State<ConfirmPictureScreen> {
               widget.patient.id, {'imageBase64': widget.imageBase64});
 
       if (mounted) {
+        Shared.showPSSnackBar(context, "Revisión guardada",
+            SnackBarType.onlyText, AppConstants.shortSnackBarDuration);
         Navigator.of(context, rootNavigator: true).pop();
         Navigator.of(context).push(
           MaterialPageRoute(
