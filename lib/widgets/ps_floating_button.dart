@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:pteriscope_frontend/util/enum/button_type.dart';
-
-import '../util/constants.dart';
 import '../util/shared.dart';
 
 class PsFloatingButton extends StatelessWidget {

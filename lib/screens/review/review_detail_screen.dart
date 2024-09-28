@@ -24,7 +24,6 @@ import '../../widgets/ps_advice_dialog.dart';
 import '../../widgets/ps_column_text.dart';
 import '../../widgets/ps_elevated_button.dart';
 import '../../widgets/ps_elevated_button_icon.dart';
-import '../../widgets/ps_floating_button.dart';
 import '../../widgets/ps_header.dart';
 import '../../widgets/ps_menu_bar.dart';
 import '../patient/patient_detail_screen.dart';

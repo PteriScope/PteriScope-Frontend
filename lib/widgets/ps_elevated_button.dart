@@ -3,8 +3,6 @@ import 'package:pteriscope_frontend/util/enum/button_type.dart';
 import 'package:pteriscope_frontend/util/enum/ps_font_type.dart';
 import 'package:pteriscope_frontend/util/shared.dart';
 
-import '../util/constants.dart';
-
 class PsElevatedButton extends StatelessWidget {
   final double width;
   final bool disabled;
